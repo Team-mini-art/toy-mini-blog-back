@@ -16,6 +16,17 @@ public class MemberService {
 
     private final MemberRepository memberRepository;
 
+    public MemberDto signup(MemberDto memberDto) {
+        Member members = new Member();
+
+        members.setEmail(memberDto.getEmail());
+        members.setPassword(memberDto.getPassword());
+        members.setNickname(memberDto.getNickname());
+        members.setCreatedDate(LocalDateTime.now());
+        memberRepository.save(members);
+        return memberDto;
+    }
+
     public List<MemberDto> findMember() {
         List<Member> members = memberRepository.findAll();
         return members.stream()
@@ -28,15 +39,5 @@ public class MemberService {
                         .build()
                 )
                 .collect(Collectors.toList());
-    }
-
-    public void signup(MemberDto memberDto) {
-        Member members = new Member();
-
-        members.setEmail(memberDto.getEmail());
-        members.setPassword(memberDto.getPassword());
-        members.setNickname(memberDto.getNickname());
-        members.setCreatedDate(LocalDateTime.now());
-        memberRepository.save(members);
     }
 }
