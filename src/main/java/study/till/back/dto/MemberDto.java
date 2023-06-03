@@ -1,6 +1,7 @@
 package study.till.back.dto;
 
 import lombok.*;
+import study.till.back.entity.Member;
 
 import java.time.LocalDateTime;
 
@@ -13,4 +14,13 @@ public class MemberDto {
     private String password;
     private String nickname;
     private LocalDateTime createdDate;
+
+    public Member toEntity() {
+        Member member = new Member();
+        member.setEmail(this.email);
+        member.setPassword(this.password);
+        member.setNickname(this.nickname);
+        member.setCreatedDate(LocalDateTime.now());
+        return member;
+    }
 }
