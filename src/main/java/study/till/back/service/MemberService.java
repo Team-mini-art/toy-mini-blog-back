@@ -21,6 +21,10 @@ public class MemberService {
         return members;
     }
 
+    public Member login(MemberDto memberDto) {
+        return memberRepository.findByEmailAndPassword(memberDto.getEmail(), memberDto.getPassword());
+    }
+
     public List<MemberDto> findMember() {
         List<Member> members = memberRepository.findAll();
         return members.stream()

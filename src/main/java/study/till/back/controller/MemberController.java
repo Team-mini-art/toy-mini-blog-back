@@ -22,6 +22,11 @@ public class MemberController {
         return memberService.signup(memberDto);
     }
 
+    @PostMapping("/login")
+    public Member login(@RequestBody MemberDto memberDto) {
+        return memberService.login(memberDto);
+    }
+
     @GetMapping("/members")
     public List<MemberDto> findMember() {
         memberService.findMember();

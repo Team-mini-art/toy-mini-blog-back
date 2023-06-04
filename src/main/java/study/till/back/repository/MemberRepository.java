@@ -7,5 +7,5 @@ import study.till.back.entity.Member;
 import java.util.List;
 
 public interface MemberRepository extends JpaRepository<Member, Long> {
-
+    public Member findByEmailAndPassword(String email, String password);
 }
