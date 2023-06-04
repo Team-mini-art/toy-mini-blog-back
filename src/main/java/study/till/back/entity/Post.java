@@ -12,9 +12,9 @@ import java.time.LocalDateTime;
 public class Post {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "post_id")
-    private Long id;
+    private long id;
 
     private String title;
 
