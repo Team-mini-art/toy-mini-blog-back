@@ -1,7 +1,9 @@
 package study.till.back.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import study.till.back.dto.LoginResponse;
 import study.till.back.dto.MemberDto;
 import study.till.back.entity.Member;
 import study.till.back.repository.MemberRepository;
@@ -23,7 +25,7 @@ public class MemberController {
     }
 
     @PostMapping("/login")
-    public Member login(@RequestBody MemberDto memberDto) {
+    public ResponseEntity<LoginResponse> login(@RequestBody MemberDto memberDto) {
         return memberService.login(memberDto);
     }
 

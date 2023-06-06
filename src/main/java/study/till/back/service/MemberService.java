@@ -1,7 +1,10 @@
 package study.till.back.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import study.till.back.dto.LoginResponse;
 import study.till.back.dto.MemberDto;
 import study.till.back.entity.Member;
 import study.till.back.repository.MemberRepository;
@@ -21,8 +24,26 @@ public class MemberService {
         return members;
     }
 
-    public Member login(MemberDto memberDto) {
-        return memberRepository.findByEmailAndPassword(memberDto.getEmail(), memberDto.getPassword());
+    public ResponseEntity<LoginResponse> login(MemberDto memberDto) {
+
+        Member member = memberRepository.findByEmailAndPassword(memberDto.getEmail(), memberDto.getPassword());
+        if (member != null) {
+            LoginResponse loginResponse = LoginResponse.builder()
+                    .status("SUCCESS")
+                    .message("로그인 성공")
+                    .id(member.getId())
+                    .email(member.getEmail())
+                    .nickname(member.getNickname())
+                    .build();
+            return ResponseEntity.ok().body(loginResponse);
+        }
+        else {
+            LoginResponse loginResponse = LoginResponse.builder()
+                    .status("FAIL")
+                    .message("로그인 실패")
+                    .build();
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(loginResponse);
+        }
     }
 
     public List<MemberDto> findMember() {
