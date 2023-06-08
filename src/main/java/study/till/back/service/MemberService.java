@@ -40,7 +40,7 @@ public class MemberService {
         else {
             LoginResponse loginResponse = LoginResponse.builder()
                     .status("FAIL")
-                    .message("로그인 실패")
+                    .message("로그인 실패, 아이디 또는 비밀번호를 확인해주세요.")
                     .build();
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(loginResponse);
         }
