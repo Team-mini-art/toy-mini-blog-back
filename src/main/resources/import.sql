@@ -1,1 +1,0 @@
-insert into member (created_date, email, nickname, password) values (NOW(), 'a@a.com', 'a', '1234');

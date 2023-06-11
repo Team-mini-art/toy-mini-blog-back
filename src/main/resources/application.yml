@@ -10,7 +10,8 @@ spring:
 
   jpa:
     hibernate:
-      hbm2ddl.auto: update
+#      hbm2ddl.auto: create
+      ddl-auto: create
     properties:
       hibernate:
         # show_sql: true
@@ -35,3 +36,7 @@ springdoc:
 logging.level:
   org.hibernate.SQL: debug
 #  org.hibernate.type: trace
+
+jwt:
+  secret: MDwwDQYJKoZIhvcNAQEBBQADKwAwKAIhAIqwfgdpBCIj/Kk4qtsIDrRjuABSI+rj69wlm+4eqU65AgMBAAE=
+  token-validity-in-seconds: 86400
