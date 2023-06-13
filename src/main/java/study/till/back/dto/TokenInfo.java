@@ -1,12 +1,12 @@
 package study.till.back.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
+import lombok.*;
 
 @Builder
 @Data
 @AllArgsConstructor
+@Getter
+@Setter
 public class TokenInfo {
     private String grantType;
     private String accessToken;
