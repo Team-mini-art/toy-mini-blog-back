@@ -5,6 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import study.till.back.dto.LoginResponse;
 import study.till.back.dto.LoginRequest;
+import study.till.back.dto.findMemberResponse;
 import study.till.back.entity.Member;
 import study.till.back.repository.MemberRepository;
 import study.till.back.service.MemberService;
@@ -30,7 +31,7 @@ public class MemberController {
     }
 
     @GetMapping("/members")
-    public List<LoginRequest> findMember() {
+    public List<findMemberResponse> findMember() {
         memberService.findMember();
         return memberService.findMember();
     }

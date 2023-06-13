@@ -10,6 +10,7 @@ import study.till.back.config.jwt.JwtTokenProvider;
 import study.till.back.dto.LoginResponse;
 import study.till.back.dto.LoginRequest;
 import study.till.back.dto.TokenInfo;
+import study.till.back.dto.findMemberResponse;
 import study.till.back.entity.Member;
 import study.till.back.repository.MemberRepository;
 
@@ -66,13 +67,12 @@ public class MemberService {
         }
     }
 
-    public List<LoginRequest> findMember() {
+    public List<findMemberResponse> findMember() {
         List<Member> members = memberRepository.findAll();
         return members.stream()
-                .map(member -> LoginRequest.builder()
+                .map(member -> findMemberResponse.builder()
                         .id(member.getId())
                         .email(member.getEmail())
-                        .password(member.getPassword())
                         .nickname(member.getNickname())
                         .createdDate(member.getCreatedDate())
                         .build()
