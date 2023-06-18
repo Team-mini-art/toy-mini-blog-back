@@ -5,7 +5,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import study.till.back.entity.Post;
-import study.till.back.repository.PostRepository;
 import study.till.back.service.PostService;
 
 import java.util.List;
