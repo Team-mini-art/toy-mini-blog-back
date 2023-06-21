@@ -59,9 +59,11 @@ public class MemberService {
             return ResponseEntity.ok().body(loginResponse);
         }
         else {
+            String status = "FAIL";
+            String message = "로그인 실패, 아이디 또는 비밀번호를 확인해주세요.";
             LoginResponse loginResponse = LoginResponse.builder()
-                    .status("FAIL")
-                    .message("로그인 실패, 아이디 또는 비밀번호를 확인해주세요.")
+                    .status(status)
+                    .message(message)
                     .build();
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(loginResponse);
         }
