@@ -1,9 +1,9 @@
 package study.till.back.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
+import study.till.back.dto.CreatePostRequest;
 import study.till.back.entity.Post;
 import study.till.back.service.PostService;
 
@@ -19,5 +19,10 @@ public class PostController {
     @GetMapping("/posts")
     public List<Post> findPosts() {
         return postService.findPosts();
+    }
+
+    @PostMapping("/posts")
+    public HttpStatus createPost(@RequestBody CreatePostRequest createPostRequest) {
+        return postService.createPost(createPostRequest);
     }
 }
