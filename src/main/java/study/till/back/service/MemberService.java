@@ -3,14 +3,13 @@ package study.till.back.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import study.till.back.config.jwt.JwtTokenProvider;
 import study.till.back.dto.LoginResponse;
 import study.till.back.dto.LoginRequest;
 import study.till.back.dto.TokenInfo;
-import study.till.back.dto.findMemberResponse;
+import study.till.back.dto.FindMemberResponse;
 import study.till.back.entity.Member;
 import study.till.back.repository.MemberRepository;
 
@@ -69,10 +68,10 @@ public class MemberService {
         }
     }
 
-    public List<findMemberResponse> findMember() {
+    public List<FindMemberResponse> findMember() {
         List<Member> members = memberRepository.findAll();
         return members.stream()
-                .map(member -> findMemberResponse.builder()
+                .map(member -> FindMemberResponse.builder()
                         .id(member.getId())
                         .email(member.getEmail())
                         .nickname(member.getNickname())

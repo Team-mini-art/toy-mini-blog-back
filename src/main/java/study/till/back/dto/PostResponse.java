@@ -9,8 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class CreatePostRequest {
-    private Long member_id;
-    private String title;
-    private String contents;
+public class PostResponse {
+    private String status;
+    private String message;
 }

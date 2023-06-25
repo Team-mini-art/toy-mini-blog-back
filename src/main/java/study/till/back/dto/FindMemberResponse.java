@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 @Data
 @Builder
 @Getter
-public class findMemberResponse {
+public class FindMemberResponse {
     private Long id;
     private String email;
     private String nickname;
