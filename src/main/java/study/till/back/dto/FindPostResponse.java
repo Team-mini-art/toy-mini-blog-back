@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class FindPostResponse {
-    private long id;
+    private Long id;
     private String title;
     private String contents;
 }

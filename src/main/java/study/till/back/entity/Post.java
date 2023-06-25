@@ -31,4 +31,5 @@ public class Post {
     private Member member;
 
     private LocalDateTime createdDate;
+    private LocalDateTime updateDate;
 }

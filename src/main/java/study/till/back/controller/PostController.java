@@ -28,4 +28,9 @@ public class PostController {
     public ResponseEntity<PostResponse> createPost(@RequestBody PostRequest postRequest) {
         return postService.createPost(postRequest);
     }
+
+    @PutMapping("/posts")
+    public ResponseEntity<PostResponse> updatePost(@RequestBody PostRequest postRequest) {
+        return postService.updatePost(postRequest);
+    }
 }

@@ -58,4 +58,28 @@ public class PostService {
                 .build();
         return ResponseEntity.ok(postResponse);
     }
+
+    public ResponseEntity<PostResponse> updatePost(PostRequest postRequest) {
+        Post post = postRepository.findById(postRequest.getId()).orElse(null);
+
+        PostResponse postResponse;
+        if (post == null) {
+            postResponse = PostResponse.builder()
+                    .status("FAIL")
+                    .message("존재하지 않는 게시글입니다.")
+                    .build();
+            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(postResponse);
+        }
+
+        post.setTitle(postRequest.getTitle());
+        post.setContents(postRequest.getContents());
+        post.setUpdateDate(LocalDateTime.now());
+        postRepository.save(post);
+
+        postResponse = PostResponse.builder()
+                .status("SUCCESS")
+                .message("게시글이 수정되었습니다.")
+                .build();
+        return ResponseEntity.ok(postResponse);
+    }
 }

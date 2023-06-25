@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PostRequest {
+    private Long id;
     private Long member_id;
     private String title;
     private String contents;
