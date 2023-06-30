@@ -46,7 +46,7 @@ public class MemberService {
         if (member == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
 
         if (passwordEncoder.matches(loginRequest.getPassword(), member.getPassword())) {
-            TokenInfo tokenInfo = jwtTokenProvider.generateToken(member.getEmail(), member.getRoles());
+            TokenInfo tokenInfo = jwtTokenProvider.generateToken(member.getId(), member.getRoles());
             LoginResponse loginResponse = LoginResponse.builder()
                     .status("SUCCESS")
                     .message("로그인 성공")

@@ -33,13 +33,13 @@ public class JwtTokenProvider {
         this.key = Keys.hmacShaKeyFor(keyBytes);
     }
 
-    public TokenInfo generateToken(String memberPk, List<String> roles) {
+    public TokenInfo generateToken(Long memberPk, List<String> roles) {
 
         long now = (new Date()).getTime();
 
         Date accessTokenExpiresIn = new Date(now + 3_600_000);
         // Access Token 생성
-        Claims claims = Jwts.claims().setSubject(memberPk);
+        Claims claims = Jwts.claims().setSubject(String.valueOf(memberPk));
         claims.put("roles", roles);
         String accessToken = Jwts.builder()
                 .setClaims(claims)
