@@ -33,4 +33,9 @@ public class PostController {
     public ResponseEntity<PostResponse> updatePost(@RequestBody PostRequest postRequest) {
         return postService.updatePost(postRequest);
     }
+
+    @DeleteMapping("posts")
+    public ResponseEntity<PostResponse> deletePost(@RequestBody PostRequest postRequest) {
+        return postService.deletePost(postRequest);
+    }
 }

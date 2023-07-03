@@ -14,6 +14,7 @@ import study.till.back.repository.PostRepository;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -33,16 +34,12 @@ public class PostService {
     }
 
     public ResponseEntity<PostResponse> createPost(PostRequest postRequest) {
-        Member member = memberRepository.findById(postRequest.getMember_id()).orElse(null);
-
-        PostResponse postResponse;
-        if (member == null) {
-            postResponse = PostResponse.builder()
-                    .status("FAIL")
-                    .message("등록된 회원 정보가 없습니다.")
-                    .build();
-            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(postResponse);
+        Optional<ResponseEntity<PostResponse>> memberCheckResult = validateMember(postRequest.getMember_id());
+        if (memberCheckResult.isPresent()) {
+            return memberCheckResult.get();
         }
+
+        Member member = memberRepository.findById(postRequest.getMember_id()).orElse(null);
 
         Post post = Post.builder()
                 .title(postRequest.getTitle())
@@ -52,7 +49,7 @@ public class PostService {
                 .build();
         postRepository.save(post);
 
-        postResponse = PostResponse.builder()
+        PostResponse postResponse = PostResponse.builder()
                 .status("SUCCESS")
                 .message("게시글 저장 성공")
                 .build();
@@ -60,26 +57,70 @@ public class PostService {
     }
 
     public ResponseEntity<PostResponse> updatePost(PostRequest postRequest) {
-        Post post = postRepository.findById(postRequest.getId()).orElse(null);
-
-        PostResponse postResponse;
-        if (post == null) {
-            postResponse = PostResponse.builder()
-                    .status("FAIL")
-                    .message("존재하지 않는 게시글입니다.")
-                    .build();
-            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(postResponse);
+        Optional<ResponseEntity<PostResponse>> memberCheckResult = validateMember(postRequest.getMember_id());
+        if (memberCheckResult.isPresent()) {
+            return memberCheckResult.get();
         }
 
+        Optional<ResponseEntity<PostResponse>> postCheckResult = validatePost(postRequest.getId());
+        if (postCheckResult.isPresent()) {
+            return postCheckResult.get();
+        }
+
+        Post post = postRepository.findById(postRequest.getId()).orElse(null);
         post.setTitle(postRequest.getTitle());
         post.setContents(postRequest.getContents());
         post.setUpdateDate(LocalDateTime.now());
         postRepository.save(post);
 
-        postResponse = PostResponse.builder()
+        PostResponse postResponse = PostResponse.builder()
                 .status("SUCCESS")
                 .message("게시글이 수정되었습니다.")
                 .build();
         return ResponseEntity.ok(postResponse);
+    }
+
+    public ResponseEntity<PostResponse> deletePost(PostRequest postRequest) {
+        Optional<ResponseEntity<PostResponse>> memberCheckResult = validateMember(postRequest.getMember_id());
+        if (memberCheckResult.isPresent()) {
+            return memberCheckResult.get();
+        }
+
+        Optional<ResponseEntity<PostResponse>> postCheckResult = validatePost(postRequest.getId());
+        if (postCheckResult.isPresent()) {
+            return postCheckResult.get();
+        }
+
+        postRepository.deleteById(postRequest.getId());
+
+        PostResponse postResponse = PostResponse.builder()
+                .status("SUCCESS")
+                .message("게시글이 삭제되었습니다.")
+                .build();
+        return ResponseEntity.ok(postResponse);
+    }
+
+    public Optional<ResponseEntity<PostResponse>> validateMember(Long memberId) {
+        Member member = memberRepository.findById(memberId).orElse(null);
+        if (member == null) {
+            PostResponse postResponse = PostResponse.builder()
+                    .status("FAIL")
+                    .message("등록된 회원 정보가 없습니다.")
+                    .build();
+            return Optional.of(ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(postResponse));
+        }
+        return Optional.empty();
+    }
+
+    public Optional<ResponseEntity<PostResponse>> validatePost(Long postId) {
+        Post post = postRepository.findById(postId).orElse(null);
+        if (post == null) {
+            PostResponse postResponse = PostResponse.builder()
+                    .status("FAIL")
+                    .message("존재하지 않는 게시글입니다.")
+                    .build();
+            return Optional.of(ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(postResponse));
+        }
+        return Optional.empty();
     }
 }
