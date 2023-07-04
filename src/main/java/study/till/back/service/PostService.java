@@ -29,6 +29,7 @@ public class PostService {
                 .id(post.getId())
                 .title(post.getTitle())
                 .contents(post.getContents())
+                .createdDate(post.getCreatedDate())
                 .build()
         ).collect(Collectors.toList());
     }
