@@ -81,18 +81,13 @@ public class PostService {
         return ResponseEntity.ok(postResponse);
     }
 
-    public ResponseEntity<PostResponse> deletePost(PostRequest postRequest) {
-        Optional<ResponseEntity<PostResponse>> memberCheckResult = validateMember(postRequest.getMember_id());
-        if (memberCheckResult.isPresent()) {
-            return memberCheckResult.get();
-        }
-
-        Optional<ResponseEntity<PostResponse>> postCheckResult = validatePost(postRequest.getId());
+    public ResponseEntity<PostResponse> deletePost(Long id) {
+        Optional<ResponseEntity<PostResponse>> postCheckResult = validatePost(id);
         if (postCheckResult.isPresent()) {
             return postCheckResult.get();
         }
 
-        postRepository.deleteById(postRequest.getId());
+        postRepository.deleteById(id);
 
         PostResponse postResponse = PostResponse.builder()
                 .status("SUCCESS")
