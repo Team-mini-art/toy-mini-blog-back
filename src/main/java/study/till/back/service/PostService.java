@@ -23,15 +23,30 @@ public class PostService {
     private final MemberRepository memberRepository;
     private final PostRepository postRepository;
 
-    public List<FindPostResponse> findPosts() {
+    public ResponseEntity<List<FindPostResponse>> findPosts() {
         List<Post> posts = postRepository.findAll();
-        return posts.stream().map(post -> FindPostResponse.builder()
+
+        List<FindPostResponse> findPostResponses = posts.stream().map(post -> FindPostResponse.builder()
                 .id(post.getId())
                 .title(post.getTitle())
                 .contents(post.getContents())
                 .createdDate(post.getCreatedDate())
                 .build()
         ).collect(Collectors.toList());
+        return ResponseEntity.ok(findPostResponses);
+    }
+
+    public ResponseEntity<FindPostResponse> findPost(Long postId) {
+        Post post = postRepository.findById(postId).get();
+
+        FindPostResponse findPostResponse = FindPostResponse.builder()
+                .id(post.getId())
+                .title(post.getTitle())
+                .contents(post.getContents())
+                .createdDate(post.getCreatedDate())
+                .build();
+
+        return ResponseEntity.ok(findPostResponse);
     }
 
     public ResponseEntity<PostResponse> createPost(PostRequest postRequest) {

@@ -20,8 +20,13 @@ public class PostController {
     private final PostService postService;
 
     @GetMapping("/posts")
-    public List<FindPostResponse> findPosts() {
+    public ResponseEntity<List<FindPostResponse>> findPosts() {
         return postService.findPosts();
+    }
+
+    @GetMapping("/posts/{id}")
+    public ResponseEntity<FindPostResponse> findPost(@PathVariable("id") Long id) {
+        return postService.findPost(id);
     }
 
     @PostMapping("/posts")
