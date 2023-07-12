@@ -41,6 +41,7 @@ public class PostService {
 
         FindPostResponse findPostResponse = FindPostResponse.builder()
                 .id(post.getId())
+                .member_id(post.getMember().getId())
                 .title(post.getTitle())
                 .contents(post.getContents())
                 .createdDate(post.getCreatedDate())
