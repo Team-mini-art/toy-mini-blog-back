@@ -12,6 +12,7 @@ import study.till.back.entity.Post;
 import study.till.back.repository.MemberRepository;
 import study.till.back.repository.PostRepository;
 
+import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -50,6 +51,7 @@ public class PostService {
         return ResponseEntity.ok(findPostResponse);
     }
 
+    @Transactional
     public ResponseEntity<PostResponse> createPost(PostRequest postRequest) {
         Optional<ResponseEntity<PostResponse>> memberCheckResult = validateMember(postRequest.getMember_id());
         if (memberCheckResult.isPresent()) {
@@ -73,6 +75,7 @@ public class PostService {
         return ResponseEntity.ok(postResponse);
     }
 
+    @Transactional
     public ResponseEntity<PostResponse> updatePost(PostRequest postRequest) {
         Optional<ResponseEntity<PostResponse>> memberCheckResult = validateMember(postRequest.getMember_id());
         if (memberCheckResult.isPresent()) {
@@ -96,7 +99,7 @@ public class PostService {
                 .build();
         return ResponseEntity.ok(postResponse);
     }
-
+    @Transactional
     public ResponseEntity<PostResponse> deletePost(Long id) {
         Optional<ResponseEntity<PostResponse>> postCheckResult = validatePost(id);
         if (postCheckResult.isPresent()) {

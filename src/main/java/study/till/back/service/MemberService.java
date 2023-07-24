@@ -10,9 +10,12 @@ import study.till.back.dto.LoginResponse;
 import study.till.back.dto.LoginRequest;
 import study.till.back.dto.TokenInfo;
 import study.till.back.dto.FindMemberResponse;
+import study.till.back.dto.exception.ErrorCode;
 import study.till.back.entity.Member;
+import study.till.back.exception.CustomException;
 import study.till.back.repository.MemberRepository;
 
+import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
@@ -26,6 +29,7 @@ public class MemberService {
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
 
+    @Transactional
     public Member signup(LoginRequest loginRequest) {
         loginRequest.setPassword(passwordEncoder.encode(loginRequest.getPassword()));
         Member members = Member.builder()
@@ -43,7 +47,7 @@ public class MemberService {
     public ResponseEntity<LoginResponse> login(LoginRequest loginRequest) {
 
         Member member = memberRepository.findByEmail(loginRequest.getEmail());
-        if (member == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+        if (member == null) throw new CustomException(ErrorCode.NOT_FOUND);
 
         if (passwordEncoder.matches(loginRequest.getPassword(), member.getPassword())) {
             TokenInfo tokenInfo = jwtTokenProvider.generateToken(member.getId(), member.getRoles());
