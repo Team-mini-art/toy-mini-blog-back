@@ -1,7 +1,6 @@
 package study.till.back.service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -10,9 +9,8 @@ import study.till.back.dto.LoginResponse;
 import study.till.back.dto.LoginRequest;
 import study.till.back.dto.TokenInfo;
 import study.till.back.dto.FindMemberResponse;
-import study.till.back.dto.exception.ErrorCode;
 import study.till.back.entity.Member;
-import study.till.back.exception.CustomException;
+import study.till.back.exception.NotFoundMemberException;
 import study.till.back.repository.MemberRepository;
 
 import javax.transaction.Transactional;
@@ -47,29 +45,19 @@ public class MemberService {
     public ResponseEntity<LoginResponse> login(LoginRequest loginRequest) {
 
         Member member = memberRepository.findByEmail(loginRequest.getEmail());
-        if (member == null) throw new CustomException(ErrorCode.NOT_FOUND);
+        if (member == null) throw new NotFoundMemberException();
+        if (!passwordEncoder.matches(loginRequest.getPassword(), member.getPassword())) throw new NotFoundMemberException();
 
-        if (passwordEncoder.matches(loginRequest.getPassword(), member.getPassword())) {
-            TokenInfo tokenInfo = jwtTokenProvider.generateToken(member.getId(), member.getRoles());
-            LoginResponse loginResponse = LoginResponse.builder()
-                    .status("SUCCESS")
-                    .message("로그인 성공")
-                    .id(member.getId())
-                    .email(member.getEmail())
-                    .nickname(member.getNickname())
-                    .tokenInfo(tokenInfo)
-                    .build();
-            return ResponseEntity.ok().body(loginResponse);
-        }
-        else {
-            String status = "FAIL";
-            String message = "로그인 실패, 아이디 또는 비밀번호를 확인해주세요.";
-            LoginResponse loginResponse = LoginResponse.builder()
-                    .status(status)
-                    .message(message)
-                    .build();
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(loginResponse);
-        }
+        TokenInfo tokenInfo = jwtTokenProvider.generateToken(member.getId(), member.getRoles());
+        LoginResponse loginResponse = LoginResponse.builder()
+                .status("SUCCESS")
+                .message("로그인 성공")
+                .id(member.getId())
+                .email(member.getEmail())
+                .nickname(member.getNickname())
+                .tokenInfo(tokenInfo)
+                .build();
+        return ResponseEntity.ok().body(loginResponse);
     }
 
     public List<FindMemberResponse> findMember() {

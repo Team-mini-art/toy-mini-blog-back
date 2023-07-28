@@ -7,7 +7,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
-import study.till.back.dto.exception.ErrorCode;
 import study.till.back.dto.exception.ErrorResponse;
 
 import static study.till.back.dto.exception.ErrorCode.*;
@@ -26,5 +25,11 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     protected ResponseEntity<ErrorResponse> handleCustomException(CustomException e) {
         log.error("handleCustomException throw CustomException : {}", e.getErrorCode());
         return ErrorResponse.toResponseEntity(e.getErrorCode());
+    }
+
+    @ExceptionHandler(value = { NotFoundMemberException.class })
+    protected ResponseEntity<ErrorResponse> notFoundException(RuntimeException e) {
+        log.error("RuntimeException throw NotFoundMemberException : {}", e.getMessage());
+        return ErrorResponse.toResponseEntity(NOT_FOUND, e.getMessage());
     }
 }
