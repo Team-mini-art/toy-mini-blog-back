@@ -9,6 +9,8 @@ import study.till.back.dto.PostRequest;
 import study.till.back.dto.PostResponse;
 import study.till.back.entity.Member;
 import study.till.back.entity.Post;
+import study.till.back.exception.NotFoundMemberException;
+import study.till.back.exception.NotFoundPostException;
 import study.till.back.repository.MemberRepository;
 import study.till.back.repository.PostRepository;
 
@@ -53,12 +55,8 @@ public class PostService {
 
     @Transactional
     public ResponseEntity<PostResponse> createPost(PostRequest postRequest) {
-        Optional<ResponseEntity<PostResponse>> memberCheckResult = validateMember(postRequest.getMember_id());
-        if (memberCheckResult.isPresent()) {
-            return memberCheckResult.get();
-        }
-
         Member member = memberRepository.findById(postRequest.getMember_id()).orElse(null);
+        if (member == null) throw new NotFoundMemberException();
 
         Post post = Post.builder()
                 .title(postRequest.getTitle())
@@ -77,17 +75,13 @@ public class PostService {
 
     @Transactional
     public ResponseEntity<PostResponse> updatePost(PostRequest postRequest) {
-        Optional<ResponseEntity<PostResponse>> memberCheckResult = validateMember(postRequest.getMember_id());
-        if (memberCheckResult.isPresent()) {
-            return memberCheckResult.get();
-        }
-
-        Optional<ResponseEntity<PostResponse>> postCheckResult = validatePost(postRequest.getId());
-        if (postCheckResult.isPresent()) {
-            return postCheckResult.get();
-        }
+        Member member = memberRepository.findById(postRequest.getMember_id()).orElse(null);
+        if (member == null) throw new NotFoundMemberException();
 
         Post post = postRepository.findById(postRequest.getId()).orElse(null);
+        if (post == null) throw new NotFoundPostException();
+
+
         post.setTitle(postRequest.getTitle());
         post.setContents(postRequest.getContents());
         post.setUpdateDate(LocalDateTime.now());
@@ -101,10 +95,8 @@ public class PostService {
     }
     @Transactional
     public ResponseEntity<PostResponse> deletePost(Long id) {
-        Optional<ResponseEntity<PostResponse>> postCheckResult = validatePost(id);
-        if (postCheckResult.isPresent()) {
-            return postCheckResult.get();
-        }
+        Post post = postRepository.findById(id).orElse(null);
+        if (post == null) throw new NotFoundPostException();
 
         postRepository.deleteById(id);
 

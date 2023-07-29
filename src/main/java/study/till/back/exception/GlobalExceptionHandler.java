@@ -28,8 +28,14 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler(value = { NotFoundMemberException.class })
-    protected ResponseEntity<ErrorResponse> notFoundException(RuntimeException e) {
+    protected ResponseEntity<ErrorResponse> notFoundMemberException(RuntimeException e) {
         log.error("RuntimeException throw NotFoundMemberException : {}", e.getMessage());
+        return ErrorResponse.toResponseEntity(NOT_FOUND, e.getMessage());
+    }
+
+    @ExceptionHandler(value = { NotFoundPostException.class })
+    protected ResponseEntity<ErrorResponse> notFoundPostException(RuntimeException e) {
+        log.error("RuntimeException throw NotFoundPostException : {}", e.getMessage());
         return ErrorResponse.toResponseEntity(NOT_FOUND, e.getMessage());
     }
 }
