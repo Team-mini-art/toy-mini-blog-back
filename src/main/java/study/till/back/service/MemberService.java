@@ -5,10 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import study.till.back.config.jwt.JwtTokenProvider;
-import study.till.back.dto.LoginResponse;
-import study.till.back.dto.LoginRequest;
-import study.till.back.dto.TokenInfo;
-import study.till.back.dto.FindMemberResponse;
+import study.till.back.dto.*;
 import study.till.back.entity.Member;
 import study.till.back.exception.NotFoundMemberException;
 import study.till.back.repository.MemberRepository;
@@ -28,18 +25,22 @@ public class MemberService {
     private final JwtTokenProvider jwtTokenProvider;
 
     @Transactional
-    public Member signup(LoginRequest loginRequest) {
-        loginRequest.setPassword(passwordEncoder.encode(loginRequest.getPassword()));
+    public CommonResponse signup(SignupRequest signupRequest) {
+        signupRequest.setPassword(passwordEncoder.encode(signupRequest.getPassword()));
         Member members = Member.builder()
-                .email(loginRequest.getEmail())
-                .password(loginRequest.getPassword())
-                .nickname(loginRequest.getNickname())
+                .email(signupRequest.getEmail())
+                .password(signupRequest.getPassword())
+                .nickname(signupRequest.getNickname())
                 .createdDate(LocalDateTime.now())
                 .roles(Collections.singletonList("ROLE_USER"))
                 .build();
 
         memberRepository.save(members);
-        return members;
+        CommonResponse commonResponse = CommonResponse.builder()
+                .status("SUCCESS")
+                .message("회원가입 완료")
+                .build();
+        return commonResponse;
     }
 
     public ResponseEntity<LoginResponse> login(LoginRequest loginRequest) {
@@ -48,13 +49,10 @@ public class MemberService {
         if (member == null) throw new NotFoundMemberException();
         if (!passwordEncoder.matches(loginRequest.getPassword(), member.getPassword())) throw new NotFoundMemberException();
 
-        TokenInfo tokenInfo = jwtTokenProvider.generateToken(member.getId(), member.getRoles());
+        TokenInfo tokenInfo = jwtTokenProvider.generateToken(member.getEmail(), member.getRoles());
         LoginResponse loginResponse = LoginResponse.builder()
                 .status("SUCCESS")
                 .message("로그인 성공")
-                .id(member.getId())
-                .email(member.getEmail())
-                .nickname(member.getNickname())
                 .tokenInfo(tokenInfo)
                 .build();
         return ResponseEntity.ok().body(loginResponse);
@@ -64,7 +62,6 @@ public class MemberService {
         List<Member> members = memberRepository.findAll();
         return members.stream()
                 .map(member -> FindMemberResponse.builder()
-                        .id(member.getId())
                         .email(member.getEmail())
                         .nickname(member.getNickname())
                         .createdDate(member.getCreatedDate())

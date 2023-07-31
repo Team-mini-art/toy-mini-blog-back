@@ -40,7 +40,7 @@ class JwtTokenProviderTest extends JwtTokenProvider {
     }
 
     @Override
-    public TokenInfo generateToken(Long memberPk, List<String> roles) {
+    public TokenInfo generateToken(String memberPk, List<String> roles) {
         long now = (new Date()).getTime();
 
         Date accessTokenExpiresIn = new Date(now + expiredSecond * 500);
@@ -74,7 +74,7 @@ class JwtTokenProviderTest extends JwtTokenProvider {
     @BeforeEach
     void initToken() {
         //given
-        Long memberPk = 1L;
+        String memberPk = "a@a.com";
         List<String> roles = new ArrayList<>();
         roles.add("testUser");
         this.tokenInfo = this.generateToken(memberPk, roles);

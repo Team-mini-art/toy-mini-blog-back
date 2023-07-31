@@ -32,7 +32,7 @@ public class JwtTokenProvider {
         this.key = Keys.hmacShaKeyFor(keyBytes);
     }
 
-    public TokenInfo generateToken(Long memberPk, List<String> roles) {
+    public TokenInfo generateToken(String memberPk, List<String> roles) {
 
         long now = (new Date()).getTime();
 

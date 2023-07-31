@@ -1,13 +1,12 @@
 package study.till.back.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import study.till.back.dto.FindPostResponse;
 import study.till.back.dto.PostRequest;
-import study.till.back.dto.PostResponse;
-import study.till.back.entity.Post;
+import study.till.back.dto.CommonResponse;
+import study.till.back.dto.UpdatePostRequest;
 import study.till.back.service.PostService;
 
 import java.util.List;
@@ -30,17 +29,17 @@ public class PostController {
     }
 
     @PostMapping("/posts")
-    public ResponseEntity<PostResponse> createPost(@RequestBody PostRequest postRequest) {
+    public ResponseEntity<CommonResponse> createPost(@RequestBody PostRequest postRequest) {
         return postService.createPost(postRequest);
     }
 
     @PutMapping("/posts")
-    public ResponseEntity<PostResponse> updatePost(@RequestBody PostRequest postRequest) {
+    public ResponseEntity<CommonResponse> updatePost(@RequestBody UpdatePostRequest postRequest) {
         return postService.updatePost(postRequest);
     }
 
     @DeleteMapping("/posts/{id}")
-    public ResponseEntity<PostResponse> deletePost(@PathVariable("id") Long id) {
+    public ResponseEntity<CommonResponse> deletePost(@PathVariable("id") Long id) {
         return postService.deletePost(id);
     }
 }

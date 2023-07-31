@@ -10,7 +10,6 @@ import java.time.LocalDateTime;
 @Builder
 @Getter
 public class FindMemberResponse {
-    private Long id;
     private String email;
     private String nickname;
     private LocalDateTime createdDate;

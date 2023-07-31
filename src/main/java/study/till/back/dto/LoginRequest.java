@@ -11,10 +11,6 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class LoginRequest {
-
-    private Long id;
     private String email;
     private String password;
-    private String nickname;
-    private LocalDateTime createdDate;
 }

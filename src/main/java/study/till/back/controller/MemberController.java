@@ -3,9 +3,7 @@ package study.till.back.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import study.till.back.dto.LoginResponse;
-import study.till.back.dto.LoginRequest;
-import study.till.back.dto.FindMemberResponse;
+import study.till.back.dto.*;
 import study.till.back.entity.Member;
 import study.till.back.repository.MemberRepository;
 import study.till.back.service.MemberService;
@@ -21,8 +19,8 @@ public class MemberController {
     private final MemberService memberService;
 
     @PostMapping("/signup")
-    public Member signup(@RequestBody LoginRequest loginRequest) {
-        return memberService.signup(loginRequest);
+    public CommonResponse signup(@RequestBody SignupRequest signupRequest) {
+        return memberService.signup(signupRequest);
     }
 
     @PostMapping("/login")

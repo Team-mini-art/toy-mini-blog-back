@@ -18,11 +18,9 @@ import java.util.List;
 @AllArgsConstructor
 public class Member implements UserDetails {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "member_id")
-    private Long id;
 
+    @Id
+    @Column(name = "email")
     private String email;
 
     private String password;

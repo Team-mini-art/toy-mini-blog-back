@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class FindPostResponse {
     private Long id;
-    private Long member_id;
+    private String email;
     private String title;
     private String contents;
     private LocalDateTime createdDate;
