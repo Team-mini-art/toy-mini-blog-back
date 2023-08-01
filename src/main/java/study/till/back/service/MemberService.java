@@ -7,6 +7,8 @@ import org.springframework.stereotype.Service;
 import study.till.back.config.jwt.JwtTokenProvider;
 import study.till.back.dto.*;
 import study.till.back.entity.Member;
+import study.till.back.exception.DuplicateMemberException;
+import study.till.back.exception.InvalidPasswordException;
 import study.till.back.exception.NotFoundMemberException;
 import study.till.back.repository.MemberRepository;
 
@@ -26,6 +28,13 @@ public class MemberService {
 
     @Transactional
     public CommonResponse signup(SignupRequest signupRequest) {
+        if (!isValidPassword(signupRequest.getPassword())) {
+            throw new InvalidPasswordException();
+        }
+
+        Member member = memberRepository.findByEmail(signupRequest.getEmail());
+        if (member != null) throw new DuplicateMemberException();
+
         signupRequest.setPassword(passwordEncoder.encode(signupRequest.getPassword()));
         Member members = Member.builder()
                 .email(signupRequest.getEmail())
@@ -68,5 +77,10 @@ public class MemberService {
                         .build()
                 )
                 .collect(Collectors.toList());
+    }
+
+    public boolean isValidPassword(String password) {
+        String pattern = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{10,}$";
+        return password.matches(pattern);
     }
 }

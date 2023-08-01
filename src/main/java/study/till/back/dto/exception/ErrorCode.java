@@ -13,7 +13,8 @@ public enum ErrorCode {
     METHOD_NOT_ALLOWED(HttpStatus.METHOD_NOT_ALLOWED, "지원하지 않는 HTTP 메소드 요청입니다."),
     NOT_FOUND(HttpStatus.NOT_FOUND, "회원을 찾을 수 없습니다."),
     TOKEN_UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "유효하지 않은 토큰입니다"),
-    DUPLICATED_KEY(HttpStatus.CONFLICT, "중복된 key를 사용할 수 없습니다.")
+    DUPLICATED_KEY(HttpStatus.CONFLICT, "중복된 key를 사용할 수 없습니다."),
+    INVALID_PASSWORD(HttpStatus.FORBIDDEN, "비밀번호는 대문자, 숫자, 특수문자 포함 10자리 이상이어야 합니다."),
     ;
 
     private final HttpStatus status;

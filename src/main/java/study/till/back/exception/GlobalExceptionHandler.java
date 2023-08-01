@@ -38,4 +38,16 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         log.error("RuntimeException throw NotFoundPostException : {}", e.getMessage());
         return ErrorResponse.toResponseEntity(NOT_FOUND, e.getMessage());
     }
+
+    @ExceptionHandler(value = { DuplicateMemberException.class })
+    protected ResponseEntity<ErrorResponse> duplicateMemberException(RuntimeException e) {
+        log.error("RuntimeException throw NotFoundPostException : {}", e.getMessage());
+        return ErrorResponse.toResponseEntity(DUPLICATED_KEY, e.getMessage());
+    }
+
+    @ExceptionHandler(value = { InvalidPasswordException.class })
+    protected ResponseEntity<ErrorResponse> invalidPasswordException(RuntimeException e) {
+        log.error("RuntimeException throw NotFoundPostException : {}", e.getMessage());
+        return ErrorResponse.toResponseEntity(INVALID_PASSWORD, e.getMessage());
+    }
 }
