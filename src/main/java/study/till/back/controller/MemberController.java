@@ -15,11 +15,10 @@ import java.util.List;
 @RequestMapping("/api")
 public class MemberController {
 
-    private final MemberRepository memberRepository;
     private final MemberService memberService;
 
     @PostMapping("/signup")
-    public CommonResponse signup(@RequestBody SignupRequest signupRequest) {
+    public ResponseEntity<CommonResponse> signup(@RequestBody SignupRequest signupRequest) {
         return memberService.signup(signupRequest);
     }
 

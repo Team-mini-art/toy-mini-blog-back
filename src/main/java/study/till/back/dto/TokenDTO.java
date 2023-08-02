@@ -2,12 +2,11 @@ package study.till.back.dto;
 
 import lombok.*;
 
-@Builder
 @Data
 @AllArgsConstructor
 @Getter
-public class TokenInfo {
-    private String grantType;
+@Builder
+public class TokenDTO {
     private String accessToken;
     private String refreshToken;
 }

@@ -108,6 +108,9 @@ class JwtTokenProviderTest extends JwtTokenProvider {
         assertEquals(boolRefresh, true);
     }
 
+    /**
+     * Token 만료 검증
+     */
     @Test
     void tokenExpirationTest() {
         this.accessToken = tokenInfo.getAccessToken();
@@ -128,4 +131,12 @@ class JwtTokenProviderTest extends JwtTokenProvider {
                 "Token should be expired"
         );
     }
+
+    /**
+     * 임의로 만든 Token 검증
+     */
+
+    /**
+     * accessToken 만료시 Token 재발급
+     */
 }

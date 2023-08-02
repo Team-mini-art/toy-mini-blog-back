@@ -1,4 +1,4 @@
-package study.till.back.exception;
+package study.till.back.exception.post;
 
 public class NotFoundPostException extends RuntimeException {
     public NotFoundPostException() {

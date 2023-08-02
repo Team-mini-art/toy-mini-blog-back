@@ -1,15 +1,16 @@
 package study.till.back.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import study.till.back.config.jwt.JwtTokenProvider;
 import study.till.back.dto.*;
 import study.till.back.entity.Member;
-import study.till.back.exception.DuplicateMemberException;
-import study.till.back.exception.InvalidPasswordException;
-import study.till.back.exception.NotFoundMemberException;
+import study.till.back.exception.member.DuplicateMemberException;
+import study.till.back.exception.member.InvalidPasswordException;
+import study.till.back.exception.member.NotFoundMemberException;
 import study.till.back.repository.MemberRepository;
 
 import javax.transaction.Transactional;
@@ -27,7 +28,7 @@ public class MemberService {
     private final JwtTokenProvider jwtTokenProvider;
 
     @Transactional
-    public CommonResponse signup(SignupRequest signupRequest) {
+    public ResponseEntity<CommonResponse> signup(SignupRequest signupRequest) {
         if (!isValidPassword(signupRequest.getPassword())) {
             throw new InvalidPasswordException();
         }
@@ -49,7 +50,7 @@ public class MemberService {
                 .status("SUCCESS")
                 .message("회원가입 완료")
                 .build();
-        return commonResponse;
+        return ResponseEntity.status(HttpStatus.CREATED).body(commonResponse);
     }
 
     public ResponseEntity<LoginResponse> login(LoginRequest loginRequest) {

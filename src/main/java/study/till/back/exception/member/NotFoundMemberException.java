@@ -1,4 +1,4 @@
-package study.till.back.exception;
+package study.till.back.exception.member;
 
 public class NotFoundMemberException extends RuntimeException {
     public NotFoundMemberException() {

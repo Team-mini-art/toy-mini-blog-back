@@ -1,6 +1,7 @@
 package study.till.back.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import study.till.back.dto.FindPostResponse;
@@ -9,8 +10,8 @@ import study.till.back.dto.CommonResponse;
 import study.till.back.dto.UpdatePostRequest;
 import study.till.back.entity.Member;
 import study.till.back.entity.Post;
-import study.till.back.exception.NotFoundMemberException;
-import study.till.back.exception.NotFoundPostException;
+import study.till.back.exception.member.NotFoundMemberException;
+import study.till.back.exception.post.NotFoundPostException;
 import study.till.back.repository.MemberRepository;
 import study.till.back.repository.PostRepository;
 
@@ -71,7 +72,8 @@ public class PostService {
                 .status("SUCCESS")
                 .message("게시글 저장 성공")
                 .build();
-        return ResponseEntity.ok(commonResponse);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(commonResponse);
     }
 
     @Transactional

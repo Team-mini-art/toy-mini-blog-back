@@ -8,6 +8,12 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 import study.till.back.dto.exception.ErrorResponse;
+import study.till.back.exception.member.DuplicateMemberException;
+import study.till.back.exception.member.InvalidPasswordException;
+import study.till.back.exception.member.NotFoundMemberException;
+import study.till.back.exception.post.NotFoundPostException;
+import study.till.back.exception.token.ExpiredTokenException;
+import study.till.back.exception.token.UnauthorizedTokenException;
 
 import static study.till.back.dto.exception.ErrorCode.*;
 
@@ -48,6 +54,18 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(value = { InvalidPasswordException.class })
     protected ResponseEntity<ErrorResponse> invalidPasswordException(RuntimeException e) {
         log.error("RuntimeException throw NotFoundPostException : {}", e.getMessage());
-        return ErrorResponse.toResponseEntity(INVALID_PASSWORD, e.getMessage());
+        return ErrorResponse.toResponseEntity(INVALID_PASSWORD);
+    }
+
+    @ExceptionHandler(value = {ExpiredTokenException.class })
+    protected ResponseEntity<ErrorResponse> expiredTokenException(RuntimeException e) {
+        log.error("RuntimeException throw expiredTokenException : {}", e.getMessage());
+        return ErrorResponse.toResponseEntity(EXPIRED_TOKEN);
+    }
+
+    @ExceptionHandler(value = {UnauthorizedTokenException.class })
+    protected ResponseEntity<ErrorResponse> invalidTokenException(RuntimeException e) {
+        log.error("RuntimeException throw InvalidTokenException : {}", e.getMessage());
+        return ErrorResponse.toResponseEntity(UNAUTHORIZED_TOKEN);
     }
 }
