@@ -1,4 +1,4 @@
-package study.till.back.dto;
+package study.till.back.dto.member;
 
 import lombok.Builder;
 import lombok.Data;

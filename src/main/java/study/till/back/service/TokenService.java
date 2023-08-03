@@ -1,10 +1,12 @@
 package study.till.back.service;
 
+import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import study.till.back.config.jwt.JwtTokenProvider;
-import study.till.back.dto.TokenDTO;
+import study.till.back.dto.token.TokenRequest;
+import study.till.back.dto.token.TokenResponse;
 import study.till.back.exception.token.UnauthorizedTokenException;
 
 @Service
@@ -13,17 +15,16 @@ public class TokenService {
 
     private final JwtTokenProvider jwtTokenProvider;
 
-    public ResponseEntity<TokenDTO> refreshToken(TokenDTO tokenRequest) {
+    public ResponseEntity<TokenResponse> refreshToken(TokenRequest tokenRequest) {
         String refreshToken = tokenRequest.getRefreshToken();
         if (jwtTokenProvider.validateToken(refreshToken)) {
-            String subject = jwtTokenProvider.parseClaims(refreshToken).getSubject();
-            String newAccessToken = jwtTokenProvider.createAccessToken(subject);
+            Claims claims = jwtTokenProvider.parseClaims(refreshToken);
+            String newAccessToken = jwtTokenProvider.createAccessToken(claims);
 
-            TokenDTO tokenDTO = TokenDTO.builder()
-                    .accessToken(newAccessToken)
-                    .refreshToken(refreshToken)
+            TokenResponse tokenResponse = TokenResponse.builder()
+                    .newAccessToken(newAccessToken)
                     .build();
-            return ResponseEntity.ok(tokenDTO);
+            return ResponseEntity.ok(tokenResponse);
         }
         else {
             throw new UnauthorizedTokenException();

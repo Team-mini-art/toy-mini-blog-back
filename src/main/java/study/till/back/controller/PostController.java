@@ -3,10 +3,10 @@ package study.till.back.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import study.till.back.dto.FindPostResponse;
-import study.till.back.dto.PostRequest;
+import study.till.back.dto.post.FindPostResponse;
+import study.till.back.dto.post.PostRequest;
 import study.till.back.dto.CommonResponse;
-import study.till.back.dto.UpdatePostRequest;
+import study.till.back.dto.post.UpdatePostRequest;
 import study.till.back.service.PostService;
 
 import java.util.List;

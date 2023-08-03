@@ -4,8 +4,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import study.till.back.dto.*;
-import study.till.back.entity.Member;
-import study.till.back.repository.MemberRepository;
+import study.till.back.dto.member.FindMemberResponse;
+import study.till.back.dto.member.LoginRequest;
+import study.till.back.dto.member.LoginResponse;
+import study.till.back.dto.member.SignupRequest;
 import study.till.back.service.MemberService;
 
 import java.util.List;

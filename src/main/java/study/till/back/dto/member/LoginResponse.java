@@ -1,7 +1,8 @@
-package study.till.back.dto;
+package study.till.back.dto.member;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
+import study.till.back.dto.token.TokenInfo;
 
 @Data
 @Builder
@@ -13,5 +14,7 @@ import lombok.*;
 public class LoginResponse {
     private String status;
     private String message;
+    private String email;
+    private String nickname;
     private TokenInfo tokenInfo;
 }

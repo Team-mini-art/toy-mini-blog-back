@@ -1,8 +1,6 @@
-package study.till.back.dto;
+package study.till.back.dto.member;
 
 import lombok.*;
-
-import java.time.LocalDateTime;
 
 @Data
 @Builder
@@ -10,7 +8,8 @@ import java.time.LocalDateTime;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class LoginRequest {
+public class SignupRequest {
     private String email;
     private String password;
+    private String nickname;
 }

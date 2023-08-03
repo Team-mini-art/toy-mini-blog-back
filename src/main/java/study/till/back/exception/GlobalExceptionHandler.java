@@ -1,5 +1,6 @@
 package study.till.back.exception;
 
+import io.jsonwebtoken.ExpiredJwtException;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -57,7 +58,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return ErrorResponse.toResponseEntity(INVALID_PASSWORD);
     }
 
-    @ExceptionHandler(value = {ExpiredTokenException.class })
+    @ExceptionHandler(value = { ExpiredJwtException.class })
     protected ResponseEntity<ErrorResponse> expiredTokenException(RuntimeException e) {
         log.error("RuntimeException throw expiredTokenException : {}", e.getMessage());
         return ErrorResponse.toResponseEntity(EXPIRED_TOKEN);

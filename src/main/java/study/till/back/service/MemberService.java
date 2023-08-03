@@ -7,6 +7,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import study.till.back.config.jwt.JwtTokenProvider;
 import study.till.back.dto.*;
+import study.till.back.dto.member.FindMemberResponse;
+import study.till.back.dto.member.LoginRequest;
+import study.till.back.dto.member.LoginResponse;
+import study.till.back.dto.member.SignupRequest;
+import study.till.back.dto.token.TokenInfo;
 import study.till.back.entity.Member;
 import study.till.back.exception.member.DuplicateMemberException;
 import study.till.back.exception.member.InvalidPasswordException;
@@ -63,6 +68,8 @@ public class MemberService {
         LoginResponse loginResponse = LoginResponse.builder()
                 .status("SUCCESS")
                 .message("로그인 성공")
+                .email(member.getEmail())
+                .nickname(member.getNickname())
                 .tokenInfo(tokenInfo)
                 .build();
         return ResponseEntity.ok().body(loginResponse);
@@ -81,7 +88,7 @@ public class MemberService {
     }
 
     public boolean isValidPassword(String password) {
-        String pattern = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{10,}$";
+        String pattern = "^(?=.*[!@#$%^&*()-=_+\\[\\]{}\\\\,/<>?'\":;|]).*(?=.*[A-Z]).*(?=.*[0-9]).{10,}$";
         return password.matches(pattern);
     }
 }

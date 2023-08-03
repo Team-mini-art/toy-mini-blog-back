@@ -1,4 +1,4 @@
-package study.till.back.dto;
+package study.till.back.dto.token;
 
 import lombok.*;
 

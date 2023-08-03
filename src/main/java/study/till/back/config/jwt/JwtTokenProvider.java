@@ -12,8 +12,8 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
-import study.till.back.dto.TokenInfo;
-import study.till.back.exception.token.ExpiredTokenException;
+import study.till.back.dto.token.TokenInfo;
+import study.till.back.exception.token.UnauthorizedTokenException;
 
 import java.security.Key;
 import java.util.Arrays;
@@ -27,8 +27,6 @@ import java.util.stream.Collectors;
 public class JwtTokenProvider {
 
     private final Key key;
-    private final long now = (new Date()).getTime();
-    private final Date accessTokenExpiresIn = new Date(now + 900_000);
 
     public JwtTokenProvider(@Value("${jwt.secret}") String secretKey) {
         byte[] keyBytes = Decoders.BASE64.decode(secretKey);
@@ -36,6 +34,8 @@ public class JwtTokenProvider {
     }
 
     public TokenInfo generateToken(String memberPk, List<String> roles) {
+        long now = (new Date()).getTime();
+        Date accessTokenExpiresIn = new Date(now + 1_800_000);
 
         // Access Token 생성
         Claims claims = Jwts.claims().setSubject(String.valueOf(memberPk));
@@ -48,7 +48,8 @@ public class JwtTokenProvider {
 
         // Refresh Token 생성
         String refreshToken = Jwts.builder()
-                .setExpiration(new Date(now + 3_600_000))
+                .setClaims(claims)
+                .setExpiration(new Date(now + 604_800_000))
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
 
@@ -63,7 +64,7 @@ public class JwtTokenProvider {
         Claims claims = parseClaims(accessToken);
 
         if (claims.get("roles") == null) {
-            throw new RuntimeException("권한 정보가 없는 토큰입니다.");
+            throw new UnauthorizedTokenException();
         }
 
         Collection<? extends GrantedAuthority> authorities =
@@ -79,11 +80,11 @@ public class JwtTokenProvider {
         try {
             Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
             return true;
-        } catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e) {
+        }
+        catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e) {
             log.info("Invalid JWT Token", e);
         } catch (ExpiredJwtException e) {
             log.info("Expired JWT Token", e);
-            throw new ExpiredTokenException();
         } catch (UnsupportedJwtException e) {
             log.info("Unsupported JWT Token", e);
         } catch (IllegalArgumentException e) {
@@ -100,9 +101,12 @@ public class JwtTokenProvider {
         }
     }
 
-    public String createAccessToken(String subject) {
+    public String createAccessToken(Claims claims) {
+        long now = (new Date()).getTime();
+        Date accessTokenExpiresIn = new Date(now + 1_800_000);
+
         return Jwts.builder()
-                .setSubject(subject)
+                .setClaims(claims)
                 .setExpiration(accessTokenExpiresIn)
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
