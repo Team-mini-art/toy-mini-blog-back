@@ -55,7 +55,7 @@ class JwtTokenProviderTest extends JwtTokenProvider {
 
         // Refresh Token 생성
         String refreshToken = Jwts.builder()
-                .setExpiration(new Date(now + expiredSecond * 500))
+                .setExpiration(new Date(now + expiredSecond * 800))
                 .signWith(this.key, SignatureAlgorithm.HS256)
                 .compact();
 
@@ -134,9 +134,5 @@ class JwtTokenProviderTest extends JwtTokenProvider {
 
     /**
      * 임의로 만든 Token 검증
-     */
-
-    /**
-     * accessToken 만료시 Token 재발급
      */
 }

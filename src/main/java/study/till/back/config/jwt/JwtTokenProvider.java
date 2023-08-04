@@ -13,6 +13,7 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import study.till.back.dto.token.TokenInfo;
+import study.till.back.exception.token.ExpiredTokenException;
 import study.till.back.exception.token.UnauthorizedTokenException;
 
 import java.security.Key;
@@ -35,7 +36,8 @@ public class JwtTokenProvider {
 
     public TokenInfo generateToken(String memberPk, List<String> roles) {
         long now = (new Date()).getTime();
-        Date accessTokenExpiresIn = new Date(now + 1_800_000);
+//        Date accessTokenExpiresIn = new Date(now + 1_800_000);
+        Date accessTokenExpiresIn = new Date(now + 5_000);
 
         // Access Token 생성
         Claims claims = Jwts.claims().setSubject(String.valueOf(memberPk));
@@ -49,7 +51,8 @@ public class JwtTokenProvider {
         // Refresh Token 생성
         String refreshToken = Jwts.builder()
                 .setClaims(claims)
-                .setExpiration(new Date(now + 604_800_000))
+//                .setExpiration(new Date(now + 604_800_000))
+                .setExpiration(new Date(now + 5_000))
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
 
@@ -83,11 +86,15 @@ public class JwtTokenProvider {
         }
         catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e) {
             log.info("Invalid JWT Token", e);
-        } catch (ExpiredJwtException e) {
+        }
+        catch (ExpiredJwtException e) {
             log.info("Expired JWT Token", e);
-        } catch (UnsupportedJwtException e) {
+            throw new ExpiredTokenException();
+        }
+        catch (UnsupportedJwtException e) {
             log.info("Unsupported JWT Token", e);
-        } catch (IllegalArgumentException e) {
+        }
+        catch (IllegalArgumentException e) {
             log.info("JWT claims string is empty.", e);
         }
         return false;

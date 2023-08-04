@@ -1,6 +1,5 @@
 package study.till.back.exception;
 
-import io.jsonwebtoken.ExpiredJwtException;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -36,35 +35,35 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(value = { NotFoundMemberException.class })
     protected ResponseEntity<ErrorResponse> notFoundMemberException(RuntimeException e) {
-        log.error("RuntimeException throw NotFoundMemberException : {}", e.getMessage());
+        log.error("RuntimeException throw notFoundMemberException : {}", e.getMessage());
         return ErrorResponse.toResponseEntity(NOT_FOUND, e.getMessage());
     }
 
     @ExceptionHandler(value = { NotFoundPostException.class })
     protected ResponseEntity<ErrorResponse> notFoundPostException(RuntimeException e) {
-        log.error("RuntimeException throw NotFoundPostException : {}", e.getMessage());
+        log.error("RuntimeException throw notFoundPostException : {}", e.getMessage());
         return ErrorResponse.toResponseEntity(NOT_FOUND, e.getMessage());
     }
 
     @ExceptionHandler(value = { DuplicateMemberException.class })
     protected ResponseEntity<ErrorResponse> duplicateMemberException(RuntimeException e) {
-        log.error("RuntimeException throw NotFoundPostException : {}", e.getMessage());
+        log.error("RuntimeException throw duplicateMemberException : {}", e.getMessage());
         return ErrorResponse.toResponseEntity(DUPLICATED_KEY, e.getMessage());
     }
 
     @ExceptionHandler(value = { InvalidPasswordException.class })
     protected ResponseEntity<ErrorResponse> invalidPasswordException(RuntimeException e) {
-        log.error("RuntimeException throw NotFoundPostException : {}", e.getMessage());
+        log.error("RuntimeException throw invalidPasswordException : {}", e.getMessage());
         return ErrorResponse.toResponseEntity(INVALID_PASSWORD);
     }
 
-    @ExceptionHandler(value = { ExpiredJwtException.class })
+    @ExceptionHandler(value = { ExpiredTokenException.class })
     protected ResponseEntity<ErrorResponse> expiredTokenException(RuntimeException e) {
         log.error("RuntimeException throw expiredTokenException : {}", e.getMessage());
-        return ErrorResponse.toResponseEntity(EXPIRED_TOKEN);
+        return ErrorResponse.toResponseEntity(EXPIRED_TOKEN, e.getMessage());
     }
 
-    @ExceptionHandler(value = {UnauthorizedTokenException.class })
+    @ExceptionHandler(value = { UnauthorizedTokenException.class })
     protected ResponseEntity<ErrorResponse> invalidTokenException(RuntimeException e) {
         log.error("RuntimeException throw InvalidTokenException : {}", e.getMessage());
         return ErrorResponse.toResponseEntity(UNAUTHORIZED_TOKEN);
