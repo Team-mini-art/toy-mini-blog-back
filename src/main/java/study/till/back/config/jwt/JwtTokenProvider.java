@@ -12,6 +12,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
+import study.till.back.dto.token.JwtStatus;
 import study.till.back.dto.token.TokenInfo;
 import study.till.back.exception.token.ExpiredTokenException;
 import study.till.back.exception.token.UnauthorizedTokenException;
@@ -89,7 +90,6 @@ public class JwtTokenProvider {
         }
         catch (ExpiredJwtException e) {
             log.info("Expired JWT Token", e);
-            throw new ExpiredTokenException();
         }
         catch (UnsupportedJwtException e) {
             log.info("Unsupported JWT Token", e);
@@ -98,6 +98,19 @@ public class JwtTokenProvider {
             log.info("JWT claims string is empty.", e);
         }
         return false;
+    }
+
+    public JwtStatus getTokenStatus(String token) {
+        try {
+            Jwts.parser().setSigningKey(key).parseClaimsJws(token);
+            return JwtStatus.VALID;
+        } catch (ExpiredJwtException e) {
+            return JwtStatus.EXPIRED;
+        } catch (UnsupportedJwtException e) {
+            return JwtStatus.UNSUPPORTED;
+        } catch (JwtException | IllegalArgumentException e) {
+            return JwtStatus.INVALID;
+        }
     }
 
     public Claims parseClaims(String accessToken) {
