@@ -1,9 +1,6 @@
 package study.till.back.config.jwt;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import org.junit.jupiter.api.BeforeEach;
@@ -71,6 +68,12 @@ class JwtTokenProviderTest extends JwtTokenProvider {
         return Jwts.parserBuilder().setSigningKey(this.key).build().parseClaimsJws(accessToken).getBody();
     }
 
+    @Override
+    public boolean validateToken(String token) {
+        Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
+        return false;
+    }
+
     @BeforeEach
     void initToken() {
         //given
@@ -135,4 +138,14 @@ class JwtTokenProviderTest extends JwtTokenProvider {
     /**
      * 임의로 만든 Token 검증
      */
+    @Test
+    void fakeTokenTest() {
+        String fakeToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c";
+
+        assertThrows(
+                io.jsonwebtoken.security.SignatureException.class,
+                () -> this.validateToken(fakeToken),
+                "Invalid JWT Token"
+        );
+    }
 }

@@ -14,7 +14,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import study.till.back.dto.token.JwtStatus;
 import study.till.back.dto.token.TokenInfo;
-import study.till.back.exception.token.ExpiredTokenException;
 import study.till.back.exception.token.UnauthorizedTokenException;
 
 import java.security.Key;
