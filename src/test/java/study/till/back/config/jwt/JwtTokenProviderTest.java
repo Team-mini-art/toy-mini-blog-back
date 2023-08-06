@@ -127,11 +127,18 @@ class JwtTokenProviderTest extends JwtTokenProvider {
             fail("Sleep interrupted: " + e.getMessage());
         }
 
-        //발급된 토큰이 만료되었는지 확인
+        //access 토큰이 만료되었는지 확인
         assertThrows(
                 ExpiredJwtException.class,
                 () -> this.parseClaims(accessToken),
-                "Token should be expired"
+                "Access Token should be expired"
+        );
+
+        //refresh 토큰이 만료되었는지 확인
+        assertThrows(
+                ExpiredJwtException.class,
+                () -> this.parseClaims(refreshToken),
+                "Refresh Token should be expired"
         );
     }
 
@@ -148,4 +155,5 @@ class JwtTokenProviderTest extends JwtTokenProvider {
                 "Invalid JWT Token"
         );
     }
+
 }
