@@ -53,7 +53,7 @@ public class MemberService {
         memberRepository.save(members);
         CommonResponse commonResponse = CommonResponse.builder()
                 .status("SUCCESS")
-                .message("회원가입 완료")
+                .message("회원가입 완료되었습니다.")
                 .build();
         return ResponseEntity.status(HttpStatus.CREATED).body(commonResponse);
     }
@@ -67,7 +67,7 @@ public class MemberService {
         TokenInfo tokenInfo = jwtTokenProvider.generateToken(member.getEmail(), member.getRoles());
         LoginResponse loginResponse = LoginResponse.builder()
                 .status("SUCCESS")
-                .message("로그인 성공")
+                .message("로그인 성공하였습니다.")
                 .email(member.getEmail())
                 .nickname(member.getNickname())
                 .tokenInfo(tokenInfo)

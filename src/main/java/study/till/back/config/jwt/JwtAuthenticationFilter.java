@@ -8,7 +8,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.GenericFilterBean;
 import study.till.back.dto.CommonResponse;
-import study.till.back.dto.exception.ErrorResponse;
 import study.till.back.dto.token.JwtStatus;
 
 import javax.servlet.FilterChain;
