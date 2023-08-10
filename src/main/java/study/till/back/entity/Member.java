@@ -16,7 +16,7 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Member implements UserDetails {
+public class Member extends BaseTimeEntity implements UserDetails {
 
 
     @Id
@@ -27,10 +27,8 @@ public class Member implements UserDetails {
 
     private String nickname;
 
-    @ElementCollection(fetch = FetchType.EAGER)
+    @ElementCollection
     private List<String> roles = new ArrayList<>();
-
-    private LocalDateTime createdDate;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

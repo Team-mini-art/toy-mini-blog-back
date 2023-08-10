@@ -33,7 +33,6 @@ public class PostService {
                 .id(post.getId())
                 .title(post.getTitle())
                 .contents(post.getContents())
-                .createdDate(post.getCreatedDate())
                 .build()
         ).collect(Collectors.toList());
         return ResponseEntity.ok(findPostResponses);
@@ -49,7 +48,6 @@ public class PostService {
                 .email(post.getMember().getEmail())
                 .title(post.getTitle())
                 .contents(post.getContents())
-                .createdDate(post.getCreatedDate())
                 .build();
 
         return ResponseEntity.ok(findPostResponse);
@@ -64,7 +62,6 @@ public class PostService {
                 .title(postRequest.getTitle())
                 .contents(postRequest.getContents())
                 .member(member)
-                .createdDate(LocalDateTime.now())
                 .build();
         postRepository.save(post);
 
@@ -87,7 +84,6 @@ public class PostService {
 
         post.setTitle(postRequest.getTitle());
         post.setContents(postRequest.getContents());
-        post.setUpdateDate(LocalDateTime.now());
         postRepository.save(post);
 
         CommonResponse commonResponse = CommonResponse.builder()

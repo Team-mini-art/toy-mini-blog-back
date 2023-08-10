@@ -46,7 +46,6 @@ public class MemberService {
                 .email(signupRequest.getEmail())
                 .password(signupRequest.getPassword())
                 .nickname(signupRequest.getNickname())
-                .createdDate(LocalDateTime.now())
                 .roles(Collections.singletonList("ROLE_USER"))
                 .build();
 
@@ -81,7 +80,6 @@ public class MemberService {
                 .map(member -> FindMemberResponse.builder()
                         .email(member.getEmail())
                         .nickname(member.getNickname())
-                        .createdDate(member.getCreatedDate())
                         .build()
                 )
                 .collect(Collectors.toList());
