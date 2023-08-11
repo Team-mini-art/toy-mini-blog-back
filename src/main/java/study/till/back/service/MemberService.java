@@ -19,7 +19,6 @@ import study.till.back.exception.member.NotFoundMemberException;
 import study.till.back.repository.MemberRepository;
 
 import javax.transaction.Transactional;
-import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -80,6 +79,8 @@ public class MemberService {
                 .map(member -> FindMemberResponse.builder()
                         .email(member.getEmail())
                         .nickname(member.getNickname())
+                        .createdDate(member.getCreatedDate())
+                        .updatedDate(member.getUpdatedDate())
                         .build()
                 )
                 .collect(Collectors.toList());

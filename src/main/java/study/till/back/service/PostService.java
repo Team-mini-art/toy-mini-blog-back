@@ -31,8 +31,11 @@ public class PostService {
 
         List<FindPostResponse> findPostResponses = posts.stream().map(post -> FindPostResponse.builder()
                 .id(post.getId())
+                .email(post.getMember().getEmail())
                 .title(post.getTitle())
                 .contents(post.getContents())
+                .createdDate(post.getCreatedDate())
+                .updatedDate(post.getUpdatedDate())
                 .build()
         ).collect(Collectors.toList());
         return ResponseEntity.ok(findPostResponses);
@@ -48,6 +51,8 @@ public class PostService {
                 .email(post.getMember().getEmail())
                 .title(post.getTitle())
                 .contents(post.getContents())
+                .createdDate(post.getCreatedDate())
+                .updatedDate(post.getUpdatedDate())
                 .build();
 
         return ResponseEntity.ok(findPostResponse);

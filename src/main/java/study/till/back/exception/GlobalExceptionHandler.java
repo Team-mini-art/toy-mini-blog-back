@@ -21,10 +21,16 @@ import static study.till.back.dto.exception.ErrorCode.*;
 @Slf4j
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
-    @ExceptionHandler(value = {ConstraintViolationException.class, DataIntegrityViolationException.class })
-    protected ResponseEntity<ErrorResponse> handleDataException() {
-        log.error("handleDataException throw Exception : {}", DUPLICATED_KEY);
+    @ExceptionHandler(value = { ConstraintViolationException.class })
+    protected ResponseEntity<ErrorResponse> ConstraintViolationException() {
+        log.error("ConstraintViolationException throw Exception : {}", DUPLICATED_KEY);
         return ErrorResponse.toResponseEntity(DUPLICATED_KEY);
+    }
+
+    @ExceptionHandler(value = { DataIntegrityViolationException.class })
+    protected ResponseEntity<ErrorResponse> DataIntegrityViolationException() {
+        log.error("DataIntegrityViolationException throw Exception : {}", DATA_INTEGRITY_VIOLATION);
+        return ErrorResponse.toResponseEntity(DATA_INTEGRITY_VIOLATION);
     }
 
     @ExceptionHandler(value = { CustomException.class })

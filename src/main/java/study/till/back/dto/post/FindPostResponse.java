@@ -17,4 +17,5 @@ public class FindPostResponse {
     private String title;
     private String contents;
     private LocalDateTime createdDate;
+    private LocalDateTime updatedDate;
 }

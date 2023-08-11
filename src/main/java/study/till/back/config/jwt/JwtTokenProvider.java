@@ -36,8 +36,7 @@ public class JwtTokenProvider {
 
     public TokenInfo generateToken(String memberPk, List<String> roles) {
         long now = (new Date()).getTime();
-//        Date accessTokenExpiresIn = new Date(now + 1_800_000);
-        Date accessTokenExpiresIn = new Date(now + 5_000);
+        Date accessTokenExpiresIn = new Date(now + 1_800_000);
 
         // Access Token 생성
         Claims claims = Jwts.claims().setSubject(String.valueOf(memberPk));
@@ -51,8 +50,7 @@ public class JwtTokenProvider {
         // Refresh Token 생성
         String refreshToken = Jwts.builder()
                 .setClaims(claims)
-//                .setExpiration(new Date(now + 604_800_000))
-                .setExpiration(new Date(now + 5_000))
+                .setExpiration(new Date(now + 604_800_000))
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
 

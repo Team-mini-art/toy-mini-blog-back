@@ -13,4 +13,5 @@ public class FindMemberResponse {
     private String email;
     private String nickname;
     private LocalDateTime createdDate;
+    private LocalDateTime updatedDate;
 }
