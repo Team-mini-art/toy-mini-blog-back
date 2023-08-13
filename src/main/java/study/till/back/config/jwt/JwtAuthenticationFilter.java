@@ -37,7 +37,7 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
                     SecurityContextHolder.getContext().setAuthentication(authentication);
                     break;
                 case EXPIRED:
-                    String jsonExpiredErrorResponse = createJsonErrorResponse("401", "Expired JWT token");
+                    String jsonExpiredErrorResponse = createJsonErrorResponse("401", "access_token_expired");
                     sendJsonErrorResponse(httpResponse, jsonExpiredErrorResponse);
                     return;
                 case UNSUPPORTED:

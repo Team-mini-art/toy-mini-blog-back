@@ -16,7 +16,7 @@ public enum ErrorCode {
     DATA_INTEGRITY_VIOLATION(HttpStatus.BAD_REQUEST, "데이터베이스의 무결성 제약 조건을 위반하였습니다."),
     INVALID_PASSWORD(HttpStatus.FORBIDDEN, "비밀번호는 대문자, 숫자, 특수문자 포함 10자리 이상이어야 합니다."),
     EXPIRED_TOKEN(HttpStatus.UNAUTHORIZED, "만료된 토큰입니다."),
-    UNAUTHORIZED_TOKEN(HttpStatus.UNAUTHORIZED, "유효하지 않은 토큰입니다"),
+    UNAUTHORIZED_TOKEN(HttpStatus.UNAUTHORIZED, "refresh_token_expired"),
     ;
 
     private final HttpStatus status;
