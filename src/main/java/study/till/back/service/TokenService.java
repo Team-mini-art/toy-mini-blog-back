@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import study.till.back.config.jwt.JwtTokenProvider;
 import study.till.back.dto.token.TokenRequest;
 import study.till.back.dto.token.TokenResponse;
+import study.till.back.exception.token.ExpiredRefreshTokenException;
 import study.till.back.exception.token.UnauthorizedTokenException;
 
 @Service
@@ -27,7 +28,7 @@ public class TokenService {
             return ResponseEntity.ok(tokenResponse);
         }
         else {
-            throw new UnauthorizedTokenException();
+            throw new ExpiredRefreshTokenException();
         }
     }
 }

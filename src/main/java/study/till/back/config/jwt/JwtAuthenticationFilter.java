@@ -41,12 +41,12 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
                     sendJsonErrorResponse(httpResponse, jsonExpiredErrorResponse);
                     return;
                 case UNSUPPORTED:
-                    String jsonUnsupportedErrorResponse = createJsonErrorResponse("401", "Unsupported JWT token");
+                    String jsonUnsupportedErrorResponse = createJsonErrorResponse("401", "unsupported_jwt_token");
                     sendJsonErrorResponse(httpResponse, jsonUnsupportedErrorResponse);
                     return;
                 case INVALID:
                 default:
-                    String jsonInvalidErrorResponse = createJsonErrorResponse("401", "Invalid JWT token");
+                    String jsonInvalidErrorResponse = createJsonErrorResponse("401", "invalid_jwt_token");
                     sendJsonErrorResponse(httpResponse, jsonInvalidErrorResponse);
                     return;
             }

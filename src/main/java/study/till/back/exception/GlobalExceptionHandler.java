@@ -12,7 +12,8 @@ import study.till.back.exception.member.DuplicateMemberException;
 import study.till.back.exception.member.InvalidPasswordException;
 import study.till.back.exception.member.NotFoundMemberException;
 import study.till.back.exception.post.NotFoundPostException;
-import study.till.back.exception.token.ExpiredTokenException;
+import study.till.back.exception.token.ExpiredAccessTokenException;
+import study.till.back.exception.token.ExpiredRefreshTokenException;
 import study.till.back.exception.token.UnauthorizedTokenException;
 
 import static study.till.back.dto.exception.ErrorCode.*;
@@ -63,10 +64,16 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return ErrorResponse.toResponseEntity(INVALID_PASSWORD);
     }
 
-    @ExceptionHandler(value = { ExpiredTokenException.class })
-    protected ResponseEntity<ErrorResponse> expiredTokenException(RuntimeException e) {
-        log.error("RuntimeException throw expiredTokenException : {}", e.getMessage());
-        return ErrorResponse.toResponseEntity(EXPIRED_TOKEN, e.getMessage());
+    @ExceptionHandler(value = { ExpiredAccessTokenException.class })
+    protected ResponseEntity<ErrorResponse> expiredAccessTokenException(RuntimeException e) {
+        log.error("RuntimeException throw expiredAccessTokenException : {}", e.getMessage());
+        return ErrorResponse.toResponseEntity(EXPIRED_ACCESS_TOKEN, e.getMessage());
+    }
+
+    @ExceptionHandler(value = { ExpiredRefreshTokenException.class })
+    protected ResponseEntity<ErrorResponse> expiredRefreshTokenException(RuntimeException e) {
+        log.error("RuntimeException throw expiredRefreshTokenException : {}", e.getMessage());
+        return ErrorResponse.toResponseEntity(EXPIRED_REFRESH_TOKEN, e.getMessage());
     }
 
     @ExceptionHandler(value = { UnauthorizedTokenException.class })
