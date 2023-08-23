@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 import study.till.back.dto.exception.ErrorResponse;
+import study.till.back.exception.comment.NotFoundCommentException;
 import study.till.back.exception.member.DuplicateMemberException;
 import study.till.back.exception.member.InvalidPasswordException;
 import study.till.back.exception.member.NotFoundMemberException;
@@ -80,5 +81,11 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     protected ResponseEntity<ErrorResponse> invalidTokenException(RuntimeException e) {
         log.error("RuntimeException throw InvalidTokenException : {}", e.getMessage());
         return ErrorResponse.toResponseEntity(UNAUTHORIZED_TOKEN);
+    }
+
+    @ExceptionHandler(value = {NotFoundCommentException.class })
+    protected ResponseEntity<ErrorResponse> notFoundCommentException(RuntimeException e) {
+        log.error("RuntimeException throw notFoundCommentException : {}", e.getMessage());
+        return ErrorResponse.toResponseEntity(NOT_FOUND, e.getMessage());
     }
 }

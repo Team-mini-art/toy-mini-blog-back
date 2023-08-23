@@ -13,5 +13,6 @@ public class FindCommentResponse {
     private Long id;
     private Long post_id;
     private String email;
+    private String nickname;
     private String contents;
 }
