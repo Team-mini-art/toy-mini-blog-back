@@ -65,7 +65,7 @@ public class MemberService {
         TokenInfo tokenInfo = jwtTokenProvider.generateToken(member.getEmail(), member.getRoles());
         LoginResponse loginResponse = LoginResponse.builder()
                 .status("SUCCESS")
-                .message("로그인 성공하였습니다.")
+                .message("로그인에 성공하였습니다.")
                 .email(member.getEmail())
                 .nickname(member.getNickname())
                 .tokenInfo(tokenInfo)

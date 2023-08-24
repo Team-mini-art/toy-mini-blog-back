@@ -72,7 +72,7 @@ public class PostService {
 
         CommonResponse commonResponse = CommonResponse.builder()
                 .status("SUCCESS")
-                .message("게시글 저장 성공")
+                .message("게시글 작성이 완료되었습니다.")
                 .build();
 
         return ResponseEntity.status(HttpStatus.CREATED).body(commonResponse);
