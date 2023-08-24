@@ -51,6 +51,11 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
                     return;
             }
         }
+        else {
+            String jsonInvalidErrorResponse = createJsonErrorResponse("403", "empty token in header");
+            sendJsonErrorResponse(httpResponse, jsonInvalidErrorResponse);
+            return;
+        }
 
         chain.doFilter(request, response);
     }
@@ -73,7 +78,9 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
     }
 
     private void sendJsonErrorResponse(HttpServletResponse httpResponse, String jsonErrorResponse) throws IOException {
-        httpResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        ObjectMapper objectMapper = new ObjectMapper();
+        CommonResponse commonResponse = objectMapper.readValue(jsonErrorResponse, CommonResponse.class);
+        httpResponse.setStatus(Integer.parseInt(commonResponse.getStatus()));
         httpResponse.setContentType(MediaType.APPLICATION_JSON_VALUE);
         httpResponse.getWriter().write(jsonErrorResponse);
     }

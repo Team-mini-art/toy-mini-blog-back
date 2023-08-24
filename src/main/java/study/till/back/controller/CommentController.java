@@ -23,7 +23,7 @@ public class CommentController {
         return commentService.findComments();
     }
 
-    @GetMapping("/comment/{id}")
+    @GetMapping("/comments/{id}")
     public ResponseEntity<FindCommentResponse> findComment(@PathVariable("id") Long id) {
         return commentService.findComment(id);
     }
