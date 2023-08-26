@@ -21,6 +21,23 @@ public class SecurityConfig {
 
     private final JwtTokenProvider jwtTokenProvider;
 
+    private static final String[] NON_AUTHENTICATED_URIS = {
+            "/api/signup",
+            "/api/login",
+            "/api/refresh"
+    };
+
+    private static final String[] SWAGGER_URIS = {
+            "/v3/api-docs/**",
+            "/swagger-ui/**",
+            "/swagger-ui.html"
+    };
+
+    private static final String[] PUBLIC_GET_URIS = {
+            "/api/posts/**",
+            "/api/comments/**"
+    };
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
@@ -29,13 +46,13 @@ public class SecurityConfig {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeRequests()
-                .antMatchers("/api/signup", "/api/login", "/api/refresh").permitAll()
-                .antMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
-                .antMatchers(HttpMethod.GET, "/api/posts/**").permitAll()
-                .antMatchers(HttpMethod.GET, "/api/comments/**").permitAll()
+                .antMatchers(NON_AUTHENTICATED_URIS).permitAll()
+                .antMatchers(SWAGGER_URIS).permitAll()
+                .antMatchers(HttpMethod.GET, PUBLIC_GET_URIS).permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class);
+
         return http.build();
     }
 

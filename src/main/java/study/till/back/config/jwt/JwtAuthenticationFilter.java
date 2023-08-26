@@ -2,6 +2,7 @@ package study.till.back.config.jwt;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -17,17 +18,35 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends GenericFilterBean {
 
     private final JwtTokenProvider jwtTokenProvider;
 
+    private static final List<String> EXEMPTED_URIS = Arrays.asList(
+            "/api/signup",
+            "/api/login",
+            "/api/refresh"
+    );
+
+    private static final List<String> EXEMPTED_REGEX_URIS = Arrays.asList(
+            "^/api/posts(/.*)?$",
+            "^/api/comments(/.*)?$"
+    );
+
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-        String token = resolveToken((HttpServletRequest) request);
+        HttpServletRequest httpRequest = (HttpServletRequest) request;
         HttpServletResponse httpResponse = (HttpServletResponse) response;
 
+        if (isExemptedFromTokenValidation(httpRequest)) {
+            chain.doFilter(request, response);
+            return;
+        }
+        String token = resolveToken(httpRequest);
         if (token != null) {
             JwtStatus status = jwtTokenProvider.getTokenStatus(token);
 
@@ -83,5 +102,19 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
         httpResponse.setStatus(Integer.parseInt(commonResponse.getStatus()));
         httpResponse.setContentType(MediaType.APPLICATION_JSON_VALUE);
         httpResponse.getWriter().write(jsonErrorResponse);
+    }
+
+    private boolean isExemptedFromTokenValidation(HttpServletRequest httpRequest) {
+        String httpMethod = httpRequest.getMethod();
+        String requestURI = httpRequest.getRequestURI();
+
+        boolean isExemptedByUri = EXEMPTED_URIS.stream().anyMatch(uri -> requestURI.equals(uri));
+        boolean isExemptedByRegex = EXEMPTED_REGEX_URIS.stream().anyMatch(pattern -> requestURI.matches(pattern));
+
+        if(HttpMethod.GET.name().equalsIgnoreCase(httpMethod)) {
+            return isExemptedByRegex;
+        } else {
+            return isExemptedByUri;
+        }
     }
 }
