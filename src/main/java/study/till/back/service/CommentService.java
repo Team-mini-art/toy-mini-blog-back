@@ -81,4 +81,24 @@ public class CommentService {
         
         return ResponseEntity.status(HttpStatus.CREATED).body(commonResponse);
     }
+
+    public ResponseEntity<CommonResponse> updateComment(Long id, CommentRequest commentRequest) {
+        Member member = memberRepository.findByEmail(commentRequest.getEmail());
+        if (member == null) throw new NotFoundMemberException();
+
+        Post post = postRepository.findById(commentRequest.getPost_id()).orElse(null);
+        if (post == null) throw new NotFoundPostException();
+
+        Comment comment = commentRepositroy.findById(id).orElse(null);
+        if (comment == null) throw new NotFoundCommentException();
+
+        comment.updateComment(commentRequest.getContents());
+        commentRepositroy.save(comment);
+
+        CommonResponse commonResponse = CommonResponse.builder()
+                .status("SUCCESS")
+                .message("댓글이 수정되었습니다.")
+                .build();
+        return ResponseEntity.ok(commonResponse);
+    }
 }

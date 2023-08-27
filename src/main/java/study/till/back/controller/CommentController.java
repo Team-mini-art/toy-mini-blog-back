@@ -31,4 +31,9 @@ public class CommentController {
     public ResponseEntity<CommonResponse> createComment(@RequestBody CommentRequest commentRequest) {
         return commentService.createComment(commentRequest);
     }
+
+    @PutMapping("/comments/{id}")
+    public ResponseEntity<CommonResponse> updateComment(@PathVariable("id") Long id, @RequestBody CommentRequest commentRequest) {
+        return commentService.updateComment(id, commentRequest);
+    }
 }
