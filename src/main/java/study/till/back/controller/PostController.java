@@ -6,7 +6,6 @@ import org.springframework.web.bind.annotation.*;
 import study.till.back.dto.post.FindPostResponse;
 import study.till.back.dto.post.PostRequest;
 import study.till.back.dto.CommonResponse;
-import study.till.back.dto.post.UpdatePostRequest;
 import study.till.back.service.PostService;
 
 import java.util.List;
@@ -33,9 +32,9 @@ public class PostController {
         return postService.createPost(postRequest);
     }
 
-    @PutMapping("/posts")
-    public ResponseEntity<CommonResponse> updatePost(@RequestBody UpdatePostRequest postRequest) {
-        return postService.updatePost(postRequest);
+    @PutMapping("/posts/{id}")
+    public ResponseEntity<CommonResponse> updatePost(@PathVariable("id") Long id, @RequestBody PostRequest postRequest) {
+        return postService.updatePost(id, postRequest);
     }
 
     @DeleteMapping("/posts/{id}")

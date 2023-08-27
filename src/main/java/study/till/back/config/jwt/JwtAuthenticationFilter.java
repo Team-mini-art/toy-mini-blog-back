@@ -27,12 +27,15 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
     private final JwtTokenProvider jwtTokenProvider;
 
     private static final List<String> EXEMPTED_URIS = Arrays.asList(
+            "/swagger-ui/index.html",
             "/api/signup",
             "/api/login",
             "/api/refresh"
     );
 
     private static final List<String> EXEMPTED_REGEX_URIS = Arrays.asList(
+            "^/swagger-ui.*$",
+            "^/v3/api-docs(/.*)?$",
             "^/api/posts(/.*)?$",
             "^/api/comments(/.*)?$"
     );

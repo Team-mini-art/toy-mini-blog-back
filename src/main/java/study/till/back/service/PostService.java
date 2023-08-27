@@ -7,7 +7,6 @@ import org.springframework.stereotype.Service;
 import study.till.back.dto.post.FindPostResponse;
 import study.till.back.dto.post.PostRequest;
 import study.till.back.dto.CommonResponse;
-import study.till.back.dto.post.UpdatePostRequest;
 import study.till.back.entity.Member;
 import study.till.back.entity.Post;
 import study.till.back.exception.member.NotFoundMemberException;
@@ -16,7 +15,6 @@ import study.till.back.repository.MemberRepository;
 import study.till.back.repository.PostRepository;
 
 import javax.transaction.Transactional;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -79,16 +77,14 @@ public class PostService {
     }
 
     @Transactional
-    public ResponseEntity<CommonResponse> updatePost(UpdatePostRequest postRequest) {
+    public ResponseEntity<CommonResponse> updatePost(Long id, PostRequest postRequest) {
         Member member = memberRepository.findById(postRequest.getEmail()).orElse(null);
         if (member == null) throw new NotFoundMemberException();
 
-        Post post = postRepository.findById(postRequest.getId()).orElse(null);
+        Post post = postRepository.findById(id).orElse(null);
         if (post == null) throw new NotFoundPostException();
 
-
-        post.setTitle(postRequest.getTitle());
-        post.setContents(postRequest.getContents());
+        post.updatePost(postRequest.getTitle(), postRequest.getContents());
         postRepository.save(post);
 
         CommonResponse commonResponse = CommonResponse.builder()

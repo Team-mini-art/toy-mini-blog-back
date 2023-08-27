@@ -29,4 +29,9 @@ public class Post extends BaseTimeEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "email")
     private Member member;
+
+    public void updatePost(String title, String contents) {
+        this.title = title;
+        this.contents = contents;
+    }
 }
