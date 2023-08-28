@@ -10,6 +10,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 import study.till.back.dto.exception.ErrorResponse;
 import study.till.back.exception.comment.NotFoundCommentException;
 import study.till.back.exception.member.DuplicateMemberException;
+import study.till.back.exception.member.InvalidEmailException;
 import study.till.back.exception.member.InvalidPasswordException;
 import study.till.back.exception.member.NotFoundMemberException;
 import study.till.back.exception.post.NotFoundPostException;
@@ -57,6 +58,12 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     protected ResponseEntity<ErrorResponse> duplicateMemberException(RuntimeException e) {
         log.error("RuntimeException throw duplicateMemberException : {}", e.getMessage());
         return ErrorResponse.toResponseEntity(DUPLICATED_KEY, e.getMessage());
+    }
+
+    @ExceptionHandler(value = { InvalidEmailException.class })
+    protected ResponseEntity<ErrorResponse> InvalidEmailException(RuntimeException e) {
+        log.error("RuntimeException throw invalidEmailException : {}", e.getMessage());
+        return ErrorResponse.toResponseEntity(INVALID_EMAIL);
     }
 
     @ExceptionHandler(value = { InvalidPasswordException.class })

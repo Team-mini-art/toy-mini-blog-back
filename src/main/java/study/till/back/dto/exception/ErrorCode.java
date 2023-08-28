@@ -14,6 +14,7 @@ public enum ErrorCode {
     NOT_FOUND(HttpStatus.NOT_FOUND, "회원을 찾을 수 없습니다."),
     DUPLICATED_KEY(HttpStatus.CONFLICT, "중복된 key를 사용할 수 없습니다."),
     DATA_INTEGRITY_VIOLATION(HttpStatus.BAD_REQUEST, "데이터베이스의 무결성 제약 조건을 위반하였습니다."),
+    INVALID_EMAIL(HttpStatus.FORBIDDEN, "이메일 형식이 올바르지 않습니다."),
     INVALID_PASSWORD(HttpStatus.FORBIDDEN, "비밀번호는 대문자, 숫자, 특수문자 포함 10자리 이상이어야 합니다."),
     EXPIRED_ACCESS_TOKEN(HttpStatus.UNAUTHORIZED, "access_token_expired"),
     EXPIRED_REFRESH_TOKEN(HttpStatus.UNAUTHORIZED, "refresh_token_expired"),

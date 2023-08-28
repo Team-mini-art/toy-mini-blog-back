@@ -14,6 +14,7 @@ import study.till.back.dto.member.SignupRequest;
 import study.till.back.dto.token.TokenInfo;
 import study.till.back.entity.Member;
 import study.till.back.exception.member.DuplicateMemberException;
+import study.till.back.exception.member.InvalidEmailException;
 import study.till.back.exception.member.InvalidPasswordException;
 import study.till.back.exception.member.NotFoundMemberException;
 import study.till.back.repository.MemberRepository;
@@ -21,6 +22,7 @@ import study.till.back.repository.MemberRepository;
 import javax.transaction.Transactional;
 import java.util.Collections;
 import java.util.List;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @Service
@@ -33,6 +35,10 @@ public class MemberService {
 
     @Transactional
     public ResponseEntity<CommonResponse> signup(SignupRequest signupRequest) {
+        if (!isValidEmail(signupRequest.getEmail())) {
+            throw new InvalidEmailException();
+        }
+
         if (!isValidPassword(signupRequest.getPassword())) {
             throw new InvalidPasswordException();
         }
@@ -84,6 +90,13 @@ public class MemberService {
                         .build()
                 )
                 .collect(Collectors.toList());
+    }
+
+    public boolean isValidEmail(String email) {
+        String EMAIL_REGEX = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$";
+        Pattern EMAIL_PATTERN = Pattern.compile(EMAIL_REGEX);
+
+        return EMAIL_PATTERN.matcher(email).matches();
     }
 
     public boolean isValidPassword(String password) {
