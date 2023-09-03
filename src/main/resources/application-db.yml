@@ -1,0 +1,38 @@
+spring:
+  config:
+    activate:
+      on-profile: local
+  datasource:
+    url: jdbc:h2:tcp://localhost/~/til-back
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
+
+  jpa:
+    hibernate:
+      hbm2ddl.auto: update
+#          ddl-auto: create
+    properties:
+      hibernate:
+        #         show_sql: true
+        format_sql: true
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: prod
+  datasource:
+    url: ENC(LMbLcampRt9GtQ1h/CpD5rtocQYopjHkBZQBBKrleu0tMKeyYHgxNsTWTJj55BnHIKMSZOjyxjyvyMqJRgRiDyCLX12wvtuPiVLj7wikei5qWUX7CrxLwsbcsphyfHxg)
+    username: ENC(gcNZpdpwOAapp1Mn5z/dKw==)
+    password: ENC(DFBE0sJ3qjUvKi4bHbcJAUQ6DRNvxVVY)
+    driver-class-name: org.mariadb.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        show_sql: false
+#        format_sql: false
