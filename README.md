@@ -10,3 +10,4 @@
 - JPA
 - Spring Data JPA
 - JWT Token
+- Spring Security
