@@ -9,10 +9,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 import study.till.back.dto.exception.ErrorResponse;
 import study.till.back.exception.comment.NotFoundCommentException;
-import study.till.back.exception.member.DuplicateMemberException;
-import study.till.back.exception.member.InvalidEmailException;
-import study.till.back.exception.member.InvalidPasswordException;
-import study.till.back.exception.member.NotFoundMemberException;
+import study.till.back.exception.member.*;
 import study.till.back.exception.post.NotFoundPostException;
 import study.till.back.exception.token.ExpiredAccessTokenException;
 import study.till.back.exception.token.ExpiredRefreshTokenException;
@@ -45,6 +42,12 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(value = { NotFoundMemberException.class })
     protected ResponseEntity<ErrorResponse> notFoundMemberException(RuntimeException e) {
         log.error("RuntimeException throw notFoundMemberException : {}", e.getMessage());
+        return ErrorResponse.toResponseEntity(NOT_FOUND, e.getMessage());
+    }
+
+    @ExceptionHandler(value = { NotMatchMemberException.class })
+    protected ResponseEntity<ErrorResponse> updateNotMatchMemberException(RuntimeException e) {
+        log.error("RuntimeException throw updateNotMatchMemberException : {}", e.getMessage());
         return ErrorResponse.toResponseEntity(NOT_FOUND, e.getMessage());
     }
 
