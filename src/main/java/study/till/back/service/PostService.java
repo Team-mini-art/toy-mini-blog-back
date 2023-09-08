@@ -11,6 +11,7 @@ import study.till.back.dto.CommonResponse;
 import study.till.back.entity.Member;
 import study.till.back.entity.Post;
 import study.till.back.exception.member.NotFoundMemberException;
+import study.till.back.exception.member.NotMatchMemberException;
 import study.till.back.exception.post.NotFoundPostException;
 import study.till.back.repository.MemberRepository;
 import study.till.back.repository.PostRepository;
@@ -87,6 +88,8 @@ public class PostService {
 
         Post post = postRepository.findById(id).orElse(null);
         if (post == null) throw new NotFoundPostException();
+
+        if (!postRequest.getEmail().equals(post.getMember().getEmail())) throw new NotMatchMemberException();
 
         post.updatePost(postRequest.getTitle(), postRequest.getContents());
         postRepository.save(post);
