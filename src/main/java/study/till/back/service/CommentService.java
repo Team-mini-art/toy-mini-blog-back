@@ -12,11 +12,13 @@ import study.till.back.entity.Member;
 import study.till.back.entity.Post;
 import study.till.back.exception.comment.NotFoundCommentException;
 import study.till.back.exception.member.NotFoundMemberException;
+import study.till.back.exception.member.NotMatchMemberException;
 import study.till.back.exception.post.NotFoundPostException;
 import study.till.back.repository.CommentRepositroy;
 import study.till.back.repository.MemberRepository;
 import study.till.back.repository.PostRepository;
 
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -59,6 +61,7 @@ public class CommentService {
         return ResponseEntity.ok(findCommentResponse);
     }
 
+    @Transactional
     public ResponseEntity<CommonResponse> createComment(CommentRequest commentRequest) {
         Member member = memberRepository.findByEmail(commentRequest.getEmail());
         if (member == null) throw new NotFoundMemberException();
@@ -82,6 +85,7 @@ public class CommentService {
         return ResponseEntity.status(HttpStatus.CREATED).body(commonResponse);
     }
 
+    @Transactional
     public ResponseEntity<CommonResponse> updateComment(Long id, CommentRequest commentRequest) {
         Member member = memberRepository.findByEmail(commentRequest.getEmail());
         if (member == null) throw new NotFoundMemberException();
@@ -99,6 +103,21 @@ public class CommentService {
                 .status("SUCCESS")
                 .message("댓글이 수정되었습니다.")
                 .build();
+        return ResponseEntity.ok(commonResponse);
+    }
+
+    @Transactional
+    public ResponseEntity<CommonResponse> deleteComment(Long id) {
+        Comment comment = commentRepositroy.findById(id).orElse(null);
+        if (comment == null) throw new NotFoundCommentException();
+
+        commentRepositroy.deleteById(id);
+
+        CommonResponse commonResponse = CommonResponse.builder()
+                .status("SUCCESSS")
+                .message("댓글이 삭제되었습니다.")
+                .build();
+
         return ResponseEntity.ok(commonResponse);
     }
 }
