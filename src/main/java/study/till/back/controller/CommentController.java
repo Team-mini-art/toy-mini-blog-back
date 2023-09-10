@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import study.till.back.dto.CommonResponse;
+import study.till.back.dto.CreateCommonResponse;
 import study.till.back.dto.comment.CommentRequest;
 import study.till.back.dto.comment.FindCommentResponse;
 import study.till.back.service.CommentService;
@@ -28,7 +29,7 @@ public class CommentController {
     }
 
     @PostMapping("/comments")
-    public ResponseEntity<CommonResponse> createComment(@RequestBody CommentRequest commentRequest) {
+    public ResponseEntity<CreateCommonResponse> createComment(@RequestBody CommentRequest commentRequest) {
         return commentService.createComment(commentRequest);
     }
 

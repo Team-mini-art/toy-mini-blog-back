@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import study.till.back.dto.post.CreatePostReponse;
+import study.till.back.dto.CreateCommonResponse;
 import study.till.back.dto.post.FindPostResponse;
 import study.till.back.dto.post.PostRequest;
 import study.till.back.dto.CommonResponse;
@@ -59,7 +59,7 @@ public class PostService {
     }
 
     @Transactional
-    public ResponseEntity<CreatePostReponse> createPost(PostRequest postRequest) {
+    public ResponseEntity<CreateCommonResponse> createPost(PostRequest postRequest) {
         Member member = memberRepository.findById(postRequest.getEmail()).orElse(null);
         if (member == null) throw new NotFoundMemberException();
 
@@ -72,13 +72,13 @@ public class PostService {
 
         long id = post.getId();
 
-        CreatePostReponse createPostReponse = CreatePostReponse.builder()
+        CreateCommonResponse createCommonResponse = CreateCommonResponse.builder()
                 .id(id)
                 .status("SUCCESS")
                 .message("게시글 작성이 완료되었습니다.")
                 .build();
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(createPostReponse);
+        return ResponseEntity.status(HttpStatus.CREATED).body(createCommonResponse);
     }
 
     @Transactional

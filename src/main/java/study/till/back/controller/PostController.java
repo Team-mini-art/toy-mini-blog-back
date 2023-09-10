@@ -3,7 +3,7 @@ package study.till.back.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import study.till.back.dto.post.CreatePostReponse;
+import study.till.back.dto.CreateCommonResponse;
 import study.till.back.dto.post.FindPostResponse;
 import study.till.back.dto.post.PostRequest;
 import study.till.back.dto.CommonResponse;
@@ -29,7 +29,7 @@ public class PostController {
     }
 
     @PostMapping("/posts")
-    public ResponseEntity<CreatePostReponse> createPost(@RequestBody PostRequest postRequest) {
+    public ResponseEntity<CreateCommonResponse> createPost(@RequestBody PostRequest postRequest) {
         return postService.createPost(postRequest);
     }
 
