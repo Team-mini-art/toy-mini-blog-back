@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import study.till.back.dto.CommonResponse;
+import study.till.back.dto.CreateCommonResponse;
 import study.till.back.dto.comment.CommentRequest;
 import study.till.back.dto.comment.FindCommentResponse;
 import study.till.back.entity.Comment;
@@ -62,27 +63,28 @@ public class CommentService {
     }
 
     @Transactional
-    public ResponseEntity<CommonResponse> createComment(CommentRequest commentRequest) {
+    public ResponseEntity<CreateCommonResponse> createComment(CommentRequest commentRequest) {
         Member member = memberRepository.findByEmail(commentRequest.getEmail());
         if (member == null) throw new NotFoundMemberException();
-        
+
         Post post = postRepository.findById(commentRequest.getPost_id()).orElse(null);
         if (post == null) throw new NotFoundPostException();
-        
+
         Comment comment = Comment.builder()
                 .member(member)
                 .post(post)
                 .contents(commentRequest.getContents())
                 .build();
-        
+
         commentRepositroy.save(comment);
-        
-        CommonResponse commonResponse = CommonResponse.builder()
+
+        CreateCommonResponse createCommonResponse = CreateCommonResponse.builder()
+                .id(comment.getId())
                 .status("SUCCESS")
                 .message("댓글 작성이 완료되었습니다.")
                 .build();
-        
-        return ResponseEntity.status(HttpStatus.CREATED).body(commonResponse);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(createCommonResponse);
     }
 
     @Transactional
@@ -95,6 +97,8 @@ public class CommentService {
 
         Comment comment = commentRepositroy.findById(id).orElse(null);
         if (comment == null) throw new NotFoundCommentException();
+
+        if (!member.getEmail().equals(comment.getMember().getEmail())) throw new NotMatchMemberException();
 
         comment.updateComment(commentRequest.getContents());
         commentRepositroy.save(comment);
