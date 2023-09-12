@@ -24,7 +24,8 @@ public class SecurityConfig {
     private static final String[] NON_AUTHENTICATED_URIS = {
             "/api/signup",
             "/api/login",
-            "/api/refresh"
+            "/api/refresh",
+            "/api/super"
     };
 
     private static final String[] SWAGGER_URIS = {

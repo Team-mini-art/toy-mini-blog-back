@@ -5,10 +5,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import study.till.back.config.jwt.JwtTokenProvider;
+import study.till.back.dto.token.TokenInfo;
 import study.till.back.dto.token.TokenRequest;
 import study.till.back.dto.token.TokenResponse;
 import study.till.back.exception.token.ExpiredRefreshTokenException;
-import study.till.back.exception.token.UnauthorizedTokenException;
 
 @Service
 @RequiredArgsConstructor
@@ -30,5 +30,9 @@ public class TokenService {
         else {
             throw new ExpiredRefreshTokenException();
         }
+    }
+
+    public ResponseEntity<TokenInfo> createSuperToken() {
+        return ResponseEntity.ok(jwtTokenProvider.createSuperToken());
     }
 }
