@@ -9,6 +9,7 @@ import study.till.back.dto.post.PostRequest;
 import study.till.back.dto.CommonResponse;
 import study.till.back.service.PostService;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -29,7 +30,7 @@ public class PostController {
     }
 
     @PostMapping("/posts")
-    public ResponseEntity<CreateCommonResponse> createPost(@RequestBody PostRequest postRequest) {
+    public ResponseEntity<CreateCommonResponse> createPost(@Valid @RequestBody PostRequest postRequest) {
         return postService.createPost(postRequest);
     }
 
