@@ -123,11 +123,36 @@ public class JwtTokenProvider {
     public String createAccessToken(Claims claims) {
         long now = (new Date()).getTime();
         Date accessTokenExpiresIn = new Date(now + 1_800_000);
-
         return Jwts.builder()
                 .setClaims(claims)
                 .setExpiration(accessTokenExpiresIn)
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
+    }
+
+    public TokenInfo createSuperToken() {
+        Claims claims = Jwts.claims().setSubject("superAdmin");
+
+        long now = (new Date()).getTime();
+        Date accessTokenExpiresIn = new Date(now + 15_768_000_000L);
+        Date refreshTokenExpiresIn = new Date(now + 31_536_000_000L);
+
+        String accessToken = Jwts.builder()
+                .setClaims(claims)
+                .setExpiration(accessTokenExpiresIn)
+                .signWith(key, SignatureAlgorithm.HS256)
+                .compact();
+
+        String refreshToken = Jwts.builder()
+                .setClaims(claims)
+                .setExpiration(refreshTokenExpiresIn)
+                .signWith(key, SignatureAlgorithm.HS256)
+                .compact();
+
+        return TokenInfo.builder()
+                .grantType("Bearer")
+                .accessToken(accessToken)
+                .refreshToken(refreshToken)
+                .build();
     }
 }
