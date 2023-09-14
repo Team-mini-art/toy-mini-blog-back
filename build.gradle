@@ -5,11 +5,11 @@ plugins {
 }
 
 jar {
-	baseName = 'toy-mini-blog-back'
-	// version = '0.0.1-SNAPSHOT'
+	baseName = 'toy-mini-blog-back'	
 }
 
 group = 'study'
+version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '11'
 
 configurations {
