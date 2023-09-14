@@ -5,7 +5,7 @@ FROM amazoncorretto:11
 RUN mkdir /deploy
 
 # JAR 파일 복사
-COPY build/libs/*.jar /deploy/toy-mini-blog-back-0.0.1-SNAPSHOT.jar
+COPY toy-mini-blog-back.jar /deploy/
 
 # 서버 포트 설정
 EXPOSE 8081
