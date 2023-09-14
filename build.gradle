@@ -5,7 +5,7 @@ plugins {
 }
 
 jar {
-	baseName = 'toy-mini-blog-back'	
+    archiveFileName = "toy-mini-blog-back.jar"
 }
 
 group = 'study'
