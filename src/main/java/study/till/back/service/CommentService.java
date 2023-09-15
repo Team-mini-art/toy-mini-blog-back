@@ -40,6 +40,8 @@ public class CommentService {
                 .nickname(comment.getMember().getNickname())
                 .post_id(comment.getPost().getId())
                 .contents(comment.getContents())
+                .createdDate(comment.getCreatedDate())
+                .updatedDate(comment.getUpdatedDate())
                 .build()
         ).collect(Collectors.toList());
 
@@ -57,6 +59,8 @@ public class CommentService {
                 .email(comment.getMember().getEmail())
                 .nickname(comment.getMember().getNickname())
                 .contents(comment.getContents())
+                .createdDate(comment.getCreatedDate())
+                .updatedDate(comment.getUpdatedDate())
                 .build();
 
         return ResponseEntity.ok(findCommentResponse);
