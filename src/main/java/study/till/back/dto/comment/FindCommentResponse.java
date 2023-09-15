@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 @Data
 @Builder
 @AllArgsConstructor
@@ -15,4 +17,6 @@ public class FindCommentResponse {
     private String email;
     private String nickname;
     private String contents;
+    private LocalDateTime createdDate;
+    private LocalDateTime updatedDate;
 }

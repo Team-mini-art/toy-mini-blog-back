@@ -19,13 +19,13 @@ public class Member extends BaseTimeEntity implements UserDetails {
 
 
     @Id
-    @Column(name = "email")
     private String email;
 
     private String password;
 
     private String nickname;
 
+    @Builder.Default
     @ElementCollection
     private List<String> roles = new ArrayList<>();
 
