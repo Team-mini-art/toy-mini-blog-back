@@ -1,6 +1,8 @@
 package study.till.back.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -79,8 +81,8 @@ public class MemberService {
         return ResponseEntity.ok().body(loginResponse);
     }
 
-    public List<FindMemberResponse> findMember() {
-        List<Member> members = memberRepository.findAll();
+    public List<FindMemberResponse> findMembers(Pageable pageable) {
+        Page<Member> members = memberRepository.findAll(pageable);
         return members.stream()
                 .map(member -> FindMemberResponse.builder()
                         .email(member.getEmail())
