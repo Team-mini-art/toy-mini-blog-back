@@ -132,6 +132,7 @@ public class JwtTokenProvider {
 
     public TokenInfo createSuperToken() {
         Claims claims = Jwts.claims().setSubject("superAdmin");
+        claims.put("roles", "superAdmin");
 
         long now = (new Date()).getTime();
         Date accessTokenExpiresIn = new Date(now + 15_768_000_000L);
