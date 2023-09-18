@@ -9,10 +9,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import study.till.back.config.jwt.JwtTokenProvider;
 import study.till.back.dto.*;
-import study.till.back.dto.member.FindMemberResponse;
-import study.till.back.dto.member.LoginRequest;
-import study.till.back.dto.member.LoginResponse;
-import study.till.back.dto.member.SignupRequest;
+import study.till.back.dto.member.*;
 import study.till.back.dto.token.TokenInfo;
 import study.till.back.entity.Member;
 import study.till.back.exception.member.DuplicateMemberException;
@@ -24,6 +21,7 @@ import study.till.back.repository.MemberRepository;
 import javax.transaction.Transactional;
 import java.util.Collections;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -81,17 +79,22 @@ public class MemberService {
         return ResponseEntity.ok().body(loginResponse);
     }
 
-    public List<FindMemberResponse> findMembers(Pageable pageable) {
-        Page<Member> members = memberRepository.findAll(pageable);
-        return members.stream()
-                .map(member -> FindMemberResponse.builder()
-                        .email(member.getEmail())
-                        .nickname(member.getNickname())
-                        .createdDate(member.getCreatedDate())
-                        .updatedDate(member.getUpdatedDate())
-                        .build()
-                )
-                .collect(Collectors.toList());
+    public FindMemberPageResponse findMembers(Pageable pageable) {
+        Page<Member> contents = memberRepository.findAll(pageable);
+
+        List<FindMemberResponse> members = contents.stream().map(FindMemberResponse::from).collect(Collectors.toList());
+
+        FindMemberPageResponse findMemberPageResponse = FindMemberPageResponse.builder()
+                .members(members)
+                .totalElements(contents.getTotalElements())
+                .totalPages(contents.getTotalPages())
+                .pageNumber(contents.getNumber())
+                .pageSize(contents.getSize())
+                .hasPrevious(contents.hasPrevious())
+                .hasNext(contents.hasNext())
+                .build();
+
+        return findMemberPageResponse;
     }
 
     public boolean isValidEmail(String email) {

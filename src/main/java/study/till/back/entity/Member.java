@@ -3,7 +3,6 @@ package study.till.back.entity;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import study.till.back.dto.member.FindMemberResponse;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -41,21 +40,21 @@ public class Member extends BaseTimeEntity implements UserDetails {
 
     @Override
     public boolean isAccountNonExpired() {
-        return false;
+        return true;
     }
 
     @Override
     public boolean isAccountNonLocked() {
-        return false;
+        return true;
     }
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return false;
+        return true;
     }
 
     @Override
     public boolean isEnabled() {
-        return false;
+        return true;
     }
 }
