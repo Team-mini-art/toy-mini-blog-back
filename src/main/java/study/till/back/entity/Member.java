@@ -3,6 +3,7 @@ package study.till.back.entity;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import study.till.back.dto.member.FindMemberResponse;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -10,7 +11,6 @@ import java.util.Collection;
 import java.util.List;
 
 @Getter
-@Setter
 @Entity
 @Builder
 @NoArgsConstructor
