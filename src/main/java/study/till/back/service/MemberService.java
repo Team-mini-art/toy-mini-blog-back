@@ -12,6 +12,7 @@ import study.till.back.dto.*;
 import study.till.back.dto.member.*;
 import study.till.back.dto.token.TokenInfo;
 import study.till.back.entity.Member;
+import study.till.back.exception.common.NoDataException;
 import study.till.back.exception.member.DuplicateMemberException;
 import study.till.back.exception.member.InvalidEmailException;
 import study.till.back.exception.member.InvalidPasswordException;
@@ -81,6 +82,10 @@ public class MemberService {
 
     public FindMemberPageResponse findMembers(Pageable pageable) {
         Page<Member> contents = memberRepository.findAll(pageable);
+
+        if (contents.isEmpty()) {
+            throw new NoDataException();
+        }
 
         List<FindMemberResponse> members = contents.stream().map(FindMemberResponse::from).collect(Collectors.toList());
 
