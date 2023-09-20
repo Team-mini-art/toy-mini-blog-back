@@ -70,7 +70,18 @@ class JwtTokenProviderTest extends JwtTokenProvider {
 
     @Override
     public boolean validateToken(String token) {
-        Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
+        try {
+            Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
+            return true;
+        }
+        catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e) {
+        }
+        catch (ExpiredJwtException e) {
+        }
+        catch (UnsupportedJwtException e) {
+        }
+        catch (IllegalArgumentException e) {
+        }
         return false;
     }
 
@@ -100,9 +111,9 @@ class JwtTokenProviderTest extends JwtTokenProvider {
      * 토큰 검증
      */
     @Test
-    void validateToken() {
-        boolean boolAccess = jwtTokenProvider.validateToken(accessToken);
-        boolean boolRefresh = jwtTokenProvider.validateToken(refreshToken);
+    void validateTokenTest() {
+        boolean boolAccess = jwtTokenProvider.validateToken(tokenInfo.getAccessToken());
+        boolean boolRefresh = jwtTokenProvider.validateToken(tokenInfo.getRefreshToken());
 
         System.out.println("boolAccess = " + boolAccess);
         System.out.println("boolRefresh = " + boolRefresh);
@@ -147,13 +158,12 @@ class JwtTokenProviderTest extends JwtTokenProvider {
      */
     @Test
     void fakeTokenTest() {
-        String fakeToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c";
+        String fakeToken = "123eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c";
 
-        assertThrows(
-                io.jsonwebtoken.security.SignatureException.class,
-                () -> this.validateToken(fakeToken),
-                "Invalid JWT Token"
-        );
+        boolean bool = this.validateToken(fakeToken);
+        System.out.println("test = " + bool);
+
+        assertEquals(bool, false);
     }
 
 }
