@@ -4,8 +4,9 @@ plugins {
 	id 'io.spring.dependency-management' version '1.1.0'
 }
 
-jar {
+bootJar {
     archiveFileName = "toy-mini-blog-back.jar"
+    mainClassName = 'study.till.back.Application' // 실제 메인 클래스의 전체 이름으로 변경
 }
 
 group = 'study'
