@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 import study.till.back.dto.exception.ErrorResponse;
 import study.till.back.exception.comment.NotFoundCommentException;
+import study.till.back.exception.common.NoDataException;
 import study.till.back.exception.member.*;
 import study.till.back.exception.post.NotFoundPostException;
 import study.till.back.exception.token.ExpiredAccessTokenException;
@@ -93,9 +94,15 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return ErrorResponse.toResponseEntity(UNAUTHORIZED_TOKEN);
     }
 
-    @ExceptionHandler(value = {NotFoundCommentException.class })
+    @ExceptionHandler(value = { NotFoundCommentException.class })
     protected ResponseEntity<ErrorResponse> notFoundCommentException(RuntimeException e) {
         log.error("RuntimeException throw notFoundCommentException : {}", e.getMessage());
         return ErrorResponse.toResponseEntity(NOT_FOUND, e.getMessage());
+    }
+
+    @ExceptionHandler(value = { NoDataException.class })
+    protected ResponseEntity<ErrorResponse> noDataException(RuntimeException e) {
+        log.error("RuntimeException throw noDataException : {}", e.getMessage());
+        return ErrorResponse.toResponseEntity(NO_DATA, e.getMessage());
     }
 }

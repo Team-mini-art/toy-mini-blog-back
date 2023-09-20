@@ -7,10 +7,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import study.till.back.dto.*;
-import study.till.back.dto.member.FindMemberResponse;
-import study.till.back.dto.member.LoginRequest;
-import study.till.back.dto.member.LoginResponse;
-import study.till.back.dto.member.SignupRequest;
+import study.till.back.dto.member.*;
 import study.till.back.service.MemberService;
 
 import java.util.List;
@@ -33,7 +30,7 @@ public class MemberController {
     }
 
     @GetMapping("/members")
-    public List<FindMemberResponse> findMembers(
+    public FindMemberPageResponse findMembers(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "email") String sort,

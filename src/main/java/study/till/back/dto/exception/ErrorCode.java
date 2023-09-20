@@ -20,6 +20,7 @@ public enum ErrorCode {
     EXPIRED_REFRESH_TOKEN(HttpStatus.UNAUTHORIZED, "refresh_token_expired"),
     UNAUTHORIZED_TOKEN(HttpStatus.UNAUTHORIZED, "인증되지 않은 토큰입니다."),
     NOT_MATCH(HttpStatus.FORBIDDEN, "수정하실 컨텐츠의 회원과 등록된 회원이 일치하지 않습니다."),
+    NO_DATA(HttpStatus.NOT_FOUND, "No Data"),
     ;
 
     private final HttpStatus status;
