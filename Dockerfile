@@ -4,8 +4,10 @@ FROM amazoncorretto:11
 # /deploy 디렉터리 생성
 RUN mkdir /deploy
 
-# JAR 파일 복사
-COPY build/libs/toy-mini-blog-back.jar /deploy/
+# JAR 파일 변수 지정
+ARG JAR_FILE build/libs/till.back-0.0.1-SNAPSHOT.jar 
+
+ADD ${JAR_FILE} /deploy/toy-mini-blog-back.jar
 
 # 서버 포트 설정
 EXPOSE 8081
