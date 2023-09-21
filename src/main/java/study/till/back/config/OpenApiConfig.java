@@ -24,8 +24,8 @@ public class OpenApiConfig {
 
         Info info = new Info()
                 .version("v1.0.0")
-                .title("till back API Document")
-                .description("till back API 문서");
+                .title("toy-mini-blog-back API Document")
+                .description("toy-mini-blog-back API 문서");
 
         List<SecurityRequirement> securityRequirements = new ArrayList<>();
         securityRequirements.add(new SecurityRequirement().addList("bearerAuth"));

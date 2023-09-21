@@ -20,13 +20,11 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 class JwtTokenProviderTest extends JwtTokenProvider {
 
-    @Autowired
-    private JwtTokenProvider jwtTokenProvider;
-
     private Key key;
     private TokenInfo tokenInfo;
     private String accessToken;
     private String refreshToken;
+
     private Long expiredSecond = 1L;
 
     @Autowired
@@ -36,11 +34,21 @@ class JwtTokenProviderTest extends JwtTokenProvider {
         this.key = Keys.hmacShaKeyFor(keyBytes);
     }
 
-    @Override
-    public TokenInfo generateToken(String memberPk, List<String> roles) {
+    public TokenInfo generateToken(String memberPk, List<String> roles, Boolean isShort) {
         long now = (new Date()).getTime();
 
-        Date accessTokenExpiresIn = new Date(now + expiredSecond * 500);
+        Date accessTokenExpiresIn;
+        Date refreshTokenExpiresIn;
+
+        if (isShort) {
+            accessTokenExpiresIn = new Date(now + expiredSecond * 500);
+            refreshTokenExpiresIn = new Date(now + expiredSecond * 800);
+        }
+        else {
+            accessTokenExpiresIn = new Date(now + expiredSecond * 5000);
+            refreshTokenExpiresIn = new Date(now + expiredSecond * 8000);
+        }
+
         // Access Token 생성
         Claims claims = Jwts.claims().setSubject(String.valueOf(memberPk));
         claims.put("roles", roles);
@@ -52,7 +60,7 @@ class JwtTokenProviderTest extends JwtTokenProvider {
 
         // Refresh Token 생성
         String refreshToken = Jwts.builder()
-                .setExpiration(new Date(now + expiredSecond * 800))
+                .setExpiration(refreshTokenExpiresIn)
                 .signWith(this.key, SignatureAlgorithm.HS256)
                 .compact();
 
@@ -91,7 +99,7 @@ class JwtTokenProviderTest extends JwtTokenProvider {
         String memberPk = "a@a.com";
         List<String> roles = new ArrayList<>();
         roles.add("testUser");
-        this.tokenInfo = this.generateToken(memberPk, roles);
+        this.tokenInfo = this.generateToken(memberPk, roles, true);
         System.out.println("tokenInfo = " + tokenInfo);
 
         this.accessToken = tokenInfo.getAccessToken();
@@ -102,18 +110,22 @@ class JwtTokenProviderTest extends JwtTokenProvider {
      * 토큰 생성 확인
      */
     @Test
-    void generateToken() {
+    void generateTokenTest() {
         assertNotNull(tokenInfo);
         assertEquals(tokenInfo.getGrantType(), "Bearer");
     }
 
     /**
-     * 토큰 검증
+     * 유효한 토큰인지 검증
      */
     @Test
     void validateTokenTest() {
-        boolean boolAccess = jwtTokenProvider.validateToken(tokenInfo.getAccessToken());
-        boolean boolRefresh = jwtTokenProvider.validateToken(tokenInfo.getRefreshToken());
+        String memberPk = "a@a.com";
+        List<String> roles = new ArrayList<>();
+        roles.add("testUser");
+        TokenInfo testTokenInfo = this.generateToken(memberPk, roles, false);
+        boolean boolAccess = this.validateToken(testTokenInfo.getAccessToken());
+        boolean boolRefresh = this.validateToken(testTokenInfo.getRefreshToken());
 
         System.out.println("boolAccess = " + boolAccess);
         System.out.println("boolRefresh = " + boolRefresh);
