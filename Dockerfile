@@ -13,4 +13,4 @@ ADD ${JAR_FILE} /deploy/toy-mini-blog-back.jar
 EXPOSE 8081
 
 # jar 파일 실행
-ENTRYPOINT ["java","-jar","/deploy/toy-mini-blog-back.jar"]
+ENTRYPOINT ['java', '-Dspring.profiles.active=prod', '-jar','/deploy/toy-mini-blog-back.jar']
