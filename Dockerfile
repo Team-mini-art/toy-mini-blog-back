@@ -5,7 +5,7 @@ FROM amazoncorretto:11
 RUN mkdir /deploy
 
 # JAR 파일 변수 지정
-ARG JAR_FILE build/libs/till.back-0.0.1-SNAPSHOT.jar 
+ARG JAR_FILE=build/libs/till.back-0.0.1-SNAPSHOT.jar 
 
 ADD ${JAR_FILE} /deploy/toy-mini-blog-back.jar
 
