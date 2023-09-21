@@ -9,8 +9,11 @@ ARG JAR_FILE=build/libs/till.back-0.0.1-SNAPSHOT.jar
 
 ADD ${JAR_FILE} /deploy/toy-mini-blog-back.jar
 
-# 서버 포트 설정
-EXPOSE 8081
+# 환경 변수로 프로파일 설정
+ENV SPRING_PROFILES_ACTIVE=prod
 
 # jar 파일 실행
-ENTRYPOINT ['java', '-Dspring.profiles.active=prod', '-jar','/deploy/toy-mini-blog-back.jar']
+ENTRYPOINT ['java', '-jar', '/deploy/toy-mini-blog-back.jar']
+
+# 서버 포트 설정
+EXPOSE 8081
