@@ -20,10 +20,6 @@ springdoc:
     paths-to-match:
       - /**
 
-logging.level:
-  org.hibernate.SQL: debug
-#  org.hibernate.type: trace
-
 jwt:
   secret: MDwwDQYJKoZIhvcNAQEBBQADKwAwKAIhAIqwfgdpBCIj/Kk4qtsIDrRjuABSI+rj69wlm+4eqU65AgMBAAE=
   token-validity-in-seconds: 86400
