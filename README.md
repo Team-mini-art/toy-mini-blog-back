@@ -5,7 +5,7 @@
 
 - java: 11
 - spring-boot: 2.7.9
-- DB: h2
+- DB: AWS RDS
 - Swagger UI
 - JPA
 - Spring Data JPA
