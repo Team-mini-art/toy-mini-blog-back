@@ -1,4 +1,4 @@
-# Team-mini-art til-back
+# Team-mini-art toy-mini-blog-back
 
 ## 목표
 기본적인 Blog CRUD를 Spring Boot JPA로 구현해본다.
