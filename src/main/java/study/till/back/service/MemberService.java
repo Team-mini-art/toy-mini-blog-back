@@ -22,7 +22,6 @@ import study.till.back.repository.MemberRepository;
 import javax.transaction.Transactional;
 import java.util.Collections;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -80,7 +79,7 @@ public class MemberService {
         return ResponseEntity.ok().body(loginResponse);
     }
 
-    public FindMemberPageResponse findMembers(Pageable pageable) {
+    public ResponseEntity<FindMemberPageResponse> findMembers(Pageable pageable) {
         Page<Member> contents = memberRepository.findAll(pageable);
 
         if (contents.isEmpty()) {
@@ -99,7 +98,7 @@ public class MemberService {
                 .hasNext(contents.hasNext())
                 .build();
 
-        return findMemberPageResponse;
+        return ResponseEntity.ok().body(findMemberPageResponse);
     }
 
     public boolean isValidEmail(String email) {

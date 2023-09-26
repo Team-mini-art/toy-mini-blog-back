@@ -10,8 +10,6 @@ import study.till.back.dto.*;
 import study.till.back.dto.member.*;
 import study.till.back.service.MemberService;
 
-import java.util.List;
-
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api")
@@ -30,7 +28,7 @@ public class MemberController {
     }
 
     @GetMapping("/members")
-    public FindMemberPageResponse findMembers(
+    public ResponseEntity<FindMemberPageResponse> findMembers(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "email") String sort,
