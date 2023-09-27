@@ -1,9 +1,13 @@
 package study.till.back.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import study.till.back.dto.CreateCommonResponse;
+import study.till.back.dto.post.FindPostPageResponse;
 import study.till.back.dto.post.FindPostResponse;
 import study.till.back.dto.post.PostRequest;
 import study.till.back.dto.CommonResponse;
@@ -20,8 +24,15 @@ public class PostController {
     private final PostService postService;
 
     @GetMapping("/posts")
-    public ResponseEntity<List<FindPostResponse>> findPosts() {
-        return postService.findPosts();
+    public ResponseEntity<FindPostPageResponse> findPosts(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "post_id") String sort,
+            @RequestParam(defaultValue = "asc") String direction) {
+
+        Sort.Direction sortDirection = Sort.Direction.fromString(direction);
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sortDirection, sort));
+        return postService.findPosts(pageable);
     }
 
     @GetMapping("/posts/{id}")

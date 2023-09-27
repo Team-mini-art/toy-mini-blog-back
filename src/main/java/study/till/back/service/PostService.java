@@ -1,15 +1,19 @@
 package study.till.back.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import study.till.back.dto.CreateCommonResponse;
+import study.till.back.dto.post.FindPostPageResponse;
 import study.till.back.dto.post.FindPostResponse;
 import study.till.back.dto.post.PostRequest;
 import study.till.back.dto.CommonResponse;
 import study.till.back.entity.Member;
 import study.till.back.entity.Post;
+import study.till.back.exception.common.NoDataException;
 import study.till.back.exception.member.NotFoundMemberException;
 import study.till.back.exception.member.NotMatchMemberException;
 import study.till.back.exception.post.NotFoundPostException;
@@ -26,19 +30,26 @@ public class PostService {
     private final MemberRepository memberRepository;
     private final PostRepository postRepository;
 
-    public ResponseEntity<List<FindPostResponse>> findPosts() {
-        List<Post> posts = postRepository.findAll();
+    public ResponseEntity<FindPostPageResponse> findPosts(Pageable pageable) {
+        Page<Post> contents = postRepository.findAll(pageable);
 
-        List<FindPostResponse> findPostResponses = posts.stream().map(post -> FindPostResponse.builder()
-                .id(post.getId())
-                .email(post.getMember().getEmail())
-                .title(post.getTitle())
-                .contents(post.getContents())
-                .createdDate(post.getCreatedDate())
-                .updatedDate(post.getUpdatedDate())
-                .build()
-        ).collect(Collectors.toList());
-        return ResponseEntity.ok(findPostResponses);
+        if (contents.isEmpty()) {
+            throw new NoDataException();
+        }
+
+        List<FindPostResponse> posts = contents.stream().map(FindPostResponse::from).collect(Collectors.toList());
+
+        FindPostPageResponse findPostPageResponse = FindPostPageResponse.builder()
+                .posts(posts)
+                .totalElements(contents.getTotalElements())
+                .totalPages(contents.getTotalPages())
+                .pageNumber(contents.getNumber())
+                .pageSize(contents.getSize())
+                .hasPrevious(contents.hasPrevious())
+                .hasNext(contents.hasNext())
+                .build();
+
+        return ResponseEntity.ok(findPostPageResponse);
     }
 
     public ResponseEntity<FindPostResponse> findPost(Long postId) {
