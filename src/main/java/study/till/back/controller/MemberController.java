@@ -31,8 +31,8 @@ public class MemberController {
     public ResponseEntity<FindMemberPageResponse> findMembers(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
-            @RequestParam(defaultValue = "email") String sort,
-            @RequestParam(defaultValue = "asc") String direction) {
+            @RequestParam(defaultValue = "createdDate") String sort,
+            @RequestParam(defaultValue = "desc") String direction) {
 
         Sort.Direction sortDirection = Sort.Direction.fromString(direction);
         Pageable pageable = PageRequest.of(page, size, Sort.by(sortDirection, sort));
