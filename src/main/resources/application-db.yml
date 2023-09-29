@@ -26,6 +26,30 @@ logging.level:
 spring:
   config:
     activate:
+      on-profile: dev
+  datasource:
+    url: ENC(LMbLcampRt9GtQ1h/CpD5rtocQYopjHkBZQBBKrleu0tMKeyYHgxNsTWTJj55BnHIKMSZOjyxjyvyMqJRgRiDyCLX12wvtuPiVLj7wikei5qWUX7CrxLwsbcsphyfHxg)
+    username: ENC(gcNZpdpwOAapp1Mn5z/dKw==)
+    password: ENC(DFBE0sJ3qjUvKi4bHbcJAUQ6DRNvxVVY)
+    driver-class-name: org.mariadb.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        show_sql: true
+        format_sql: true
+
+logging.level:
+  org.hibernate.SQL: debug
+#  org.hibernate.type: trace
+
+---
+
+spring:
+  config:
+    activate:
       on-profile: prod
   datasource:
     url: ENC(LMbLcampRt9GtQ1h/CpD5rtocQYopjHkBZQBBKrleu0tMKeyYHgxNsTWTJj55BnHIKMSZOjyxjyvyMqJRgRiDyCLX12wvtuPiVLj7wikei5qWUX7CrxLwsbcsphyfHxg)
@@ -44,3 +68,8 @@ spring:
 logging.level:
   org.hibernate.SQL: info
 #  org.hibernate.type: trace
+
+decorator:
+  datasource:
+    p6spy:
+      enable-logging: false
