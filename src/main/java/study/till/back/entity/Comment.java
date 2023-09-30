@@ -17,7 +17,7 @@ public class Comment extends BaseTimeEntity {
     @Id
     @GeneratedValue
     @Column(name = "comment_id")
-    private Long id;
+    private long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id")
@@ -28,6 +28,10 @@ public class Comment extends BaseTimeEntity {
     private Member member;
 
     private String contents;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "parent_comment_id")
+    private Comment parentComment;
 
     public void updateComment(String contents) {
         this.contents = contents;

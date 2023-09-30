@@ -7,6 +7,7 @@ RUN mkdir /deploy
 # JAR 파일 변수 지정
 ARG JAR_FILE=build/libs/till.back-0.0.1-SNAPSHOT.jar 
 
+# deploy 폴더로 jar 파일 복사
 ADD ${JAR_FILE} /deploy/toy-mini-blog-back.jar
 
 # 서버 포트 설정

@@ -14,6 +14,7 @@ import java.time.LocalDateTime;
 public class FindCommentResponse {
     private Long id;
     private Long post_id;
+    private Long parent_comment_id;
     private String email;
     private String nickname;
     private String contents;
