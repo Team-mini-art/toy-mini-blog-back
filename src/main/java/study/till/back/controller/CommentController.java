@@ -42,4 +42,11 @@ public class CommentController {
     public ResponseEntity<CommonResponse> deleteComment(@PathVariable("id") Long id) {
         return commentService.deleteComment(id);
     }
+
+    @PostMapping("/comments/{id}")
+    public ResponseEntity<CreateCommonResponse> createReplyComment(
+            @PathVariable("id") Long id,
+            @RequestBody CommentRequest commentRequest) {
+        return commentService.createReplyComment(id, commentRequest);
+    }
 }

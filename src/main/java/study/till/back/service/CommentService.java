@@ -36,9 +36,10 @@ public class CommentService {
 
         List<FindCommentResponse> findCommentResponse = comments.stream().map(comment -> FindCommentResponse.builder()
                 .id(comment.getId())
+                .post_id(comment.getPost().getId())
+                .parent_comment_id(comment.getParentComment() != null ? comment.getParentComment().getId() : null)
                 .email(comment.getMember().getEmail())
                 .nickname(comment.getMember().getNickname())
-                .post_id(comment.getPost().getId())
                 .contents(comment.getContents())
                 .createdDate(comment.getCreatedDate())
                 .updatedDate(comment.getUpdatedDate())
@@ -56,6 +57,7 @@ public class CommentService {
         FindCommentResponse findCommentResponse = FindCommentResponse.builder()
                 .id(comment.getId())
                 .post_id(comment.getPost().getId())
+                .parent_comment_id(comment.getParentComment().getId())
                 .email(comment.getMember().getEmail())
                 .nickname(comment.getMember().getNickname())
                 .contents(comment.getContents())
@@ -127,5 +129,33 @@ public class CommentService {
                 .build();
 
         return ResponseEntity.ok(commonResponse);
+    }
+
+    public ResponseEntity<CreateCommonResponse> createReplyComment(Long id, CommentRequest commentRequest) {
+        Member member = memberRepository.findByEmail(commentRequest.getEmail());
+        if (member == null) throw new NotFoundMemberException();
+
+        Post post = postRepository.findById(commentRequest.getPost_id()).orElse(null);
+        if (post == null) throw new NotFoundPostException();
+
+        Comment parentComment = commentRepositroy.findById(id).orElse(null);
+        if (parentComment == null) throw new NotFoundCommentException();
+
+        Comment comment = Comment.builder()
+                .member(member)
+                .post(post)
+                .contents(commentRequest.getContents())
+                .parentComment(parentComment)
+                .build();
+
+        commentRepositroy.save(comment);
+
+        CreateCommonResponse createCommonResponse = CreateCommonResponse.builder()
+                .id(comment.getId())
+                .status("SUCCESS")
+                .message("대댓글 작성이 완료되었습니다.")
+                .build();
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(createCommonResponse);
     }
 }
