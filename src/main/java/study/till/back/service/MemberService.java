@@ -43,8 +43,7 @@ public class MemberService {
             throw new InvalidPasswordException();
         }
 
-        Member member = memberRepository.findByEmail(signupRequest.getEmail());
-        if (member != null) throw new DuplicateMemberException();
+        Member member = memberRepository.findById(signupRequest.getEmail()).orElseThrow(() -> new NotFoundMemberException());
 
         signupRequest.setPassword(passwordEncoder.encode(signupRequest.getPassword()));
         Member members = Member.builder()
@@ -64,8 +63,7 @@ public class MemberService {
 
     public ResponseEntity<LoginResponse> login(LoginRequest loginRequest) {
 
-        Member member = memberRepository.findByEmail(loginRequest.getEmail());
-        if (member == null) throw new NotFoundMemberException();
+        Member member = memberRepository.findById(loginRequest.getEmail()).orElseThrow(() -> new NotFoundMemberException());
         if (!passwordEncoder.matches(loginRequest.getPassword(), member.getPassword())) throw new NotFoundMemberException();
 
         TokenInfo tokenInfo = jwtTokenProvider.generateToken(member.getEmail(), member.getRoles());
