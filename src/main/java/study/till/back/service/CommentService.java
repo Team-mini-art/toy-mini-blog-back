@@ -36,9 +36,10 @@ public class CommentService {
 
         List<FindCommentResponse> findCommentResponse = comments.stream().map(comment -> FindCommentResponse.builder()
                 .id(comment.getId())
+                .post_id(comment.getPost().getId())
+                .parent_comment_id(comment.getParentComment() != null ? comment.getParentComment().getId() : null)
                 .email(comment.getMember().getEmail())
                 .nickname(comment.getMember().getNickname())
-                .post_id(comment.getPost().getId())
                 .contents(comment.getContents())
                 .createdDate(comment.getCreatedDate())
                 .updatedDate(comment.getUpdatedDate())
@@ -49,13 +50,12 @@ public class CommentService {
     }
 
     public ResponseEntity<FindCommentResponse> findComment(Long id) {
-        Comment comment = commentRepositroy.findById(id).orElse(null);
-
-        if (comment == null) throw new NotFoundCommentException();
+        Comment comment = commentRepositroy.findById(id).orElseThrow(NotFoundCommentException::new);
 
         FindCommentResponse findCommentResponse = FindCommentResponse.builder()
                 .id(comment.getId())
                 .post_id(comment.getPost().getId())
+                .parent_comment_id(comment.getParentComment().getId())
                 .email(comment.getMember().getEmail())
                 .nickname(comment.getMember().getNickname())
                 .contents(comment.getContents())
@@ -68,11 +68,9 @@ public class CommentService {
 
     @Transactional
     public ResponseEntity<CreateCommonResponse> createComment(CommentRequest commentRequest) {
-        Member member = memberRepository.findByEmail(commentRequest.getEmail());
-        if (member == null) throw new NotFoundMemberException();
+        Member member = memberRepository.findById(commentRequest.getEmail()).orElseThrow(NotFoundMemberException::new);
 
-        Post post = postRepository.findById(commentRequest.getPost_id()).orElse(null);
-        if (post == null) throw new NotFoundPostException();
+        Post post = postRepository.findById(commentRequest.getPost_id()).orElseThrow(NotFoundPostException::new);
 
         Comment comment = Comment.builder()
                 .member(member)
@@ -93,14 +91,11 @@ public class CommentService {
 
     @Transactional
     public ResponseEntity<CommonResponse> updateComment(Long id, CommentRequest commentRequest) {
-        Member member = memberRepository.findByEmail(commentRequest.getEmail());
-        if (member == null) throw new NotFoundMemberException();
+        Member member = memberRepository.findById(commentRequest.getEmail()).orElseThrow(NotFoundMemberException::new);
 
-        Post post = postRepository.findById(commentRequest.getPost_id()).orElse(null);
-        if (post == null) throw new NotFoundPostException();
+        postRepository.findById(commentRequest.getPost_id()).orElseThrow(NotFoundPostException::new);
 
-        Comment comment = commentRepositroy.findById(id).orElse(null);
-        if (comment == null) throw new NotFoundCommentException();
+        Comment comment = commentRepositroy.findById(id).orElseThrow(NotFoundCommentException::new);
 
         if (!member.getEmail().equals(comment.getMember().getEmail())) throw new NotMatchMemberException();
 
@@ -116,16 +111,40 @@ public class CommentService {
 
     @Transactional
     public ResponseEntity<CommonResponse> deleteComment(Long id) {
-        Comment comment = commentRepositroy.findById(id).orElse(null);
-        if (comment == null) throw new NotFoundCommentException();
+        commentRepositroy.findById(id).orElseThrow(NotFoundCommentException::new);
 
         commentRepositroy.deleteById(id);
 
         CommonResponse commonResponse = CommonResponse.builder()
-                .status("SUCCESSS")
+                .status("SUCCESS")
                 .message("댓글이 삭제되었습니다.")
                 .build();
 
         return ResponseEntity.ok(commonResponse);
+    }
+
+    public ResponseEntity<CreateCommonResponse> createReplyComment(Long id, CommentRequest commentRequest) {
+        Member member = memberRepository.findById(commentRequest.getEmail()).orElseThrow(NotFoundMemberException::new);
+
+        Post post = postRepository.findById(commentRequest.getPost_id()).orElseThrow(NotFoundPostException::new);
+
+        Comment parentComment = commentRepositroy.findById(id).orElseThrow(NotFoundCommentException::new);
+
+        Comment comment = Comment.builder()
+                .member(member)
+                .post(post)
+                .contents(commentRequest.getContents())
+                .parentComment(parentComment)
+                .build();
+
+        commentRepositroy.save(comment);
+
+        CreateCommonResponse createCommonResponse = CreateCommonResponse.builder()
+                .id(comment.getId())
+                .status("SUCCESS")
+                .message("대댓글 작성이 완료되었습니다.")
+                .build();
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(createCommonResponse);
     }
 }

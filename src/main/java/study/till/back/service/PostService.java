@@ -53,9 +53,7 @@ public class PostService {
     }
 
     public ResponseEntity<FindPostResponse> findPost(Long postId) {
-        Post post = postRepository.findById(postId).orElse(null);
-
-        if (post == null) throw new NotFoundPostException();
+        Post post = postRepository.findById(postId).orElseThrow(NotFoundPostException::new);
 
         FindPostResponse findPostResponse = FindPostResponse.builder()
                 .id(post.getId())
@@ -71,8 +69,7 @@ public class PostService {
 
     @Transactional
     public ResponseEntity<CreateCommonResponse> createPost(PostRequest postRequest) {
-        Member member = memberRepository.findById(postRequest.getEmail()).orElse(null);
-        if (member == null) throw new NotFoundMemberException();
+        Member member = memberRepository.findById(postRequest.getEmail()).orElseThrow(NotFoundMemberException::new);
 
         Post post = Post.builder()
                 .title(postRequest.getTitle())
@@ -94,11 +91,9 @@ public class PostService {
 
     @Transactional
     public ResponseEntity<CommonResponse> updatePost(Long id, PostRequest postRequest) {
-        Member member = memberRepository.findById(postRequest.getEmail()).orElse(null);
-        if (member == null) throw new NotFoundMemberException();
+        memberRepository.findById(postRequest.getEmail()).orElseThrow(NotFoundMemberException::new);
 
-        Post post = postRepository.findById(id).orElse(null);
-        if (post == null) throw new NotFoundPostException();
+        Post post = postRepository.findById(id).orElseThrow(NotFoundPostException::new);
 
         if (!postRequest.getEmail().equals(post.getMember().getEmail())) throw new NotMatchMemberException();
 
@@ -113,8 +108,7 @@ public class PostService {
     }
     @Transactional
     public ResponseEntity<CommonResponse> deletePost(Long id) {
-        Post post = postRepository.findById(id).orElse(null);
-        if (post == null) throw new NotFoundPostException();
+        postRepository.findById(id).orElseThrow(NotFoundPostException::new);
 
         postRepository.deleteById(id);
 
