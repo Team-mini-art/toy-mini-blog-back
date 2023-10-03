@@ -11,6 +11,7 @@ import study.till.back.dto.comment.FindCommentResponse;
 import study.till.back.entity.Comment;
 import study.till.back.entity.Member;
 import study.till.back.entity.Post;
+import study.till.back.entity.Reply;
 import study.till.back.exception.comment.NotFoundCommentException;
 import study.till.back.exception.member.NotFoundMemberException;
 import study.till.back.exception.member.NotMatchMemberException;
@@ -18,6 +19,7 @@ import study.till.back.exception.post.NotFoundPostException;
 import study.till.back.repository.CommentRepositroy;
 import study.till.back.repository.MemberRepository;
 import study.till.back.repository.PostRepository;
+import study.till.back.repository.ReplyRepository;
 
 import javax.transaction.Transactional;
 import java.util.List;
@@ -37,7 +39,6 @@ public class CommentService {
         List<FindCommentResponse> findCommentResponse = comments.stream().map(comment -> FindCommentResponse.builder()
                 .id(comment.getId())
                 .post_id(comment.getPost().getId())
-                .parent_comment_id(comment.getParentComment() != null ? comment.getParentComment().getId() : null)
                 .email(comment.getMember().getEmail())
                 .nickname(comment.getMember().getNickname())
                 .contents(comment.getContents())
@@ -55,7 +56,6 @@ public class CommentService {
         FindCommentResponse findCommentResponse = FindCommentResponse.builder()
                 .id(comment.getId())
                 .post_id(comment.getPost().getId())
-                .parent_comment_id(comment.getParentComment().getId())
                 .email(comment.getMember().getEmail())
                 .nickname(comment.getMember().getNickname())
                 .contents(comment.getContents())
@@ -121,30 +121,5 @@ public class CommentService {
                 .build();
 
         return ResponseEntity.ok(commonResponse);
-    }
-
-    public ResponseEntity<CreateCommonResponse> createReplyComment(Long id, CommentRequest commentRequest) {
-        Member member = memberRepository.findById(commentRequest.getEmail()).orElseThrow(NotFoundMemberException::new);
-
-        Post post = postRepository.findById(commentRequest.getPost_id()).orElseThrow(NotFoundPostException::new);
-
-        Comment parentComment = commentRepositroy.findById(id).orElseThrow(NotFoundCommentException::new);
-
-        Comment comment = Comment.builder()
-                .member(member)
-                .post(post)
-                .contents(commentRequest.getContents())
-                .parentComment(parentComment)
-                .build();
-
-        commentRepositroy.save(comment);
-
-        CreateCommonResponse createCommonResponse = CreateCommonResponse.builder()
-                .id(comment.getId())
-                .status("SUCCESS")
-                .message("대댓글 작성이 완료되었습니다.")
-                .build();
-
-        return ResponseEntity.status(HttpStatus.CREATED).body(createCommonResponse);
     }
 }

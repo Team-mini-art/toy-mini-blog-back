@@ -53,7 +53,6 @@ class CommentServiceTest {
                 .contents("대댓글 test contents2")
                 .member(member1)
                 .post(post1)
-                .parentComment(comment1)
                 .build();
 
         memberRepository.save(member1);
