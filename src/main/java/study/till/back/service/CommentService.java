@@ -8,6 +8,7 @@ import study.till.back.dto.CommonResponse;
 import study.till.back.dto.CreateCommonResponse;
 import study.till.back.dto.comment.CommentRequest;
 import study.till.back.dto.comment.FindCommentResponse;
+import study.till.back.dto.reply.ReplyDTO;
 import study.till.back.entity.Comment;
 import study.till.back.entity.Member;
 import study.till.back.entity.Post;
@@ -36,19 +37,13 @@ public class CommentService {
     public ResponseEntity<List<FindCommentResponse>> findComments() {
         List<Comment> comments = commentRepositroy.findAll();
 
-        List<FindCommentResponse> findCommentResponse = comments.stream().map(comment -> FindCommentResponse.builder()
-                .id(comment.getId())
-                .post_id(comment.getPost().getId())
-                .email(comment.getMember().getEmail())
-                .nickname(comment.getMember().getNickname())
-                .contents(comment.getContents())
-                .createdDate(comment.getCreatedDate())
-                .updatedDate(comment.getUpdatedDate())
-                .build()
-        ).collect(Collectors.toList());
+        List<FindCommentResponse> findCommentResponses = comments.stream()
+                .map(FindCommentResponse::fromEntity)
+                .collect(Collectors.toList());
 
-        return ResponseEntity.ok(findCommentResponse);
+        return ResponseEntity.ok(findCommentResponses);
     }
+
 
     public ResponseEntity<FindCommentResponse> findComment(Long id) {
         Comment comment = commentRepositroy.findById(id).orElseThrow(NotFoundCommentException::new);
