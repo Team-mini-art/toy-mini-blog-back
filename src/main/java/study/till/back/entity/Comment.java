@@ -11,7 +11,6 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 @Getter
-@Setter
 public class Comment extends BaseTimeEntity {
 
     @Id
