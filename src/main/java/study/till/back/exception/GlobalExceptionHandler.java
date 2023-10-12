@@ -12,6 +12,7 @@ import study.till.back.exception.comment.NotFoundCommentException;
 import study.till.back.exception.common.NoDataException;
 import study.till.back.exception.member.*;
 import study.till.back.exception.post.NotFoundPostException;
+import study.till.back.exception.reply.NotFoundReplyException;
 import study.till.back.exception.token.ExpiredAccessTokenException;
 import study.till.back.exception.token.ExpiredRefreshTokenException;
 import study.till.back.exception.token.UnauthorizedTokenException;
@@ -96,13 +97,19 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(value = { NotFoundCommentException.class })
     protected ResponseEntity<ErrorResponse> notFoundCommentException(RuntimeException e) {
-        log.error("RuntimeException throw notFoundCommentException : {}", e.getMessage());
+        log.error("RuntimeException throw NotFoundCommentException : {}", e.getMessage());
+        return ErrorResponse.toResponseEntity(NOT_FOUND, e.getMessage());
+    }
+
+    @ExceptionHandler(value = { NotFoundReplyException.class })
+    protected ResponseEntity<ErrorResponse> notFoundReplyException(RuntimeException e) {
+        log.error("RuntimeException throw NotFoundReplyException : {}", e.getMessage());
         return ErrorResponse.toResponseEntity(NOT_FOUND, e.getMessage());
     }
 
     @ExceptionHandler(value = { NoDataException.class })
     protected ResponseEntity<ErrorResponse> noDataException(RuntimeException e) {
-        log.error("RuntimeException throw noDataException : {}", e.getMessage());
+        log.error("RuntimeException throw NoDataException : {}", e.getMessage());
         return ErrorResponse.toResponseEntity(NO_DATA, e.getMessage());
     }
 }

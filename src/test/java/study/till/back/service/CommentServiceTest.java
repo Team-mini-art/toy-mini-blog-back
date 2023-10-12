@@ -78,7 +78,7 @@ class CommentServiceTest {
         List<Reply> replyList = new ArrayList<>();
         replyList.add(reply1);
         replyList.add(reply2);
-        comment1.setReplyList(replyList);
+//        comment1.setReplyList(replyList);
 
 
         memberRepository.save(member1);
