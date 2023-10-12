@@ -58,7 +58,7 @@ public class ReplyService {
 
         Reply reply = replyRepository.findById(id).orElseThrow(NotFoundReplyException::new);
 
-        Comment comment = commentRepositroy.findById(reply.getParentComment().getId()).orElseThrow(NotFoundCommentException::new);
+        commentRepositroy.findById(reply.getParentComment().getId()).orElseThrow(NotFoundCommentException::new);
 
         if (!reply.getMember().getEmail().equals(replyRequest.getEmail())) throw new NotMatchMemberException();
 
@@ -68,6 +68,19 @@ public class ReplyService {
         CommonResponse commonResponse = CommonResponse.builder()
                 .status("SUCCESS")
                 .message("대댓글이 수정되었습니다.")
+                .build();
+
+        return ResponseEntity.ok(commonResponse);
+    }
+
+    public ResponseEntity<CommonResponse> deleteReply(Long id) {
+        replyRepository.findById(id).orElseThrow(NotFoundReplyException::new);
+
+        replyRepository.deleteById(id);
+
+        CommonResponse commonResponse = CommonResponse.builder()
+                .status("SUCCESS")
+                .message("대댓글이 삭제되었습니다.")
                 .build();
 
         return ResponseEntity.ok(commonResponse);

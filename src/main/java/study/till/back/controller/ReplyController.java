@@ -24,4 +24,9 @@ public class ReplyController {
     public ResponseEntity<CommonResponse> updateReply(@PathVariable("id") Long id, @RequestBody ReplyRequest replyRequest) {
         return replyService.updateReply(id, replyRequest);
     }
+
+    @DeleteMapping("/replies/{id}")
+    public ResponseEntity<CommonResponse> deleteReply(@PathVariable("id") Long id) {
+        return replyService.deleteReply(id);
+    }
 }
