@@ -1,6 +1,8 @@
 package study.till.back.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -12,6 +14,7 @@ import study.till.back.entity.Comment;
 import study.till.back.entity.Member;
 import study.till.back.entity.Post;
 import study.till.back.exception.comment.NotFoundCommentException;
+import study.till.back.exception.common.NoDataException;
 import study.till.back.exception.member.NotFoundMemberException;
 import study.till.back.exception.member.NotMatchMemberException;
 import study.till.back.exception.post.NotFoundPostException;
@@ -31,8 +34,12 @@ public class CommentService {
     private final PostRepository postRepository;
     private final CommentRepositroy commentRepositroy;
 
-    public ResponseEntity<List<FindCommentResponse>> findComments() {
-        List<Comment> comments = commentRepositroy.findAll();
+    public ResponseEntity<List<FindCommentResponse>> findComments(Pageable pageable) {
+        Page<Comment> comments = commentRepositroy.findAll(pageable);
+
+        if (comments.isEmpty()) {
+            throw new NoDataException();
+        }
 
         List<FindCommentResponse> findCommentResponses = comments.stream()
                 .map(FindCommentResponse::fromEntity)
