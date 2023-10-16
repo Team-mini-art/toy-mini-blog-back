@@ -5,9 +5,10 @@
 
 - java: 11
 - spring-boot: 2.7.9
-- DB: AWS RDS
+- DB: MariaDB (AWS RDS)
 - Swagger UI
 - JPA
 - Spring Data JPA
 - JWT Token
 - Spring Security
+- AWS EC2 (CI, CD Server)
