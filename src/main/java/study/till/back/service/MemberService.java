@@ -85,17 +85,7 @@ public class MemberService {
         }
 
         List<FindMemberResponse> members = contents.stream().map(FindMemberResponse::from).collect(Collectors.toList());
-
-        FindMemberPageResponse findMemberPageResponse = FindMemberPageResponse.builder()
-                .members(members)
-                .totalElements(contents.getTotalElements())
-                .totalPages(contents.getTotalPages())
-                .pageNumber(contents.getNumber())
-                .pageSize(contents.getSize())
-                .hasPrevious(contents.hasPrevious())
-                .hasNext(contents.hasNext())
-                .build();
-
+        FindMemberPageResponse findMemberPageResponse = FindMemberPageResponse.from(contents, members);
         return ResponseEntity.ok().body(findMemberPageResponse);
     }
 
