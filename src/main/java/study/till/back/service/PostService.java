@@ -38,31 +38,14 @@ public class PostService {
         }
 
         List<FindPostResponse> posts = contents.stream().map(FindPostResponse::from).collect(Collectors.toList());
-
-        FindPostPageResponse findPostPageResponse = FindPostPageResponse.builder()
-                .posts(posts)
-                .totalElements(contents.getTotalElements())
-                .totalPages(contents.getTotalPages())
-                .pageNumber(contents.getNumber())
-                .pageSize(contents.getSize())
-                .hasPrevious(contents.hasPrevious())
-                .hasNext(contents.hasNext())
-                .build();
-
+        FindPostPageResponse findPostPageResponse = FindPostPageResponse.from(contents, posts);
         return ResponseEntity.ok(findPostPageResponse);
     }
 
     public ResponseEntity<FindPostResponse> findPost(Long postId) {
         Post post = postRepository.findById(postId).orElseThrow(NotFoundPostException::new);
 
-        FindPostResponse findPostResponse = FindPostResponse.builder()
-                .id(post.getId())
-                .email(post.getMember().getEmail())
-                .title(post.getTitle())
-                .contents(post.getContents())
-                .createdDate(post.getCreatedDate())
-                .updatedDate(post.getUpdatedDate())
-                .build();
+        FindPostResponse findPostResponse = FindPostResponse.from(post);
 
         return ResponseEntity.ok(findPostResponse);
     }
