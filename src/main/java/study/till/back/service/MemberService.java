@@ -43,7 +43,7 @@ public class MemberService {
             throw new InvalidPasswordException();
         }
 
-        Member member = memberRepository.findById(signupRequest.getEmail()).orElseThrow(() -> new NotFoundMemberException());
+        memberRepository.findById(signupRequest.getEmail()).orElseThrow(() -> new NotFoundMemberException());
 
         signupRequest.setPassword(passwordEncoder.encode(signupRequest.getPassword()));
         Member members = Member.builder()

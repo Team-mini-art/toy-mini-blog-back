@@ -44,9 +44,7 @@ public class PostService {
 
     public ResponseEntity<FindPostResponse> findPost(Long postId) {
         Post post = postRepository.findById(postId).orElseThrow(NotFoundPostException::new);
-
         FindPostResponse findPostResponse = FindPostResponse.from(post);
-
         return ResponseEntity.ok(findPostResponse);
     }
 
