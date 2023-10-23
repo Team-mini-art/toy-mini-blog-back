@@ -3,6 +3,7 @@ package study.till.back.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -30,15 +31,25 @@ public class PostService {
     private final MemberRepository memberRepository;
     private final PostRepository postRepository;
 
-    public ResponseEntity<FindPostPageResponse> findPosts(Pageable pageable) {
-        Page<Post> contents = postRepository.findAll(pageable);
+    public ResponseEntity<FindPostPageResponse> findPosts(Pageable pageable, String title, String contents) {
+        Specification<Post> spec = Specification.where(Specification.<Post>where(null));
 
-        if (contents.isEmpty()) {
+        if (title != null && !title.isEmpty()) {
+            spec = spec.and((root, query, builder) -> builder.like(root.get("title"), "%" + title + "%"));
+        }
+
+        if (contents != null && !contents.isEmpty()) {
+            spec = spec.and((root, query, builder) -> builder.like(root.get("contents"), "%" + contents + "%"));
+        }
+
+        Page<Post> all = postRepository.findAll(spec, pageable);
+
+        if (all.isEmpty()) {
             throw new NoDataException();
         }
 
-        List<FindPostResponse> posts = contents.stream().map(FindPostResponse::from).collect(Collectors.toList());
-        FindPostPageResponse findPostPageResponse = FindPostPageResponse.from(contents, posts);
+        List<FindPostResponse> posts = all.stream().map(FindPostResponse::from).collect(Collectors.toList());
+        FindPostPageResponse findPostPageResponse = FindPostPageResponse.from(all, posts);
         return ResponseEntity.ok(findPostPageResponse);
     }
 
