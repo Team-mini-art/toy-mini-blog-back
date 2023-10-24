@@ -25,7 +25,7 @@ public class FindCommentResponse {
     private LocalDateTime updatedDate;
     private List<ReplyDTO> replyList = new ArrayList<>();
 
-    public static FindCommentResponse fromEntity(Comment comment) {
+    public static FindCommentResponse from(Comment comment) {
         return FindCommentResponse.builder()
                 .id(comment.getId())
                 .post_id(comment.getPost().getId())

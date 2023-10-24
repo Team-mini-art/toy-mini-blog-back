@@ -42,7 +42,7 @@ public class CommentService {
         }
 
         List<FindCommentResponse> findCommentResponses = comments.stream()
-                .map(FindCommentResponse::fromEntity)
+                .map(FindCommentResponse::from)
                 .collect(Collectors.toList());
 
         return ResponseEntity.ok(findCommentResponses);
@@ -52,15 +52,7 @@ public class CommentService {
     public ResponseEntity<FindCommentResponse> findComment(Long id) {
         Comment comment = commentRepositroy.findById(id).orElseThrow(NotFoundCommentException::new);
 
-        FindCommentResponse findCommentResponse = FindCommentResponse.builder()
-                .id(comment.getId())
-                .post_id(comment.getPost().getId())
-                .email(comment.getMember().getEmail())
-                .nickname(comment.getMember().getNickname())
-                .contents(comment.getContents())
-                .createdDate(comment.getCreatedDate())
-                .updatedDate(comment.getUpdatedDate())
-                .build();
+        FindCommentResponse findCommentResponse = FindCommentResponse.from(comment);
 
         return ResponseEntity.ok(findCommentResponse);
     }

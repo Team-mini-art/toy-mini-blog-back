@@ -3,6 +3,7 @@ package study.till.back.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -13,7 +14,6 @@ import study.till.back.dto.member.*;
 import study.till.back.dto.token.TokenInfo;
 import study.till.back.entity.Member;
 import study.till.back.exception.common.NoDataException;
-import study.till.back.exception.member.DuplicateMemberException;
 import study.till.back.exception.member.InvalidEmailException;
 import study.till.back.exception.member.InvalidPasswordException;
 import study.till.back.exception.member.NotFoundMemberException;
@@ -43,7 +43,7 @@ public class MemberService {
             throw new InvalidPasswordException();
         }
 
-        Member member = memberRepository.findById(signupRequest.getEmail()).orElseThrow(() -> new NotFoundMemberException());
+        memberRepository.findById(signupRequest.getEmail()).orElseThrow(() -> new NotFoundMemberException());
 
         signupRequest.setPassword(passwordEncoder.encode(signupRequest.getPassword()));
         Member members = Member.builder()
@@ -77,8 +77,18 @@ public class MemberService {
         return ResponseEntity.ok().body(loginResponse);
     }
 
-    public ResponseEntity<FindMemberPageResponse> findMembers(Pageable pageable) {
-        Page<Member> contents = memberRepository.findAll(pageable);
+    public ResponseEntity<FindMemberPageResponse> findMembers(Pageable pageable, String email, String nickname) {
+        Specification<Member> spec = Specification.where(Specification.<Member>where(null));
+
+        if (email != null && !email.isEmpty()) {
+            spec = spec.and((root, query, builder) -> builder.like(root.get("email"), "%" + email + "%"));
+        }
+
+        if (nickname != null && !nickname.isEmpty()) {
+            spec = spec.and((root, query, builder) -> builder.like(root.get("nickname"), "%" + nickname + "%"));
+        }
+
+        Page<Member> contents = memberRepository.findAll(spec, pageable);
 
         if (contents.isEmpty()) {
             throw new NoDataException();
