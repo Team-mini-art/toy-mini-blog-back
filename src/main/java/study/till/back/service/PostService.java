@@ -21,6 +21,7 @@ import study.till.back.exception.post.NotFoundPostException;
 import study.till.back.repository.MemberRepository;
 import study.till.back.repository.PostRepository;
 
+import javax.persistence.criteria.Join;
 import javax.transaction.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -31,8 +32,15 @@ public class PostService {
     private final MemberRepository memberRepository;
     private final PostRepository postRepository;
 
-    public ResponseEntity<FindPostPageResponse> findPosts(Pageable pageable, String title, String contents) {
+    public ResponseEntity<FindPostPageResponse> findPosts(Pageable pageable, String email, String title, String contents) {
         Specification<Post> spec = Specification.where(Specification.<Post>where(null));
+
+        if (email != null && !email.isEmpty()) {
+            spec = spec.and((root, query, builder) -> {
+                Join<Post, Member> memberPostJoin = root.join("member");
+                return builder.like(memberPostJoin.get("email"), "%" + email + "%");
+            });
+        }
 
         if (title != null && !title.isEmpty()) {
             spec = spec.and((root, query, builder) -> builder.like(root.get("title"), "%" + title + "%"));

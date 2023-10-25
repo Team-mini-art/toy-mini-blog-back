@@ -29,13 +29,14 @@ public class PostController {
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "id") String sort,
             @RequestParam(defaultValue = "desc") String direction,
+            @RequestParam(required = false) String email,
             @RequestParam(required = false) String title,
             @RequestParam(required = false) String contents
     ) {
 
         Sort.Direction sortDirection = Sort.Direction.fromString(direction);
         Pageable pageable = PageRequest.of(page, size, Sort.by(sortDirection, sort));
-        return postService.findPosts(pageable, title, contents);
+        return postService.findPosts(pageable, email, title, contents);
     }
 
     @GetMapping("/posts/{id}")
