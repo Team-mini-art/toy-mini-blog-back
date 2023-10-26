@@ -31,6 +31,9 @@ public class Member extends BaseTimeEntity implements UserDetails {
     @ElementCollection
     private List<String> roles = new ArrayList<>();
 
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<MemberAttach> attaches = new ArrayList<>();
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return roles.stream()
