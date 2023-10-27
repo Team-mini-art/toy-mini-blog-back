@@ -45,8 +45,8 @@ logging.level:
   org.hibernate.SQL: debug
 #  org.hibernate.type: trace
 
-file:
-  dir: /Users/hmmini/mini/develop/project/backend/asset
+upload:
+  path: /Users/hmmini/mini/develop/project/backend/asset/
 
 ---
 

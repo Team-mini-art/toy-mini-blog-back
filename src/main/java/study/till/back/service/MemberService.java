@@ -1,6 +1,7 @@
 package study.till.back.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -8,20 +9,28 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 import study.till.back.config.jwt.JwtTokenProvider;
 import study.till.back.dto.*;
 import study.till.back.dto.member.*;
 import study.till.back.dto.token.TokenInfo;
 import study.till.back.entity.Member;
+import study.till.back.entity.MemberAttach;
 import study.till.back.exception.common.NoDataException;
+import study.till.back.exception.member.DuplicateMemberException;
 import study.till.back.exception.member.InvalidEmailException;
 import study.till.back.exception.member.InvalidPasswordException;
 import study.till.back.exception.member.NotFoundMemberException;
+import study.till.back.repository.MemberAttachRepository;
 import study.till.back.repository.MemberRepository;
 
 import javax.transaction.Transactional;
+import java.io.File;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -29,9 +38,13 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class MemberService {
 
+    @Value("${upload.path}")
+    private String uploadPath;
+
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
+    private final MemberAttachRepository memberAttachRepository;
 
     @Transactional
     public ResponseEntity<CommonResponse> signup(SignupRequest signupRequest) {
@@ -43,21 +56,55 @@ public class MemberService {
             throw new InvalidPasswordException();
         }
 
-        memberRepository.findById(signupRequest.getEmail()).orElseThrow(() -> new NotFoundMemberException());
+        if (!memberRepository.findById(signupRequest.getEmail()).isEmpty()) {
+            throw new DuplicateMemberException();
+        }
 
         signupRequest.setPassword(passwordEncoder.encode(signupRequest.getPassword()));
-        Member members = Member.builder()
+        Member member = Member.builder()
                 .email(signupRequest.getEmail())
                 .password(signupRequest.getPassword())
                 .nickname(signupRequest.getNickname())
                 .roles(Collections.singletonList("ROLE_USER"))
                 .build();
 
-        memberRepository.save(members);
+        memberRepository.save(member);
         CommonResponse commonResponse = CommonResponse.builder()
                 .status("SUCCESS")
                 .message("회원가입 완료되었습니다.")
                 .build();
+
+        /**
+         * 파일 업로드 구현
+         * - 단일 파일 업로드 구현 후 다중 파일 업로드도 구현
+         * - 일단 단일 소스로 구현 후 Common 되게 수정
+         * - 파일은 날짜별로 구분지으면 좋을듯 일단 구현부터 하자
+         */
+        if (!signupRequest.getMultipartFile().isEmpty()) {
+            MultipartFile file = signupRequest.getMultipartFile();
+
+            LocalDateTime localDateTime = LocalDateTime.now();
+            String nowTime = localDateTime.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+            String originFileName = file.getOriginalFilename();
+            String extension = originFileName.substring(originFileName.lastIndexOf("."));
+            String savedFileName = nowTime + "_" + UUID.randomUUID() + extension;
+
+            File uploadFile = new File(uploadPath + savedFileName);
+
+            MemberAttach memberAttach = MemberAttach.builder()
+                    .originFileName(originFileName)
+                    .savedFileName(savedFileName)
+                    .uploadDir(uploadPath)
+                    .extension(extension)
+                    .size(file.getSize())
+                    .contentType(file.getContentType())
+                    .member(member)
+                    .build();
+
+            memberAttachRepository.save(memberAttach);
+        }
+
+
         return ResponseEntity.status(HttpStatus.CREATED).body(commonResponse);
     }
 

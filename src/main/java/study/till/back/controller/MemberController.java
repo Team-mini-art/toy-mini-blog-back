@@ -4,8 +4,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import study.till.back.dto.*;
 import study.till.back.dto.member.*;
 import study.till.back.service.MemberService;
@@ -17,8 +19,11 @@ public class MemberController {
 
     private final MemberService memberService;
 
-    @PostMapping("/signup")
-    public ResponseEntity<CommonResponse> signup(@RequestBody SignupRequest signupRequest) {
+    @PostMapping(value = "/signup", consumes = { MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE })
+    public ResponseEntity<CommonResponse> signup(
+            @RequestPart(value = "data") SignupRequest signupRequest,
+            @RequestPart(value = "file") MultipartFile multipartFile) {
+        signupRequest.setMultipartFile(multipartFile);
         return memberService.signup(signupRequest);
     }
 
