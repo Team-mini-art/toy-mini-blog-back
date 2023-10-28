@@ -26,6 +26,7 @@ import study.till.back.repository.MemberRepository;
 
 import javax.transaction.Transactional;
 import java.io.File;
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Collections;
@@ -84,12 +85,26 @@ public class MemberService {
             MultipartFile file = signupRequest.getMultipartFile();
 
             LocalDateTime localDateTime = LocalDateTime.now();
-            String nowTime = localDateTime.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+            String nowTime = localDateTime.format(DateTimeFormatter.ofPattern("yyMMdd"));
             String originFileName = file.getOriginalFilename();
             String extension = originFileName.substring(originFileName.lastIndexOf("."));
-            String savedFileName = nowTime + "_" + UUID.randomUUID() + extension;
+            String savedFileName = nowTime + "/" + UUID.randomUUID() + extension;
 
             File uploadFile = new File(uploadPath + savedFileName);
+
+            if (!uploadFile.exists()) {
+                try {
+                    uploadFile.mkdirs();
+                }
+                catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+            try {
+                file.transferTo(uploadFile);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
 
             MemberAttach memberAttach = MemberAttach.builder()
                     .originFileName(originFileName)
@@ -98,8 +113,7 @@ public class MemberService {
                     .extension(extension)
                     .size(file.getSize())
                     .contentType(file.getContentType())
-                    .member(member)
-                    .build();
+                    .member(member)                    .build();
 
             memberAttachRepository.save(memberAttach);
         }
