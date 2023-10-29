@@ -23,15 +23,12 @@ import study.till.back.exception.member.InvalidPasswordException;
 import study.till.back.exception.member.NotFoundMemberException;
 import study.till.back.repository.MemberAttachRepository;
 import study.till.back.repository.MemberRepository;
+import study.till.back.util.FileUtil;
 
 import javax.transaction.Transactional;
-import java.io.File;
-import java.io.IOException;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.List;
-import java.util.UUID;
+import java.util.Map;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -78,44 +75,25 @@ public class MemberService {
         /**
          * 파일 업로드 구현
          * - 단일 파일 업로드 구현 후 다중 파일 업로드도 구현
-         * - 일단 단일 소스로 구현 후 Common 되게 수정
-         * - 파일은 날짜별로 구분지으면 좋을듯 일단 구현부터 하자
          */
         if (!signupRequest.getMultipartFile().isEmpty()) {
-            MultipartFile file = signupRequest.getMultipartFile();
+            Map<String, Object> rtnMap = FileUtil.uploadFile(uploadPath, signupRequest.getMultipartFile());
 
-            LocalDateTime localDateTime = LocalDateTime.now();
-            String nowTime = localDateTime.format(DateTimeFormatter.ofPattern("yyMMdd"));
-            String originFileName = file.getOriginalFilename();
-            String extension = originFileName.substring(originFileName.lastIndexOf("."));
-            String savedFileName = nowTime + "/" + UUID.randomUUID() + extension;
+            boolean result = (boolean) rtnMap.get("result");
 
-            File uploadFile = new File(uploadPath + savedFileName);
+            if (result) {
+                MemberAttach memberAttach = MemberAttach.builder()
+                        .originFileName((String) rtnMap.get("originFileName"))
+                        .savedFileName((String) rtnMap.get("savedFileName"))
+                        .uploadDir((String) rtnMap.get("uploadPath"))
+                        .extension((String) rtnMap.get("extension"))
+                        .size((Long) rtnMap.get("size"))
+                        .contentType((String) rtnMap.get("contentType"))
+                        .member(member)
+                        .build();
 
-            if (!uploadFile.exists()) {
-                try {
-                    uploadFile.mkdirs();
-                }
-                catch (Exception e) {
-                    e.printStackTrace();
-                }
+                memberAttachRepository.save(memberAttach);
             }
-            try {
-                file.transferTo(uploadFile);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            MemberAttach memberAttach = MemberAttach.builder()
-                    .originFileName(originFileName)
-                    .savedFileName(savedFileName)
-                    .uploadDir(uploadPath)
-                    .extension(extension)
-                    .size(file.getSize())
-                    .contentType(file.getContentType())
-                    .member(member)                    .build();
-
-            memberAttachRepository.save(memberAttach);
         }
 
 
