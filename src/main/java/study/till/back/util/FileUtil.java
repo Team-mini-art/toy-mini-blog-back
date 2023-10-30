@@ -2,13 +2,12 @@ package study.till.back.util;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.multipart.MultipartFile;
+import study.till.back.dto.file.UploadResult;
 
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.UUID;
 
 @Slf4j
@@ -24,37 +23,45 @@ public class FileUtil {
             return true;
         }
         catch (Exception e) {
-            log.info(e.getMessage());
+            log.error("Failed to create directories: ", e);
             return false;
         }
     }
 
-    public static Map<String, Object> uploadFile(String uploadPath, MultipartFile file) {
-            LocalDateTime localDateTime = LocalDateTime.now();
-            String nowTime = localDateTime.format(DateTimeFormatter.ofPattern("yyMMdd"));
-            String originFileName = file.getOriginalFilename();
-            String extension = originFileName.substring(originFileName.lastIndexOf("."));
-            String savedFileName = nowTime + "/" + UUID.randomUUID() + extension;
+    public static UploadResult uploadFile(String uploadPath, MultipartFile file) {
+        UploadResult uploadResult = new UploadResult();
 
-            File uploadFile = new File(uploadPath + savedFileName);
+        LocalDateTime localDateTime = LocalDateTime.now();
+        String nowTime = localDateTime.format(DateTimeFormatter.ofPattern("yyMMdd"));
+        String originFileName = file.getOriginalFilename();
+        String extension = originFileName.substring(originFileName.lastIndexOf("."));
+        String savedFileName = UUID.randomUUID() + extension;
 
-            FileUtil.makeDirs(uploadFile);
+        uploadPath += nowTime + "/";
+        File uploadFile = new File(uploadPath + savedFileName);
 
-            Map<String, Object> rtnMap = new HashMap<>();
-            rtnMap.put("originFileName", originFileName);
-            rtnMap.put("savedFileName", savedFileName);
-            rtnMap.put("uploadPath", uploadPath);
-            rtnMap.put("extension", extension);
-            rtnMap.put("size", file.getSize());
-            rtnMap.put("contentType", file.getContentType());
+        FileUtil.makeDirs(uploadFile);
 
-            try {
-                rtnMap.put("result", true);
-                file.transferTo(uploadFile);
-            } catch (IOException e) {
-                rtnMap.put("result", false);
-                e.printStackTrace();
-            }
-            return rtnMap;
+        if (!FileUtil.makeDirs(uploadFile)) {
+            log.error("Failed to create directories for file: " + savedFileName);
+            uploadResult.setResult(false);
+            return uploadResult;
+        }
+
+        uploadResult.setOriginFileName(originFileName);
+        uploadResult.setSavedFileName(savedFileName);
+        uploadResult.setUploadDir(uploadPath);
+        uploadResult.setExtension(extension);
+        uploadResult.setSize(file.getSize());
+        uploadResult.setContentType(file.getContentType());
+
+        try {
+            uploadResult.setResult(true);
+            file.transferTo(uploadFile);
+        } catch (IOException e) {
+            log.error("Failed to upload file: ", e);
+            uploadResult.setResult(false);
+        }
+        return uploadResult;
     }
 }

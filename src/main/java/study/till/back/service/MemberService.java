@@ -9,9 +9,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 import study.till.back.config.jwt.JwtTokenProvider;
 import study.till.back.dto.*;
+import study.till.back.dto.file.UploadResult;
 import study.till.back.dto.member.*;
 import study.till.back.dto.token.TokenInfo;
 import study.till.back.entity.Member;
@@ -28,7 +28,6 @@ import study.till.back.util.FileUtil;
 import javax.transaction.Transactional;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -77,26 +76,24 @@ public class MemberService {
          * - 단일 파일 업로드 구현 후 다중 파일 업로드도 구현
          */
         if (!signupRequest.getMultipartFile().isEmpty()) {
-            Map<String, Object> rtnMap = FileUtil.uploadFile(uploadPath, signupRequest.getMultipartFile());
+            UploadResult uploadResult = FileUtil.uploadFile(uploadPath, signupRequest.getMultipartFile());
 
-            boolean result = (boolean) rtnMap.get("result");
+            boolean result = uploadResult.isResult();
 
             if (result) {
                 MemberAttach memberAttach = MemberAttach.builder()
-                        .originFileName((String) rtnMap.get("originFileName"))
-                        .savedFileName((String) rtnMap.get("savedFileName"))
-                        .uploadDir((String) rtnMap.get("uploadPath"))
-                        .extension((String) rtnMap.get("extension"))
-                        .size((Long) rtnMap.get("size"))
-                        .contentType((String) rtnMap.get("contentType"))
+                        .originFileName(uploadResult.getOriginFileName())
+                        .savedFileName(uploadResult.getSavedFileName())
+                        .uploadDir(uploadResult.getUploadDir())
+                        .extension(uploadResult.getExtension())
+                        .size(uploadResult.getSize())
+                        .contentType(uploadResult.getContentType())
                         .member(member)
                         .build();
 
                 memberAttachRepository.save(memberAttach);
             }
         }
-
-
         return ResponseEntity.status(HttpStatus.CREATED).body(commonResponse);
     }
 
