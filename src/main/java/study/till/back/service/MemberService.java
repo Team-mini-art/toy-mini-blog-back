@@ -1,6 +1,7 @@
 package study.till.back.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -10,14 +11,19 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import study.till.back.config.jwt.JwtTokenProvider;
 import study.till.back.dto.*;
+import study.till.back.dto.file.UploadResult;
 import study.till.back.dto.member.*;
 import study.till.back.dto.token.TokenInfo;
 import study.till.back.entity.Member;
+import study.till.back.entity.MemberAttach;
 import study.till.back.exception.common.NoDataException;
+import study.till.back.exception.member.DuplicateMemberException;
 import study.till.back.exception.member.InvalidEmailException;
 import study.till.back.exception.member.InvalidPasswordException;
 import study.till.back.exception.member.NotFoundMemberException;
+import study.till.back.repository.MemberAttachRepository;
 import study.till.back.repository.MemberRepository;
+import study.till.back.util.FileUtil;
 
 import javax.transaction.Transactional;
 import java.util.Collections;
@@ -29,9 +35,13 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class MemberService {
 
+    @Value("${upload.path}")
+    private String uploadPath;
+
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
+    private final MemberAttachRepository memberAttachRepository;
 
     @Transactional
     public ResponseEntity<CommonResponse> signup(SignupRequest signupRequest) {
@@ -43,21 +53,47 @@ public class MemberService {
             throw new InvalidPasswordException();
         }
 
-        memberRepository.findById(signupRequest.getEmail()).orElseThrow(() -> new NotFoundMemberException());
+        if (!memberRepository.findById(signupRequest.getEmail()).isEmpty()) {
+            throw new DuplicateMemberException();
+        }
 
         signupRequest.setPassword(passwordEncoder.encode(signupRequest.getPassword()));
-        Member members = Member.builder()
+        Member member = Member.builder()
                 .email(signupRequest.getEmail())
                 .password(signupRequest.getPassword())
                 .nickname(signupRequest.getNickname())
                 .roles(Collections.singletonList("ROLE_USER"))
                 .build();
 
-        memberRepository.save(members);
+        memberRepository.save(member);
         CommonResponse commonResponse = CommonResponse.builder()
                 .status("SUCCESS")
                 .message("회원가입 완료되었습니다.")
                 .build();
+
+        /**
+         * 파일 업로드 구현
+         * - 단일 파일 업로드 구현 후 다중 파일 업로드도 구현
+         */
+        if (!signupRequest.getMultipartFile().isEmpty()) {
+            UploadResult uploadResult = FileUtil.uploadFile(uploadPath, signupRequest.getMultipartFile());
+
+            boolean result = uploadResult.isResult();
+
+            if (result) {
+                MemberAttach memberAttach = MemberAttach.builder()
+                        .originFileName(uploadResult.getOriginFileName())
+                        .savedFileName(uploadResult.getSavedFileName())
+                        .uploadDir(uploadResult.getUploadDir())
+                        .extension(uploadResult.getExtension())
+                        .size(uploadResult.getSize())
+                        .contentType(uploadResult.getContentType())
+                        .member(member)
+                        .build();
+
+                memberAttachRepository.save(memberAttach);
+            }
+        }
         return ResponseEntity.status(HttpStatus.CREATED).body(commonResponse);
     }
 
