@@ -11,11 +11,14 @@
     <h3><a href="http://54.180.91.118:8080/">Try to Mini Blog 😁</a></h3>
 </div>
 
+<br/>
+
 ## Meaning
 
 
 백엔드, 프론트 최신 기술스택에 미숙한 둘이서 실력 향상을 위한 가장 기본적인 CRUD인 블로그를 구현해보는 프로젝트
 
+<br/>
 
 ## PurPose
 
@@ -28,6 +31,7 @@
 - GitHub, Jenkins, Docker를 이용한 무중단 CI/CD 파이프라인 구축해보기
 - Git의 branch를 이슈별로 관리하여 Commit, Pull Request 협업 시뮬레이션
 
+<br/>
 
 ## Architectrue
 
@@ -35,6 +39,8 @@
 <div style="text-align: center;">
     <img src="src/main/resources/asset/mini-art-blog-diagram.001.jpeg">
 </div>
+
+<br/>
 
 ## Skills
 
@@ -51,6 +57,8 @@
 - react, typescript, javascript, redux, axios, toast-ui, tailwindcss, eslint, prettier
 - Jenkins, yarn, Docker, AWS EC2, AWS RDS
 - nginx
+
+<br/>
 
 ## Members
 
