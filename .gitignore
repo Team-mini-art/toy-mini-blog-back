@@ -36,6 +36,3 @@ out/
 
 ### VS Code ###
 .vscode/
-
-### asset ###
-/src/main/resources/asset/**
