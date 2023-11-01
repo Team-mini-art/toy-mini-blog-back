@@ -4,6 +4,7 @@
     </a>
 </div>
 
+---
 
 <div align="center">
     <img src="src/main/resources/asset/img2.png" width="500px" height="400px">
