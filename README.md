@@ -1,27 +1,24 @@
-<div style="text-align: center">
+<div align="center">
     <a href="http://54.180.91.118:8080/" target="_blank">
         <img src="src/main/resources/asset/img_logo.png" width="250px">
     </a>
 </div>
 
----
 
-<div style="text-align: center;">
+<div align="center">
     <img src="src/main/resources/asset/img2.png" width="500px" height="400px">
     <img src="src/main/resources/asset/img1.png" width="500px" height="400px">
-    <h1><a href="http://54.180.91.118:8080/">Mini Blog</a></h1>
+    <h3><a href="http://54.180.91.118:8080/">Try to Mini Blog 😁</a></h3>
 </div>
 
 ## Meaning
 
----
 
 백엔드, 프론트 최신 기술스택에 미숙한 둘이서 실력 향상을 위한 가장 기본적인 CRUD인 블로그를 구현해보는 프로젝트
 
 
 ## PurPose
 
----
 
 - Spring의 동작 원리 및 SpringBoot와의 차이점 이해하기
 - Spring Data JPA, QueryDsl 등 ORM에 대해 이해하기
@@ -34,7 +31,6 @@
 
 ## Architectrue
 
----
 
 <div style="text-align: center;">
     <img src="src/main/resources/asset/mini-art-blog-diagram.001.jpeg">
@@ -44,7 +40,6 @@
 
 ### - BackEnd
 
----
 
 - Java11, SpringBoot2.7.9, Spring Data JPA, Spring Security, JUnit5, JWT, Swagger UI, Jasypt
 - Jenkins, Gradle, Docker, AWS EC2, AWS RDS
@@ -52,7 +47,6 @@
 
 ### - FrontEnd
 
----
 
 - react, typescript, javascript, redux, axios, toast-ui, tailwindcss, eslint, prettier
 - Jenkins, yarn, Docker, AWS EC2, AWS RDS
@@ -60,7 +54,6 @@
 
 ## Members
 
----
 
 <div>
     <table style="text-align: center">
