@@ -18,14 +18,16 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Member extends BaseTimeEntity implements UserDetails {
-
-
     @Id
     private String email;
 
     private String password;
 
     private String nickname;
+
+    public void updatePost(String nickname) {
+        this.nickname = nickname;
+    }
 
     @Builder.Default
     @ElementCollection

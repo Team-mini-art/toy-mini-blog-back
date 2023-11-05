@@ -71,11 +71,7 @@ public class MemberService {
                 .message("회원가입 완료되었습니다.")
                 .build();
 
-        /**
-         * 파일 업로드 구현
-         * - 단일 파일 업로드 구현 후 다중 파일 업로드도 구현
-         */
-        if (!signupRequest.getMultipartFile().isEmpty()) {
+        if (signupRequest.getMultipartFile() != null && !signupRequest.getMultipartFile().isEmpty()) {
             UploadResult uploadResult = FileUtil.uploadFile(uploadPath, signupRequest.getMultipartFile());
 
             boolean result = uploadResult.isResult();
@@ -133,6 +129,31 @@ public class MemberService {
         List<FindMemberResponse> members = contents.stream().map(FindMemberResponse::from).collect(Collectors.toList());
         FindMemberPageResponse findMemberPageResponse = FindMemberPageResponse.from(contents, members);
         return ResponseEntity.ok().body(findMemberPageResponse);
+    }
+
+    public ResponseEntity<CommonResponse> updateMember(MemberRequest memberRequest) {
+        Member member = memberRepository.findById(memberRequest.getEmail()).orElseThrow(NotFoundMemberException::new);
+        member.updatePost(memberRequest.getNickname());
+        memberRepository.save(member);
+
+        if (memberRequest.getMultipartFile() != null && !memberRequest.getMultipartFile().isEmpty()) {
+            UploadResult uploadResult = FileUtil.uploadFile(uploadPath, memberRequest.getMultipartFile());
+
+            boolean result = uploadResult.isResult();
+
+            if (result) {
+                long count = memberAttachRepository.countByMember_EmailAndContentTypeContaining(member.getEmail(), "image");
+                if (count > 0) {
+                    memberAttachRepository.deleteByMember_Email(member.getEmail());
+                }
+            }
+        }
+
+        CommonResponse commonResponse = CommonResponse.builder()
+                .status("SUCCESS")
+                .message("회원 정보가 수정되었습니다.")
+                .build();
+        return ResponseEntity.ok(commonResponse);
     }
 
     public boolean isValidEmail(String email) {
