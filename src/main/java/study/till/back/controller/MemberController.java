@@ -22,7 +22,7 @@ public class MemberController {
     @PostMapping(value = "/signup", consumes = {"multipart/form-data"})
     public ResponseEntity<CommonResponse> signup(
             @RequestPart(value = "data") SignupRequest signupRequest,
-            @RequestPart(value = "file") MultipartFile multipartFile) {
+            @RequestPart(value = "file", required = false) MultipartFile multipartFile) {
         signupRequest.setMultipartFile(multipartFile);
         return memberService.signup(signupRequest);
     }
@@ -45,5 +45,13 @@ public class MemberController {
         Sort.Direction sortDirection = Sort.Direction.fromString(direction);
         Pageable pageable = PageRequest.of(page, size, Sort.by(sortDirection, sort));
         return memberService.findMembers(pageable, email, nickname);
+    }
+
+    @PatchMapping(value = "/members", consumes = {"multipart/form-data"})
+    public ResponseEntity<CommonResponse> updateMember(
+            @RequestPart(value = "data") MemberRequest memberRequest,
+            @RequestPart(value = "file", required = false) MultipartFile multipartFile) {
+        memberRequest.setMultipartFile(multipartFile);
+        return memberService.updateMember(memberRequest);
     }
 }

@@ -64,4 +64,8 @@ public class FileUtil {
         }
         return uploadResult;
     }
+
+    public static void deleteFile(String uploadPath) {
+
+    }
 }
