@@ -11,7 +11,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import study.till.back.config.jwt.JwtTokenProvider;
 import study.till.back.dto.*;
-import study.till.back.dto.file.UploadResult;
+import study.till.back.dto.file.FileUploadDTO;
 import study.till.back.dto.member.*;
 import study.till.back.dto.token.TokenInfo;
 import study.till.back.entity.Member;
@@ -26,6 +26,7 @@ import study.till.back.repository.MemberRepository;
 import study.till.back.util.FileUtil;
 
 import javax.transaction.Transactional;
+import java.io.File;
 import java.util.Collections;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -72,18 +73,18 @@ public class MemberService {
                 .build();
 
         if (signupRequest.getMultipartFile() != null && !signupRequest.getMultipartFile().isEmpty()) {
-            UploadResult uploadResult = FileUtil.uploadFile(uploadPath, signupRequest.getMultipartFile());
+            FileUploadDTO fileUploadDTO = FileUtil.uploadFile(uploadPath, signupRequest.getMultipartFile());
 
-            boolean result = uploadResult.isResult();
+            boolean result = fileUploadDTO.isResult();
 
             if (result) {
                 MemberAttach memberAttach = MemberAttach.builder()
-                        .originFileName(uploadResult.getOriginFileName())
-                        .savedFileName(uploadResult.getSavedFileName())
-                        .uploadDir(uploadResult.getUploadDir())
-                        .extension(uploadResult.getExtension())
-                        .size(uploadResult.getSize())
-                        .contentType(uploadResult.getContentType())
+                        .originFileName(fileUploadDTO.getOriginFileName())
+                        .savedFileName(fileUploadDTO.getSavedFileName())
+                        .uploadDir(fileUploadDTO.getUploadDir())
+                        .extension(fileUploadDTO.getExtension())
+                        .size(fileUploadDTO.getSize())
+                        .contentType(fileUploadDTO.getContentType())
                         .member(member)
                         .build();
 
@@ -137,14 +138,37 @@ public class MemberService {
         member.updatePost(memberRequest.getNickname());
         memberRepository.save(member);
 
+        FileUploadDTO fileUploadDTO = new FileUploadDTO();
+        boolean uploaded = false;
         if (memberRequest.getMultipartFile() != null && !memberRequest.getMultipartFile().isEmpty()) {
-            UploadResult uploadResult = FileUtil.uploadFile(uploadPath, memberRequest.getMultipartFile());
+            fileUploadDTO = FileUtil.uploadFile(uploadPath, memberRequest.getMultipartFile());
+            uploaded = fileUploadDTO.isResult();
+        }
 
-            boolean result = uploadResult.isResult();
+        if (uploaded) {
+            List<MemberAttach> attachList = memberAttachRepository.findByMember_Email(memberRequest.getEmail());
 
-            if (result) {
-                List<MemberAttach> attachList = memberAttachRepository.findByMember_EmailAndContentTypeContaining(memberRequest.getEmail(), "image");
+            if (attachList != null && !attachList.isEmpty()) {
+                for (MemberAttach memberAttach : attachList) {
+                    boolean deleted = FileUtil.deleteFile(memberAttach.getUploadDir() + memberAttach.getSavedFileName());
+
+                    if (deleted) {
+                        memberAttachRepository.delete(memberAttach);
+                    }
+                }
             }
+
+            MemberAttach memberAttach = MemberAttach.builder()
+                    .originFileName(fileUploadDTO.getOriginFileName())
+                    .savedFileName(fileUploadDTO.getSavedFileName())
+                    .uploadDir(fileUploadDTO.getUploadDir())
+                    .extension(fileUploadDTO.getExtension())
+                    .size(fileUploadDTO.getSize())
+                    .contentType(fileUploadDTO.getContentType())
+                    .member(member)
+                    .build();
+
+            memberAttachRepository.save(memberAttach);
         }
 
         CommonResponse commonResponse = CommonResponse.builder()

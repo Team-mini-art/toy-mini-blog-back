@@ -3,9 +3,7 @@ package study.till.back.dto.file;
 import lombok.*;
 
 @Data
-@Setter
-@Getter
-public class UploadResult {
+public class FileUploadDTO {
     private boolean result;
     private String originFileName;
     private String savedFileName;

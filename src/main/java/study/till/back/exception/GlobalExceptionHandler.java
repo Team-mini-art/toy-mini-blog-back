@@ -10,8 +10,9 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 import study.till.back.dto.exception.ErrorResponse;
 import study.till.back.exception.comment.NotFoundCommentException;
 import study.till.back.exception.common.NoDataException;
+import study.till.back.exception.file.DeleteFileException;
 import study.till.back.exception.member.*;
-import study.till.back.exception.memberAttach.UploadMemberAttachException;
+import study.till.back.exception.file.UploadFileException;
 import study.till.back.exception.post.NotFoundPostException;
 import study.till.back.exception.reply.NotFoundReplyException;
 import study.till.back.exception.token.ExpiredAccessTokenException;
@@ -114,9 +115,15 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return ErrorResponse.toResponseEntity(NO_DATA, e.getMessage());
     }
 
-    @ExceptionHandler(value = { UploadMemberAttachException.class })
-    protected ResponseEntity<ErrorResponse> uploadMemberAttachException(RuntimeException e) {
-        log.error("RuntimeException throw uploadMemberAttachException : {}", e.getMessage());
-        return ErrorResponse.toResponseEntity(CANNOT_UPLOAD, e.getMessage());
+    @ExceptionHandler(value = { UploadFileException.class })
+    protected ResponseEntity<ErrorResponse> uploadFileException(RuntimeException e) {
+        log.error("RuntimeException throw uploadFileException : {}", e.getMessage());
+        return ErrorResponse.toResponseEntity(CANNOT_UPLOAD_FILE, e.getMessage());
+    }
+
+    @ExceptionHandler(value = { DeleteFileException.class })
+    protected ResponseEntity<ErrorResponse> deleteFileException(RuntimeException e) {
+        log.error("RuntimeException throw deleteFileException : {}", e.getMessage());
+        return ErrorResponse.toResponseEntity(CANNOT_DELETE_FILE, e.getMessage());
     }
 }

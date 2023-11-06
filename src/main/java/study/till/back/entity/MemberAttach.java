@@ -2,11 +2,13 @@ package study.till.back.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
 @Entity
+@Getter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -29,4 +31,6 @@ public class MemberAttach extends BaseTimeEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     private Member member;
+
+
 }
