@@ -131,6 +131,7 @@ public class MemberService {
         return ResponseEntity.ok().body(findMemberPageResponse);
     }
 
+    @Transactional
     public ResponseEntity<CommonResponse> updateMember(MemberRequest memberRequest) {
         Member member = memberRepository.findById(memberRequest.getEmail()).orElseThrow(NotFoundMemberException::new);
         member.updatePost(memberRequest.getNickname());
@@ -142,10 +143,7 @@ public class MemberService {
             boolean result = uploadResult.isResult();
 
             if (result) {
-                long count = memberAttachRepository.countByMember_EmailAndContentTypeContaining(member.getEmail(), "image");
-                if (count > 0) {
-                    memberAttachRepository.deleteByMember_Email(member.getEmail());
-                }
+                List<MemberAttach> attachList = memberAttachRepository.findByMember_EmailAndContentTypeContaining(memberRequest.getEmail(), "image");
             }
         }
 

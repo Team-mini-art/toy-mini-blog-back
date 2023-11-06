@@ -3,8 +3,10 @@ package study.till.back.repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import study.till.back.entity.MemberAttach;
 
+import java.util.List;
+
 public interface MemberAttachRepository extends JpaRepository<MemberAttach, Long> {
-    long countByMember_EmailAndContentTypeContaining(String email, String contentType);
+    List<MemberAttach> findByMember_EmailAndContentTypeContaining(String email, String contentType);
 
     void deleteByMember_Email(String email);
 }

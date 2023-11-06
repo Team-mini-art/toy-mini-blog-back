@@ -11,6 +11,7 @@ import study.till.back.dto.exception.ErrorResponse;
 import study.till.back.exception.comment.NotFoundCommentException;
 import study.till.back.exception.common.NoDataException;
 import study.till.back.exception.member.*;
+import study.till.back.exception.memberAttach.UploadMemberAttachException;
 import study.till.back.exception.post.NotFoundPostException;
 import study.till.back.exception.reply.NotFoundReplyException;
 import study.till.back.exception.token.ExpiredAccessTokenException;
@@ -111,5 +112,11 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     protected ResponseEntity<ErrorResponse> noDataException(RuntimeException e) {
         log.error("RuntimeException throw NoDataException : {}", e.getMessage());
         return ErrorResponse.toResponseEntity(NO_DATA, e.getMessage());
+    }
+
+    @ExceptionHandler(value = { UploadMemberAttachException.class })
+    protected ResponseEntity<ErrorResponse> uploadMemberAttachException(RuntimeException e) {
+        log.error("RuntimeException throw uploadMemberAttachException : {}", e.getMessage());
+        return ErrorResponse.toResponseEntity(CANNOT_UPLOAD, e.getMessage());
     }
 }

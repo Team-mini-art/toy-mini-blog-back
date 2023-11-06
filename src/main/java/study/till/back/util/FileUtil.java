@@ -3,6 +3,7 @@ package study.till.back.util;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.multipart.MultipartFile;
 import study.till.back.dto.file.UploadResult;
+import study.till.back.exception.memberAttach.UploadMemberAttachException;
 
 import java.io.File;
 import java.io.IOException;
@@ -60,7 +61,7 @@ public class FileUtil {
             file.transferTo(uploadFile);
         } catch (IOException e) {
             log.error("Failed to upload file: ", e);
-            uploadResult.setResult(false);
+            throw new UploadMemberAttachException();
         }
         return uploadResult;
     }
