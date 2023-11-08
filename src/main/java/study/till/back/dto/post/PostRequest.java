@@ -2,6 +2,7 @@ package study.till.back.dto.post;
 
 import lombok.*;
 
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
 @Data
@@ -9,12 +10,12 @@ import javax.validation.constraints.NotNull;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PostRequest {
-    @NotNull(message = "email cannot be null")
+    @NotEmpty(message = "이메일을 입력해주세요.")
     private String email;
 
-    @NotNull(message = "title cannot be null")
+    @NotEmpty(message = "제목을 입력해주세요.")
     private String title;
 
-    @NotNull(message = "contents cannot be null")
+    @NotEmpty(message = "내용을 입력해주세요.")
     private String contents;
 }

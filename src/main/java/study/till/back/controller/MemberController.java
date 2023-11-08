@@ -12,6 +12,8 @@ import study.till.back.dto.*;
 import study.till.back.dto.member.*;
 import study.till.back.service.MemberService;
 
+import javax.validation.Valid;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api")
@@ -21,7 +23,7 @@ public class MemberController {
 
     @PostMapping(value = "/signup", consumes = {"multipart/form-data"})
     public ResponseEntity<CommonResponse> signup(
-            @RequestPart(value = "data") SignupRequest signupRequest,
+            @Valid @RequestPart(value = "data") SignupRequest signupRequest,
             @RequestPart(value = "file", required = false) MultipartFile multipartFile) {
         signupRequest.setMultipartFile(multipartFile);
         return memberService.signup(signupRequest);

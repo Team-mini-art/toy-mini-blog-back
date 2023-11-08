@@ -11,7 +11,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import study.till.back.config.jwt.JwtTokenProvider;
 import study.till.back.dto.*;
-import study.till.back.dto.file.UploadResult;
+import study.till.back.dto.file.FileUploadDTO;
 import study.till.back.dto.member.*;
 import study.till.back.dto.token.TokenInfo;
 import study.till.back.entity.Member;
@@ -23,12 +23,12 @@ import study.till.back.exception.member.InvalidPasswordException;
 import study.till.back.exception.member.NotFoundMemberException;
 import study.till.back.repository.MemberAttachRepository;
 import study.till.back.repository.MemberRepository;
-import study.till.back.util.FileUtil;
+import study.till.back.util.common.FileUtil;
+import study.till.back.util.valid.SignupValidUtil;
 
 import javax.transaction.Transactional;
 import java.util.Collections;
 import java.util.List;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @Service
@@ -45,11 +45,11 @@ public class MemberService {
 
     @Transactional
     public ResponseEntity<CommonResponse> signup(SignupRequest signupRequest) {
-        if (!isValidEmail(signupRequest.getEmail())) {
+        if (!SignupValidUtil.isValidEmail(signupRequest.getEmail())) {
             throw new InvalidEmailException();
         }
 
-        if (!isValidPassword(signupRequest.getPassword())) {
+        if (!SignupValidUtil.isValidPassword(signupRequest.getPassword())) {
             throw new InvalidPasswordException();
         }
 
@@ -72,18 +72,18 @@ public class MemberService {
                 .build();
 
         if (signupRequest.getMultipartFile() != null && !signupRequest.getMultipartFile().isEmpty()) {
-            UploadResult uploadResult = FileUtil.uploadFile(uploadPath, signupRequest.getMultipartFile());
+            FileUploadDTO fileUploadDTO = FileUtil.uploadFile(uploadPath, signupRequest.getMultipartFile());
 
-            boolean result = uploadResult.isResult();
+            boolean result = fileUploadDTO.isResult();
 
             if (result) {
                 MemberAttach memberAttach = MemberAttach.builder()
-                        .originFileName(uploadResult.getOriginFileName())
-                        .savedFileName(uploadResult.getSavedFileName())
-                        .uploadDir(uploadResult.getUploadDir())
-                        .extension(uploadResult.getExtension())
-                        .size(uploadResult.getSize())
-                        .contentType(uploadResult.getContentType())
+                        .originFileName(fileUploadDTO.getOriginFileName())
+                        .savedFileName(fileUploadDTO.getSavedFileName())
+                        .uploadDir(fileUploadDTO.getUploadDir())
+                        .extension(fileUploadDTO.getExtension())
+                        .size(fileUploadDTO.getSize())
+                        .contentType(fileUploadDTO.getContentType())
                         .member(member)
                         .build();
 
@@ -131,22 +131,43 @@ public class MemberService {
         return ResponseEntity.ok().body(findMemberPageResponse);
     }
 
+    @Transactional
     public ResponseEntity<CommonResponse> updateMember(MemberRequest memberRequest) {
         Member member = memberRepository.findById(memberRequest.getEmail()).orElseThrow(NotFoundMemberException::new);
         member.updatePost(memberRequest.getNickname());
         memberRepository.save(member);
 
+        FileUploadDTO fileUploadDTO = new FileUploadDTO();
+        boolean uploaded = false;
         if (memberRequest.getMultipartFile() != null && !memberRequest.getMultipartFile().isEmpty()) {
-            UploadResult uploadResult = FileUtil.uploadFile(uploadPath, memberRequest.getMultipartFile());
+            fileUploadDTO = FileUtil.uploadFile(uploadPath, memberRequest.getMultipartFile());
+            uploaded = fileUploadDTO.isResult();
+        }
 
-            boolean result = uploadResult.isResult();
+        if (uploaded) {
+            List<MemberAttach> attachList = memberAttachRepository.findByMember_Email(memberRequest.getEmail());
 
-            if (result) {
-                long count = memberAttachRepository.countByMember_EmailAndContentTypeContaining(member.getEmail(), "image");
-                if (count > 0) {
-                    memberAttachRepository.deleteByMember_Email(member.getEmail());
+            if (attachList != null && !attachList.isEmpty()) {
+                for (MemberAttach memberAttach : attachList) {
+                    boolean deleted = FileUtil.deleteFile(memberAttach.getUploadDir() + memberAttach.getSavedFileName());
+
+                    if (deleted) {
+                        memberAttachRepository.delete(memberAttach);
+                    }
                 }
             }
+
+            MemberAttach memberAttach = MemberAttach.builder()
+                    .originFileName(fileUploadDTO.getOriginFileName())
+                    .savedFileName(fileUploadDTO.getSavedFileName())
+                    .uploadDir(fileUploadDTO.getUploadDir())
+                    .extension(fileUploadDTO.getExtension())
+                    .size(fileUploadDTO.getSize())
+                    .contentType(fileUploadDTO.getContentType())
+                    .member(member)
+                    .build();
+
+            memberAttachRepository.save(memberAttach);
         }
 
         CommonResponse commonResponse = CommonResponse.builder()
@@ -154,17 +175,5 @@ public class MemberService {
                 .message("회원 정보가 수정되었습니다.")
                 .build();
         return ResponseEntity.ok(commonResponse);
-    }
-
-    public boolean isValidEmail(String email) {
-        String EMAIL_REGEX = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$";
-        Pattern EMAIL_PATTERN = Pattern.compile(EMAIL_REGEX);
-
-        return EMAIL_PATTERN.matcher(email).matches();
-    }
-
-    public boolean isValidPassword(String password) {
-        String pattern = "^(?=.*[!@#$%^&*()-=_+\\[\\]{}\\\\,/<>?'\":;|]).*(?=.*[A-Z]).*(?=.*[0-9]).{10,}$";
-        return password.matches(pattern);
     }
 }

@@ -21,20 +21,22 @@ public class Member extends BaseTimeEntity implements UserDetails {
     @Id
     private String email;
 
+    @Column(nullable = false)
     private String password;
 
+    @Column(nullable = false)
     private String nickname;
 
     public void updatePost(String nickname) {
         this.nickname = nickname;
     }
 
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<MemberAttach> attaches = new ArrayList<>();
+
     @Builder.Default
     @ElementCollection
     private List<String> roles = new ArrayList<>();
-
-    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<MemberAttach> attaches = new ArrayList<>();
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -45,7 +47,7 @@ public class Member extends BaseTimeEntity implements UserDetails {
 
     @Override
     public String getUsername() {
-        return email;
+        return nickname;
     }
 
     @Override

@@ -19,8 +19,10 @@ public class Post extends BaseTimeEntity {
     @Column(name = "post_id")
     private long id;
 
+    @Column(nullable = false)
     private String title;
 
+    @Column(nullable = false)
     private String contents;
 
     @JsonIgnore

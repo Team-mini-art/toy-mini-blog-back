@@ -1,8 +1,10 @@
-package study.till.back.util;
+package study.till.back.util.common;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.multipart.MultipartFile;
-import study.till.back.dto.file.UploadResult;
+import study.till.back.dto.file.FileUploadDTO;
+import study.till.back.exception.file.DeleteFileException;
+import study.till.back.exception.file.UploadFileException;
 
 import java.io.File;
 import java.io.IOException;
@@ -28,8 +30,8 @@ public class FileUtil {
         }
     }
 
-    public static UploadResult uploadFile(String uploadPath, MultipartFile file) {
-        UploadResult uploadResult = new UploadResult();
+    public static FileUploadDTO uploadFile(String uploadPath, MultipartFile file) {
+        FileUploadDTO fileUploadDTO = new FileUploadDTO();
 
         LocalDateTime localDateTime = LocalDateTime.now();
         String nowTime = localDateTime.format(DateTimeFormatter.ofPattern("yyMMdd"));
@@ -44,28 +46,35 @@ public class FileUtil {
 
         if (!FileUtil.makeDirs(uploadFile)) {
             log.error("Failed to create directories for file: " + savedFileName);
-            uploadResult.setResult(false);
-            return uploadResult;
+            fileUploadDTO.setResult(false);
+            return fileUploadDTO;
         }
 
-        uploadResult.setOriginFileName(originFileName);
-        uploadResult.setSavedFileName(savedFileName);
-        uploadResult.setUploadDir(uploadPath);
-        uploadResult.setExtension(extension);
-        uploadResult.setSize(file.getSize());
-        uploadResult.setContentType(file.getContentType());
+        fileUploadDTO.setOriginFileName(originFileName);
+        fileUploadDTO.setSavedFileName(savedFileName);
+        fileUploadDTO.setUploadDir(uploadPath);
+        fileUploadDTO.setExtension(extension);
+        fileUploadDTO.setSize(file.getSize());
+        fileUploadDTO.setContentType(file.getContentType());
 
         try {
-            uploadResult.setResult(true);
+            fileUploadDTO.setResult(true);
             file.transferTo(uploadFile);
         } catch (IOException e) {
             log.error("Failed to upload file: ", e);
-            uploadResult.setResult(false);
+            throw new UploadFileException();
         }
-        return uploadResult;
+        return fileUploadDTO;
     }
 
-    public static void deleteFile(String uploadPath) {
+    public static boolean deleteFile(String savedFilePath) {
+        File file = new File(savedFilePath);
 
+        if (file.exists()) {
+            if (!file.delete()) {
+                throw new DeleteFileException();
+            }
+        }
+        return true;
     }
 }

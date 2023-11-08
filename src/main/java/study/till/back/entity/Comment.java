@@ -14,7 +14,7 @@ import java.util.List;
 public class Comment extends BaseTimeEntity {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "comment_id")
     private long id;
 
@@ -26,6 +26,7 @@ public class Comment extends BaseTimeEntity {
     @JoinColumn(name = "email")
     private Member member;
 
+    @Column(nullable = false)
     private String contents;
 
     @Builder.Default
