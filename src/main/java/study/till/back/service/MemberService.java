@@ -23,13 +23,12 @@ import study.till.back.exception.member.InvalidPasswordException;
 import study.till.back.exception.member.NotFoundMemberException;
 import study.till.back.repository.MemberAttachRepository;
 import study.till.back.repository.MemberRepository;
-import study.till.back.util.FileUtil;
+import study.till.back.util.common.FileUtil;
+import study.till.back.util.valid.SignupValidUtil;
 
 import javax.transaction.Transactional;
-import java.io.File;
 import java.util.Collections;
 import java.util.List;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @Service
@@ -46,11 +45,11 @@ public class MemberService {
 
     @Transactional
     public ResponseEntity<CommonResponse> signup(SignupRequest signupRequest) {
-        if (!isValidEmail(signupRequest.getEmail())) {
+        if (!SignupValidUtil.isValidEmail(signupRequest.getEmail())) {
             throw new InvalidEmailException();
         }
 
-        if (!isValidPassword(signupRequest.getPassword())) {
+        if (!SignupValidUtil.isValidPassword(signupRequest.getPassword())) {
             throw new InvalidPasswordException();
         }
 
@@ -176,17 +175,5 @@ public class MemberService {
                 .message("회원 정보가 수정되었습니다.")
                 .build();
         return ResponseEntity.ok(commonResponse);
-    }
-
-    public boolean isValidEmail(String email) {
-        String EMAIL_REGEX = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$";
-        Pattern EMAIL_PATTERN = Pattern.compile(EMAIL_REGEX);
-
-        return EMAIL_PATTERN.matcher(email).matches();
-    }
-
-    public boolean isValidPassword(String password) {
-        String pattern = "^(?=.*[!@#$%^&*()-=_+\\[\\]{}\\\\,/<>?'\":;|]).*(?=.*[A-Z]).*(?=.*[0-9]).{10,}$";
-        return password.matches(pattern);
     }
 }

@@ -17,16 +17,22 @@ public class MemberAttach extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false)
     private String originFileName;
 
+    @Column(nullable = false)
     private String savedFileName;
 
+    @Column(nullable = false)
     private String uploadDir;
 
+    @Column(nullable = false)
     private String extension;
 
+    @Column(nullable = false)
     private Long size;
 
+    @Column(nullable = false)
     private String contentType;
 
     @ManyToOne(fetch = FetchType.LAZY)

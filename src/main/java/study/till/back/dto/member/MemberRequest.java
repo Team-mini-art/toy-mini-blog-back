@@ -7,11 +7,7 @@ import javax.validation.constraints.NotNull;
 
 @Data
 public class MemberRequest {
-    @NotNull(message = "email cannot be null")
     String email;
-
-    @NotNull(message = "nickname cannot be null")
     String nickname;
-
     MultipartFile multipartFile;
 }

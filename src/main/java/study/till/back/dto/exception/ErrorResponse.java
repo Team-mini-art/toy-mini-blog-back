@@ -7,14 +7,14 @@ import org.springframework.http.ResponseEntity;
 @Getter
 @Builder
 public class ErrorResponse {
-    private final int status;
+    private final String status;
     private final String message;
 
     public static ResponseEntity<ErrorResponse> toResponseEntity(ErrorCode errorCode) {
         return ResponseEntity
                 .status(errorCode.getStatus())
                 .body(ErrorResponse.builder()
-                        .status(errorCode.getStatus().value())
+                        .status(Integer.toString(errorCode.getStatus().value()))
                         .message(errorCode.getMessage())
                         .build()
                 );
@@ -24,7 +24,7 @@ public class ErrorResponse {
         return ResponseEntity
                 .status(errorCode.getStatus())
                 .body(ErrorResponse.builder()
-                        .status(errorCode.getStatus().value())
+                        .status(Integer.toString(errorCode.getStatus().value()))
                         .message(message)
                         .build()
                 );

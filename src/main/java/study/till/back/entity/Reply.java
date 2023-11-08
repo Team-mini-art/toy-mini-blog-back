@@ -16,6 +16,7 @@ public class Reply extends BaseTimeEntity {
     @Column(name = "reply_id")
     private long id;
 
+    @Column(nullable = false)
     private String contents;
 
     @ManyToOne(fetch = FetchType.LAZY)

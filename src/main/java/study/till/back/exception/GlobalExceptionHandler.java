@@ -3,10 +3,17 @@ package study.till.back.exception;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
+import study.till.back.dto.CommonResponse;
 import study.till.back.dto.exception.ErrorResponse;
 import study.till.back.exception.comment.NotFoundCommentException;
 import study.till.back.exception.common.NoDataException;
@@ -26,15 +33,41 @@ import static study.till.back.dto.exception.ErrorCode.*;
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(value = { ConstraintViolationException.class })
-    protected ResponseEntity<ErrorResponse> ConstraintViolationException() {
+    protected ResponseEntity<ErrorResponse> constraintViolationException() {
         log.error("ConstraintViolationException throw Exception : {}", DUPLICATED_KEY);
         return ErrorResponse.toResponseEntity(DUPLICATED_KEY);
     }
 
     @ExceptionHandler(value = { DataIntegrityViolationException.class })
-    protected ResponseEntity<ErrorResponse> DataIntegrityViolationException() {
+    protected ResponseEntity<ErrorResponse> dataIntegrityViolationException() {
         log.error("DataIntegrityViolationException throw Exception : {}", DATA_INTEGRITY_VIOLATION);
         return ErrorResponse.toResponseEntity(DATA_INTEGRITY_VIOLATION);
+    }
+
+    @Override
+    protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
+        BindingResult bindingResult = ex.getBindingResult();
+
+        StringBuilder builder = new StringBuilder();
+        for (FieldError fieldError : bindingResult.getFieldErrors()) {
+            builder.append(fieldError.getDefaultMessage());
+            builder.append(" [");
+            builder.append(fieldError.getField());
+            builder.append("]에 ");
+            builder.append(" 입력된 값: [");
+            builder.append(fieldError.getRejectedValue());
+            builder.append("]");
+        }
+
+        String message = builder.toString();
+        log.error("MethodArgumentNotValidException throw Exception : {}", message);
+
+        CommonResponse commonResponse = CommonResponse.builder()
+                .status(Integer.toString(status.value()))
+                .message(message)
+                .build();
+
+        return ResponseEntity.status(status.value()).body(commonResponse);
     }
 
     @ExceptionHandler(value = { CustomException.class })

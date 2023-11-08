@@ -12,6 +12,7 @@ import study.till.back.dto.comment.CommentRequest;
 import study.till.back.dto.comment.FindCommentResponse;
 import study.till.back.service.CommentService;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -39,12 +40,12 @@ public class CommentController {
     }
 
     @PostMapping("/comments")
-    public ResponseEntity<CreateCommonResponse> createComment(@RequestBody CommentRequest commentRequest) {
+    public ResponseEntity<CreateCommonResponse> createComment(@Valid @RequestBody CommentRequest commentRequest) {
         return commentService.createComment(commentRequest);
     }
 
     @PutMapping("/comments/{id}")
-    public ResponseEntity<CommonResponse> updateComment(@PathVariable("id") Long id, @RequestBody CommentRequest commentRequest) {
+    public ResponseEntity<CommonResponse> updateComment(@PathVariable("id") Long id, @Valid @RequestBody CommentRequest commentRequest) {
         return commentService.updateComment(id, commentRequest);
     }
 

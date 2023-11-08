@@ -1,6 +1,7 @@
 package study.till.back.controller;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -18,6 +19,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
+@Slf4j
 @RequestMapping("/api")
 public class PostController {
 
@@ -50,7 +52,7 @@ public class PostController {
     }
 
     @PutMapping("/posts/{id}")
-    public ResponseEntity<CommonResponse> updatePost(@PathVariable("id") Long id, @RequestBody PostRequest postRequest) {
+    public ResponseEntity<CommonResponse> updatePost(@PathVariable("id") Long id, @Valid @RequestBody PostRequest postRequest) {
         return postService.updatePost(id, postRequest);
     }
 
@@ -59,3 +61,5 @@ public class PostController {
         return postService.deletePost(id);
     }
 }
+
+
