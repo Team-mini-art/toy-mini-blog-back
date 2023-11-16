@@ -36,3 +36,6 @@ out/
 
 ### VS Code ###
 .vscode/
+
+##
+/src/test/java/study/till/back/config/jasypt/**

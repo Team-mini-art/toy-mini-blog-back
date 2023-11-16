@@ -31,6 +31,7 @@ public class Member extends BaseTimeEntity implements UserDetails {
         this.nickname = nickname;
     }
 
+    @Builder.Default
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<MemberAttach> attaches = new ArrayList<>();
 
