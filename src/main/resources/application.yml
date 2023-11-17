@@ -4,6 +4,10 @@ server:
 spring:
   profiles:
     include: db
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
 
 springdoc:
   default-consumes-media-type: application/json;charset=UTF-8
@@ -28,3 +32,15 @@ jasypt:
   encryptor:
     bean: jasyptStringEncryptor
     password : miniArt10!
+
+cloud:
+  aws:
+    credentials:
+      accessKey: ENC(VQfeJ+6u0jtYVVXJbpehJMVkBPsWyQE6FSLErRc0u8E=)
+      secretKey: ENC(RZPkWLadSjfpW8JAN4YoegBicuNlh34cTtb73SQPl0tignkmcS1FRQEBy/qXTQmobW0GGDTaE/E=)
+    s3:
+      bucket: mini-art-bucket
+    region:
+      static: ap-northeast-2
+    stack:
+      auto: false

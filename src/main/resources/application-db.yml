@@ -68,9 +68,15 @@ spring:
         show_sql: false
 #        format_sql: false
 
-logging.level:
-  org.hibernate.SQL: info
-#  org.hibernate.type: trace
+logging:
+  level:
+    org.hibernate.SQL: info
+    # org.hibernate.type: trace
+    com:
+      amazonaws:
+        util:
+          EC2MetadataUtils: error
+
 
 decorator:
   datasource:
