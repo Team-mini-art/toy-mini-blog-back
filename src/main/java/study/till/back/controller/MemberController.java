@@ -20,15 +20,13 @@ import javax.validation.Valid;
 @RequestMapping("/api")
 public class MemberController {
 
-    private final MemberService memberService;
-    private final S3Service s3Service;
+    private final MemberService memberService;private final S3Service s3Service;
 
     @PostMapping(value = "/signup", consumes = {"multipart/form-data"})
     public ResponseEntity<CommonResponse> signup(
             @Valid @RequestPart(value = "data") SignupRequest signupRequest,
             @RequestPart(value = "file", required = false) MultipartFile multipartFile) {
         signupRequest.setMultipartFile(multipartFile);
-        String s = s3Service.uploadFile(multipartFile);
         return memberService.signup(signupRequest);
     }
 

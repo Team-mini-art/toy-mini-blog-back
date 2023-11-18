@@ -25,19 +25,19 @@ springdoc:
       - /**
 
 jwt:
-  secret: MDwwDQYJKoZIhvcNAQEBBQADKwAwKAIhAIqwfgdpBCIj/Kk4qtsIDrRjuABSI+rj69wlm+4eqU65AgMBAAE=
+  secret: ${jwt-secret}
   token-validity-in-seconds: 86400
 
 jasypt:
   encryptor:
     bean: jasyptStringEncryptor
-    password : miniArt10!
+    password : ${jasypt-password}
 
 cloud:
   aws:
     credentials:
-      accessKey: ENC(VQfeJ+6u0jtYVVXJbpehJMVkBPsWyQE6FSLErRc0u8E=)
-      secretKey: ENC(RZPkWLadSjfpW8JAN4YoegBicuNlh34cTtb73SQPl0tignkmcS1FRQEBy/qXTQmobW0GGDTaE/E=)
+      accessKey: ${aws-access-key}
+      secretKey: ${aws-secret-key}
     s3:
       bucket: mini-art-bucket
     region:
