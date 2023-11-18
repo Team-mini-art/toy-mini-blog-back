@@ -4,6 +4,10 @@ server:
 spring:
   profiles:
     include: db
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
 
 springdoc:
   default-consumes-media-type: application/json;charset=UTF-8
@@ -21,10 +25,22 @@ springdoc:
       - /**
 
 jwt:
-  secret: MDwwDQYJKoZIhvcNAQEBBQADKwAwKAIhAIqwfgdpBCIj/Kk4qtsIDrRjuABSI+rj69wlm+4eqU65AgMBAAE=
+  secret: ${jwt-secret}
   token-validity-in-seconds: 86400
 
 jasypt:
   encryptor:
     bean: jasyptStringEncryptor
-    password : miniArt10!
+    password : ${jasypt-password}
+
+cloud:
+  aws:
+    credentials:
+      accessKey: ${aws-access-key}
+      secretKey: ${aws-secret-key}
+    s3:
+      bucket: mini-art-bucket
+    region:
+      static: ap-northeast-2
+    stack:
+      auto: false

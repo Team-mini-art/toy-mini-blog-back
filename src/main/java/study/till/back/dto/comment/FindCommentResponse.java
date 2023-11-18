@@ -23,6 +23,8 @@ public class FindCommentResponse {
     private String contents;
     private LocalDateTime createdDate;
     private LocalDateTime updatedDate;
+
+    @Builder.Default
     private List<ReplyDTO> replyList = new ArrayList<>();
 
     public static FindCommentResponse from(Comment comment) {

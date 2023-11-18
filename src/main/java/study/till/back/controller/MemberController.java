@@ -11,6 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 import study.till.back.dto.*;
 import study.till.back.dto.member.*;
 import study.till.back.service.MemberService;
+import study.till.back.service.S3Service;
 
 import javax.validation.Valid;
 
@@ -19,7 +20,7 @@ import javax.validation.Valid;
 @RequestMapping("/api")
 public class MemberController {
 
-    private final MemberService memberService;
+    private final MemberService memberService;private final S3Service s3Service;
 
     @PostMapping(value = "/signup", consumes = {"multipart/form-data"})
     public ResponseEntity<CommonResponse> signup(

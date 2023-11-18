@@ -41,9 +41,14 @@ spring:
         show_sql: true
         format_sql: true
 
-logging.level:
-  org.hibernate.SQL: debug
-#  org.hibernate.type: trace
+logging:
+  level:
+    org.hibernate.SQL: debug
+    # org.hibernate.type: trace
+    com:
+      amazonaws:
+        util:
+          EC2MetadataUtils: error
 
 upload:
   path: /Users/hmmini/mini/develop/project/backend/asset/
@@ -68,9 +73,15 @@ spring:
         show_sql: false
 #        format_sql: false
 
-logging.level:
-  org.hibernate.SQL: info
-#  org.hibernate.type: trace
+logging:
+  level:
+    org.hibernate.SQL: info
+    # org.hibernate.type: trace
+    com:
+      amazonaws:
+        util:
+          EC2MetadataUtils: error
+
 
 decorator:
   datasource:

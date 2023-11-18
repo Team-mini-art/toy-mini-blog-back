@@ -42,6 +42,7 @@ public class MemberService {
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
     private final MemberAttachRepository memberAttachRepository;
+    private final S3Service s3Service;
 
     @Transactional
     public ResponseEntity<CommonResponse> signup(SignupRequest signupRequest) {
@@ -72,7 +73,7 @@ public class MemberService {
                 .build();
 
         if (signupRequest.getMultipartFile() != null && !signupRequest.getMultipartFile().isEmpty()) {
-            FileUploadDTO fileUploadDTO = FileUtil.uploadFile(uploadPath, signupRequest.getMultipartFile());
+            FileUploadDTO fileUploadDTO = s3Service.uploadFile(signupRequest.getMultipartFile());
 
             boolean result = fileUploadDTO.isResult();
 

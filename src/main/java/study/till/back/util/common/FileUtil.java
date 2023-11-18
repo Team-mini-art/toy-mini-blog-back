@@ -30,21 +30,21 @@ public class FileUtil {
         }
     }
 
-    public static FileUploadDTO uploadFile(String uploadPath, MultipartFile file) {
+    public static FileUploadDTO uploadFile(String uploadPath, MultipartFile multipartFile) {
         FileUploadDTO fileUploadDTO = new FileUploadDTO();
 
         LocalDateTime localDateTime = LocalDateTime.now();
         String nowTime = localDateTime.format(DateTimeFormatter.ofPattern("yyMMdd"));
-        String originFileName = file.getOriginalFilename();
+        String originFileName = multipartFile.getOriginalFilename();
         String extension = originFileName.substring(originFileName.lastIndexOf("."));
         String savedFileName = UUID.randomUUID() + extension;
 
         uploadPath += nowTime + "/";
-        File uploadFile = new File(uploadPath + savedFileName);
+        File file = new File(uploadPath + savedFileName);
 
-        FileUtil.makeDirs(uploadFile);
+        FileUtil.makeDirs(file);
 
-        if (!FileUtil.makeDirs(uploadFile)) {
+        if (!FileUtil.makeDirs(file)) {
             log.error("Failed to create directories for file: " + savedFileName);
             fileUploadDTO.setResult(false);
             return fileUploadDTO;
@@ -54,12 +54,12 @@ public class FileUtil {
         fileUploadDTO.setSavedFileName(savedFileName);
         fileUploadDTO.setUploadDir(uploadPath);
         fileUploadDTO.setExtension(extension);
-        fileUploadDTO.setSize(file.getSize());
-        fileUploadDTO.setContentType(file.getContentType());
+        fileUploadDTO.setSize(multipartFile.getSize());
+        fileUploadDTO.setContentType(multipartFile.getContentType());
 
         try {
             fileUploadDTO.setResult(true);
-            file.transferTo(uploadFile);
+            multipartFile.transferTo(file);
         } catch (IOException e) {
             log.error("Failed to upload file: ", e);
             throw new UploadFileException();
