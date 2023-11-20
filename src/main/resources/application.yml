@@ -26,7 +26,8 @@ springdoc:
 
 jwt:
   secret: ${jwt-secret}
-  token-validity-in-seconds: 86400
+  accessExpirationTime: 1800000 #30min
+  refreshExpirationTime: 604800000 #7days
 
 jasypt:
   encryptor:

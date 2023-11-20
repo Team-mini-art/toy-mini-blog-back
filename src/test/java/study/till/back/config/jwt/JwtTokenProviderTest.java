@@ -29,7 +29,7 @@ class JwtTokenProviderTest extends JwtTokenProvider {
 
     @Autowired
     public JwtTokenProviderTest(@Value("${jwt.secret}") String secretKey) {
-        super(secretKey);
+        super(secretKey, redisTemplate);
         byte[] keyBytes = Decoders.BASE64.decode(secretKey);
         this.key = Keys.hmacShaKeyFor(keyBytes);
     }
