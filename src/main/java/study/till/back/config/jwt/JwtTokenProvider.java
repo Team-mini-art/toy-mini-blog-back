@@ -3,8 +3,10 @@ package study.till.back.config.jwt;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -21,6 +23,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -29,15 +32,22 @@ public class JwtTokenProvider {
 
     private final Key key;
 
-    public JwtTokenProvider(@Value("${jwt.secret}") String secretKey) {
+    @Value("${jwt.accessExpirationTime}")
+    long accessExpirationTime;
+
+    @Value("${jwt.refreshExpirationTime}")
+    long refreshExpirationTime;
+    private final RedisTemplate<String, String> redisTemplate;
+
+    public JwtTokenProvider(@Value("${jwt.secret}") String secretKey, RedisTemplate<String, String> redisTemplate) {
         byte[] keyBytes = Decoders.BASE64.decode(secretKey);
         this.key = Keys.hmacShaKeyFor(keyBytes);
+        this.redisTemplate = redisTemplate;
     }
 
     public TokenInfo generateToken(String memberPk, List<String> roles) {
         long now = (new Date()).getTime();
-        Date accessTokenExpiresIn = new Date(now + 1_800_000); //30min
-//        Date accessTokenExpiresIn = new Date(now + 12_000); //2min
+        Date accessTokenExpiresIn = new Date(now + accessExpirationTime);
 
         // Access Token 생성
         Claims claims = Jwts.claims().setSubject(String.valueOf(memberPk));
@@ -51,10 +61,16 @@ public class JwtTokenProvider {
         // Refresh Token 생성
         String refreshToken = Jwts.builder()
                 .setClaims(claims)
-                .setExpiration(new Date(now + 604_800_000)) //7days
-//                .setExpiration(new Date(now + 18_000)) //3min
+                .setExpiration(new Date(now + refreshExpirationTime))
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
+
+        redisTemplate.opsForValue().set(
+                memberPk,
+                refreshToken,
+                refreshExpirationTime,
+                TimeUnit.MICROSECONDS
+        );
 
         return TokenInfo.builder()
                 .grantType("Bearer")
