@@ -85,7 +85,7 @@ spring:
 
   data:
     redis:
-      host: localhost
+      host: ${elasticache-endpoint}
       port: 6379
 
 logging:

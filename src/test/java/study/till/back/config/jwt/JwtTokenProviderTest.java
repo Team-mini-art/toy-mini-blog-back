@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.redis.core.RedisTemplate;
 import study.till.back.dto.token.TokenInfo;
 
 import java.security.Key;
@@ -28,7 +29,7 @@ class JwtTokenProviderTest extends JwtTokenProvider {
     private Long expiredSecond = 1L;
 
     @Autowired
-    public JwtTokenProviderTest(@Value("${jwt.secret}") String secretKey) {
+    public JwtTokenProviderTest(@Value("${jwt.secret}") String secretKey, RedisTemplate<String, String> redisTemplate) {
         super(secretKey, redisTemplate);
         byte[] keyBytes = Decoders.BASE64.decode(secretKey);
         this.key = Keys.hmacShaKeyFor(keyBytes);
