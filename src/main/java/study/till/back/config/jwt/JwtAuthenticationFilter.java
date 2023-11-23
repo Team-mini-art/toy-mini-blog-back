@@ -42,6 +42,7 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
+
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         HttpServletResponse httpResponse = (HttpServletResponse) response;
 
@@ -59,22 +60,22 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
                     SecurityContextHolder.getContext().setAuthentication(authentication);
                     break;
                 case EXPIRED:
-                    String jsonExpiredErrorResponse = createJsonErrorResponse(401, "access_token_expired");
+                    String jsonExpiredErrorResponse = createJsonErrorResponse("401", "access_token_expired");
                     sendJsonErrorResponse(httpResponse, jsonExpiredErrorResponse);
                     return;
                 case UNSUPPORTED:
-                    String jsonUnsupportedErrorResponse = createJsonErrorResponse(401, "unsupported_jwt_token");
+                    String jsonUnsupportedErrorResponse = createJsonErrorResponse("401", "unsupported_jwt_token");
                     sendJsonErrorResponse(httpResponse, jsonUnsupportedErrorResponse);
                     return;
                 case INVALID:
                 default:
-                    String jsonInvalidErrorResponse = createJsonErrorResponse(401, "invalid_jwt_token");
+                    String jsonInvalidErrorResponse = createJsonErrorResponse("401", "invalid_jwt_token");
                     sendJsonErrorResponse(httpResponse, jsonInvalidErrorResponse);
                     return;
             }
         }
         else {
-            String jsonInvalidErrorResponse = createJsonErrorResponse(403, "empty token in header");
+            String jsonInvalidErrorResponse = createJsonErrorResponse("403", "empty token in header");
             sendJsonErrorResponse(httpResponse, jsonInvalidErrorResponse);
             return;
         }
@@ -90,7 +91,7 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
         return null;
     }
 
-    private String createJsonErrorResponse(int status, String message) throws IOException {
+    private String createJsonErrorResponse(String status, String message) throws IOException {
         ObjectMapper objectMapper = new ObjectMapper();
         TokenErrorResponse errorResponse = TokenErrorResponse.builder()
                 .status(status)
@@ -102,7 +103,7 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
     private void sendJsonErrorResponse(HttpServletResponse httpResponse, String jsonErrorResponse) throws IOException {
         ObjectMapper objectMapper = new ObjectMapper();
         TokenErrorResponse errorResponse = objectMapper.readValue(jsonErrorResponse, TokenErrorResponse.class);
-        httpResponse.setStatus(errorResponse.getStatus());
+        httpResponse.setStatus(Integer.parseInt(errorResponse.getStatus()));
         httpResponse.setContentType(MediaType.APPLICATION_JSON_VALUE);
         httpResponse.getWriter().write(jsonErrorResponse);
     }
