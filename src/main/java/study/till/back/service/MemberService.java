@@ -141,7 +141,7 @@ public class MemberService {
         FileUploadDTO fileUploadDTO = new FileUploadDTO();
         boolean uploaded = false;
         if (memberRequest.getMultipartFile() != null && !memberRequest.getMultipartFile().isEmpty()) {
-            fileUploadDTO = FileUtil.uploadFile(uploadPath, memberRequest.getMultipartFile());
+            fileUploadDTO = s3Service.uploadFile(memberRequest.getMultipartFile());
             uploaded = fileUploadDTO.isResult();
         }
 
@@ -150,7 +150,7 @@ public class MemberService {
 
             if (attachList != null && !attachList.isEmpty()) {
                 for (MemberAttach memberAttach : attachList) {
-                    boolean deleted = FileUtil.deleteFile(memberAttach.getUploadDir() + memberAttach.getSavedFileName());
+                    boolean deleted = s3Service.deleteFile(memberAttach.getUploadDir() + memberAttach.getSavedFileName());
 
                     if (deleted) {
                         memberAttachRepository.delete(memberAttach);

@@ -53,6 +53,21 @@ public class S3Service {
 
     }
 
+    public boolean deleteFile(String savedFilePath) {
+        try {
+            if(!amazonS3.doesObjectExist(bucket, savedFilePath)) {
+                return false;
+            }
+            amazonS3.deleteObject(bucket, savedFilePath);
+            return true;
+        }
+        catch (Exception e) {
+            log.error("Failed to delete file: ", e);
+            return false;
+        }
+    }
+
+
     public String makeUploadPath() {
         LocalDateTime localDateTime = LocalDateTime.now();
         String nowTime = localDateTime.format(DateTimeFormatter.ofPattern("yyMMdd"));
