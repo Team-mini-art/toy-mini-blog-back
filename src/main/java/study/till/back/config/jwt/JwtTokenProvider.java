@@ -66,10 +66,10 @@ public class JwtTokenProvider {
                 .compact();
 
         redisTemplate.opsForValue().set(
-                memberPk,
                 refreshToken,
+                memberPk,
                 refreshExpirationTime,
-                TimeUnit.MICROSECONDS
+                TimeUnit.MILLISECONDS
         );
 
         return TokenInfo.builder()

@@ -14,7 +14,7 @@ public class ErrorResponse {
         return ResponseEntity
                 .status(errorCode.getStatus())
                 .body(ErrorResponse.builder()
-                        .status(Integer.toString(errorCode.getStatus().value()))
+                        .status("FAIL")
                         .message(errorCode.getMessage())
                         .build()
                 );
@@ -24,7 +24,7 @@ public class ErrorResponse {
         return ResponseEntity
                 .status(errorCode.getStatus())
                 .body(ErrorResponse.builder()
-                        .status(Integer.toString(errorCode.getStatus().value()))
+                        .status("FAIL")
                         .message(message)
                         .build()
                 );
