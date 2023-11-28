@@ -8,6 +8,10 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
+import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
+import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import study.till.back.config.jwt.JwtTokenProvider;
 import study.till.back.dto.*;
@@ -23,7 +27,6 @@ import study.till.back.exception.member.InvalidPasswordException;
 import study.till.back.exception.member.NotFoundMemberException;
 import study.till.back.repository.MemberAttachRepository;
 import study.till.back.repository.MemberRepository;
-import study.till.back.util.common.FileUtil;
 import study.till.back.util.valid.SignupValidUtil;
 
 import javax.transaction.Transactional;
@@ -33,16 +36,18 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class MemberService {
-
-    @Value("${upload.path}")
-    private String uploadPath;
+public class MemberService extends DefaultOAuth2UserService {
 
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
     private final MemberAttachRepository memberAttachRepository;
     private final S3Service s3Service;
+
+    @Override
+    public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
+        return super.loadUser(userRequest);
+    }
 
     @Transactional
     public ResponseEntity<CommonResponse> signup(SignupRequest signupRequest) {
