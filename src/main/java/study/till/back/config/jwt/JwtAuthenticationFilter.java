@@ -30,7 +30,9 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
             "/swagger-ui/index.html",
             "/api/signup",
             "/api/login",
-            "/api/refresh"
+            "/api/refresh",
+            "oauth2/authorization/google",
+            "/login/oauth2/code/google"
     );
 
     private static final List<String> EXEMPTED_REGEX_URIS = Arrays.asList(
@@ -62,25 +64,30 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
                 case EXPIRED:
                     String jsonExpiredErrorResponse = createJsonErrorResponse("access_token_expired");
                     sendJsonErrorResponse(httpResponse, 401, jsonExpiredErrorResponse);
-                    return;
+                    break;
                 case UNSUPPORTED:
                     String jsonUnsupportedErrorResponse = createJsonErrorResponse("unsupported_jwt_token");
                     sendJsonErrorResponse(httpResponse, 401, jsonUnsupportedErrorResponse);
-                    return;
+                    break;
                 case INVALID:
                 default:
                     String jsonInvalidErrorResponse = createJsonErrorResponse("invalid_jwt_token");
                     sendJsonErrorResponse(httpResponse, 401, jsonInvalidErrorResponse);
-                    return;
+                    break;
             }
         }
         else {
-            String jsonInvalidErrorResponse = createJsonErrorResponse("empty token in header");
-            sendJsonErrorResponse(httpResponse, 403, jsonInvalidErrorResponse);
-            return;
+            try {
+                chain.doFilter(request, response);
+            } catch (Exception e) {
+                if (e instanceof IOException || e instanceof ServletException) {
+                    throw e;
+                } else {
+                    String jsonInvalidErrorResponse = createJsonErrorResponse("empty token in header");
+                    sendJsonErrorResponse(httpResponse, 403, jsonInvalidErrorResponse);
+                }
+            }
         }
-
-        chain.doFilter(request, response);
     }
 
     private String resolveToken(HttpServletRequest request) {

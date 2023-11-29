@@ -24,7 +24,9 @@ public class SecurityConfig {
     private static final String[] NON_AUTHENTICATED_URIS = {
             "/api/signup",
             "/api/login",
-            "/api/refresh"
+            "/api/refresh",
+            "oauth2/authorization/google",
+            "/login/oauth2/code/google"
     };
 
     private static final String[] SWAGGER_URIS = {
@@ -50,6 +52,8 @@ public class SecurityConfig {
                 .antMatchers(SWAGGER_URIS).permitAll()
                 .antMatchers(HttpMethod.GET, PUBLIC_GET_URIS).permitAll()
                 .anyRequest().authenticated()
+                .and()
+                .oauth2Login()
                 .and()
                 .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class);
 
