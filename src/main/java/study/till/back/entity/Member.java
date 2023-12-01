@@ -21,11 +21,14 @@ public class Member extends BaseTimeEntity implements UserDetails {
     @Id
     private String email;
 
-    @Column(nullable = false)
     private String password;
 
     @Column(nullable = false)
     private String nickname;
+
+    @Enumerated(EnumType.STRING)
+    private OAuthType oAuthType;
+
 
     public void updatePost(String nickname) {
         this.nickname = nickname;

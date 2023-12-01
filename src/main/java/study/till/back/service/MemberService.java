@@ -6,7 +6,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
@@ -21,6 +20,7 @@ import study.till.back.dto.member.*;
 import study.till.back.dto.token.TokenInfo;
 import study.till.back.entity.Member;
 import study.till.back.entity.MemberAttach;
+import study.till.back.entity.OAuthType;
 import study.till.back.exception.common.NoDataException;
 import study.till.back.exception.member.DuplicateMemberException;
 import study.till.back.exception.member.InvalidEmailException;
@@ -31,7 +31,6 @@ import study.till.back.repository.MemberRepository;
 import study.till.back.util.valid.SignupValidUtil;
 
 import javax.transaction.Transactional;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -48,19 +47,34 @@ public class MemberService implements OAuth2UserService<OAuth2UserRequest, OAuth
     private final S3Service s3Service;
 
     @Override
+    @Transactional
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
         OAuth2UserService oAuth2UserService = new DefaultOAuth2UserService();
         OAuth2User oAuth2User = oAuth2UserService.loadUser(userRequest);
 
         String registrationId = userRequest.getClientRegistration().getRegistrationId();
-        String userNameAttributeName = userRequest.getClientRegistration()
-                .getProviderDetails()
-                .getUserInfoEndpoint()
-                .getUserNameAttributeName();
-
         Map<String, Object> attributes = oAuth2User.getAttributes();
 
-        return null;
+        String email = (String) attributes.get("email");
+        String nickname = (String) attributes.get("name");
+
+        Member member = memberRepository.findById(email).orElse(null);
+
+        if (member != null) {
+            throw new DuplicateMemberException();
+        }
+
+        Member newMember = Member.builder()
+                .email(email)
+                .nickname(nickname)
+                .oAuthType(OAuthType.GOOGLE)
+                .roles(Collections.singletonList("ROLE_USER"))
+                .build();
+        memberRepository.save(newMember);
+
+        TokenInfo tokenInfo = jwtTokenProvider.generateToken(newMember.getEmail(), newMember.getRoles());
+
+        return oAuth2User;
     }
 
     @Transactional

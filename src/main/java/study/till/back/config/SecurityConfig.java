@@ -24,9 +24,7 @@ public class SecurityConfig {
     private static final String[] NON_AUTHENTICATED_URIS = {
             "/api/signup",
             "/api/login",
-            "/api/refresh",
-            "oauth2/authorization/google",
-            "/login/oauth2/code/google"
+            "/api/refresh"
     };
 
     private static final String[] SWAGGER_URIS = {
@@ -37,7 +35,9 @@ public class SecurityConfig {
 
     private static final String[] PUBLIC_GET_URIS = {
             "/api/posts/**",
-            "/api/comments/**"
+            "/api/comments/**",
+            "/oauth2/**",
+            "/login/**"
     };
 
     @Bean
