@@ -38,44 +38,13 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class MemberService implements OAuth2UserService<OAuth2UserRequest, OAuth2User> {
+public class MemberService {
 
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
     private final MemberAttachRepository memberAttachRepository;
     private final S3Service s3Service;
-
-    @Override
-    @Transactional
-    public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
-        OAuth2UserService oAuth2UserService = new DefaultOAuth2UserService();
-        OAuth2User oAuth2User = oAuth2UserService.loadUser(userRequest);
-
-        String registrationId = userRequest.getClientRegistration().getRegistrationId();
-        Map<String, Object> attributes = oAuth2User.getAttributes();
-
-        String email = (String) attributes.get("email");
-        String nickname = (String) attributes.get("name");
-
-        Member member = memberRepository.findById(email).orElse(null);
-
-        if (member != null) {
-            throw new DuplicateMemberException();
-        }
-
-        Member newMember = Member.builder()
-                .email(email)
-                .nickname(nickname)
-                .oAuthType(OAuthType.GOOGLE)
-                .roles(Collections.singletonList("ROLE_USER"))
-                .build();
-        memberRepository.save(newMember);
-
-        TokenInfo tokenInfo = jwtTokenProvider.generateToken(newMember.getEmail(), newMember.getRoles());
-
-        return oAuth2User;
-    }
 
     @Transactional
     public ResponseEntity<CommonResponse> signup(SignupRequest signupRequest) {

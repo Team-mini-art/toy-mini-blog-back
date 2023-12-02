@@ -38,8 +38,7 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
             "^/v3/api-docs(/.*)?$",
             "^/api/posts(/.*)?$",
             "^/api/comments(/.*)?$",
-            "^/oauth2(/.*)?$",
-            "^/login(/.*)?$"
+            "^/oauth(/.*)?$"
     );
 
     @Override

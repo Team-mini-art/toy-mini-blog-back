@@ -20,7 +20,7 @@ import javax.validation.Valid;
 @RequestMapping("/api")
 public class MemberController {
 
-    private final MemberService memberService;private final S3Service s3Service;
+    private final MemberService memberService;
 
     @PostMapping(value = "/signup", consumes = {"multipart/form-data"})
     public ResponseEntity<CommonResponse> signup(
