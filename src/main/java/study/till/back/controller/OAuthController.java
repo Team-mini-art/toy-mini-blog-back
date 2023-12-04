@@ -4,6 +4,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import study.till.back.dto.member.LoginResponse;
 
@@ -11,7 +12,7 @@ import study.till.back.dto.member.LoginResponse;
 @RequestMapping("/oauth")
 public class OAuthController {
 
-    @RequestMapping("/success")
+    @GetMapping("/success")
     public ResponseEntity<LoginResponse> oauthSuccess(@AuthenticationPrincipal OAuth2User principal) {
         System.out.println(principal);
         LoginResponse loginResponse = new LoginResponse();

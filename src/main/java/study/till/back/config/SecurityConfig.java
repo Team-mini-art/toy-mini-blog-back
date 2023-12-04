@@ -24,6 +24,7 @@ public class SecurityConfig {
 
     private final JwtTokenProvider jwtTokenProvider;
     private final CustomOAuth2UserService customOAuth2UserService;
+    private final OAuth2AuthenticationSuccessHandler oauth2AuthenticationSuccessHandler;
 
     private static final String[] NON_AUTHENTICATED_URIS = {
             "/api/signup",
@@ -48,7 +49,7 @@ public class SecurityConfig {
         http
                 .httpBasic().disable()
                 .csrf().disable()
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
                 .and()
                 .authorizeRequests()
                 .antMatchers(NON_AUTHENTICATED_URIS).permitAll()
@@ -57,11 +58,12 @@ public class SecurityConfig {
                 .anyRequest().authenticated()
                 .and()
                 .oauth2Login()
-                .userInfoEndpoint()
-                .userService(customOAuth2UserService)
-                .and()
-                .defaultSuccessUrl("/oauth/success")
-                .failureUrl("/oauth/fail")
+                .successHandler(oauth2AuthenticationSuccessHandler)
+//                .userInfoEndpoint()
+//                .userService(customOAuth2UserService)
+//                .and()
+//                .defaultSuccessUrl("/oauth/success")
+//                .failureUrl("/oauth/fail")
                 .and()
                 .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class);
 
