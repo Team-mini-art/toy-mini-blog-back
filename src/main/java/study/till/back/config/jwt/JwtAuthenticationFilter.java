@@ -38,7 +38,8 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
             "^/v3/api-docs(/.*)?$",
             "^/api/posts(/.*)?$",
             "^/api/comments(/.*)?$",
-            "^/oauth(/.*)?$"
+            "^/oauth(/.*)?$",
+            "^/login"
     );
 
     @Override
@@ -51,6 +52,7 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
             chain.doFilter(request, response);
             return;
         }
+
         String token = resolveToken(httpRequest);
         if (token != null) {
             JwtStatus status = jwtTokenProvider.getTokenStatus(token);
@@ -76,17 +78,16 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
             }
         }
         else {
-            try {
-                chain.doFilter(request, response);
-            } catch (Exception e) {
-                if (e instanceof IOException || e instanceof ServletException) {
-                    throw e;
-                } else {
-                    String jsonInvalidErrorResponse = createJsonErrorResponse("empty token in header");
-                    sendJsonErrorResponse(httpResponse, 403, jsonInvalidErrorResponse);
-                }
-            }
+            String jsonInvalidErrorResponse = createJsonErrorResponse("empty token in header");
+            sendJsonErrorResponse(httpResponse, 403, jsonInvalidErrorResponse);
         }
+
+        try {
+            chain.doFilter(request, response);
+        } catch (Exception e) {
+            throw e;
+        }
+
     }
 
     private String resolveToken(HttpServletRequest request) {

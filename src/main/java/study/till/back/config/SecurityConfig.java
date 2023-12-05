@@ -3,7 +3,6 @@ package study.till.back.config;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -14,8 +13,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import study.till.back.config.jwt.JwtAuthenticationFilter;
 import study.till.back.config.jwt.JwtTokenProvider;
-import study.till.back.service.CustomOAuth2UserService;
-import study.till.back.service.MemberService;
+import study.till.back.service.OAuth2Service;
 
 @Configuration
 @EnableWebSecurity
@@ -23,8 +21,7 @@ import study.till.back.service.MemberService;
 public class SecurityConfig {
 
     private final JwtTokenProvider jwtTokenProvider;
-    private final CustomOAuth2UserService customOAuth2UserService;
-    private final OAuth2AuthenticationSuccessHandler oauth2AuthenticationSuccessHandler;
+    private final OAuth2Service oAuth2Service;
 
     private static final String[] NON_AUTHENTICATED_URIS = {
             "/api/signup",
@@ -41,7 +38,8 @@ public class SecurityConfig {
     private static final String[] PUBLIC_GET_URIS = {
             "/api/posts/**",
             "/api/comments/**",
-            "/oauth/**"
+            "/oauth/**",
+            "/login"
     };
 
     @Bean
@@ -58,12 +56,11 @@ public class SecurityConfig {
                 .anyRequest().authenticated()
                 .and()
                 .oauth2Login()
-                .successHandler(oauth2AuthenticationSuccessHandler)
-//                .userInfoEndpoint()
-//                .userService(customOAuth2UserService)
-//                .and()
-//                .defaultSuccessUrl("/oauth/success")
-//                .failureUrl("/oauth/fail")
+                .userInfoEndpoint()
+                .userService(oAuth2Service)
+                .and()
+                .defaultSuccessUrl("/oauth/success")
+                .failureUrl("/oauth/fail")
                 .and()
                 .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class);
 

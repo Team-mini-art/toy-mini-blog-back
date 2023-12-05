@@ -1,14 +1,17 @@
 package study.till.back.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
-import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import study.till.back.config.jwt.JwtTokenProvider;
+import study.till.back.dto.CommonResponse;
+import study.till.back.dto.member.LoginResponse;
 import study.till.back.dto.token.TokenInfo;
 import study.till.back.entity.Member;
 import study.till.back.entity.OAuthType;
@@ -16,12 +19,12 @@ import study.till.back.repository.MemberRepository;
 
 import javax.transaction.Transactional;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
-public class CustomOAuth2UserService extends DefaultOAuth2UserService {
+public class OAuth2Service extends DefaultOAuth2UserService {
+
     private final MemberRepository memberRepository;
     private final JwtTokenProvider jwtTokenProvider;
 
@@ -30,8 +33,10 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
         OAuth2UserService oAuth2UserService = new DefaultOAuth2UserService();
         OAuth2User oAuth2User = oAuth2UserService.loadUser(userRequest);
+        return oAuth2User;
+    }
 
-        String registrationId = userRequest.getClientRegistration().getRegistrationId();
+    public ResponseEntity<LoginResponse> loginSuccess(OAuth2User oAuth2User) {
         Map<String, Object> attributes = oAuth2User.getAttributes();
 
         String email = (String) attributes.get("email");
@@ -41,9 +46,14 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
         if (member != null) {
             TokenInfo tokenInfo = jwtTokenProvider.generateToken(member.getEmail(), member.getRoles());
-            Map<String, Object> newAttributes = new HashMap<>(attributes);
-            newAttributes.put("token", tokenInfo);
-            return new DefaultOAuth2User(oAuth2User.getAuthorities(), newAttributes, "email");
+            LoginResponse loginResponse = LoginResponse.builder()
+                    .status("SUCCESS")
+                    .message("로그인에 성공하였습니다.")
+                    .email(member.getEmail())
+                    .nickname(member.getNickname())
+                    .tokenInfo(tokenInfo)
+                    .build();
+            return ResponseEntity.ok(loginResponse);
         }
 
         Member newMember = Member.builder()
@@ -56,9 +66,22 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
         TokenInfo tokenInfo = jwtTokenProvider.generateToken(newMember.getEmail(), newMember.getRoles());
 
-        Map<String, Object> newAttributes = new HashMap<>(attributes);
-        newAttributes.put("token", tokenInfo);
+        LoginResponse loginResponse = LoginResponse.builder()
+                .status("SUCCESS")
+                .message("로그인에 성공하였습니다.")
+                .email(newMember.getEmail())
+                .nickname(newMember.getNickname())
+                .tokenInfo(tokenInfo)
+                .build();
+        return ResponseEntity.ok(loginResponse);
+    }
 
-        return new DefaultOAuth2User(oAuth2User.getAuthorities(), newAttributes, "email");
+    public ResponseEntity<CommonResponse> loginFail() {
+        CommonResponse commonResponse = CommonResponse.builder()
+                .status("FAIL")
+                .message("로그인에 실패하였습니다.")
+                .build();
+
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(commonResponse);
     }
 }
