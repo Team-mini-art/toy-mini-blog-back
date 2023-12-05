@@ -37,7 +37,9 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
             "^/swagger-ui.*$",
             "^/v3/api-docs(/.*)?$",
             "^/api/posts(/.*)?$",
-            "^/api/comments(/.*)?$"
+            "^/api/comments(/.*)?$",
+            "^/oauth(/.*)?$",
+            "^/login"
     );
 
     @Override
@@ -50,6 +52,7 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
             chain.doFilter(request, response);
             return;
         }
+
         String token = resolveToken(httpRequest);
         if (token != null) {
             JwtStatus status = jwtTokenProvider.getTokenStatus(token);
@@ -62,25 +65,29 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
                 case EXPIRED:
                     String jsonExpiredErrorResponse = createJsonErrorResponse("access_token_expired");
                     sendJsonErrorResponse(httpResponse, 401, jsonExpiredErrorResponse);
-                    return;
+                    break;
                 case UNSUPPORTED:
                     String jsonUnsupportedErrorResponse = createJsonErrorResponse("unsupported_jwt_token");
                     sendJsonErrorResponse(httpResponse, 401, jsonUnsupportedErrorResponse);
-                    return;
+                    break;
                 case INVALID:
                 default:
                     String jsonInvalidErrorResponse = createJsonErrorResponse("invalid_jwt_token");
                     sendJsonErrorResponse(httpResponse, 401, jsonInvalidErrorResponse);
-                    return;
+                    break;
             }
         }
         else {
             String jsonInvalidErrorResponse = createJsonErrorResponse("empty token in header");
             sendJsonErrorResponse(httpResponse, 403, jsonInvalidErrorResponse);
-            return;
         }
 
-        chain.doFilter(request, response);
+        try {
+            chain.doFilter(request, response);
+        } catch (Exception e) {
+            throw e;
+        }
+
     }
 
     private String resolveToken(HttpServletRequest request) {

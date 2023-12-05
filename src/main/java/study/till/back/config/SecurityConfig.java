@@ -13,6 +13,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import study.till.back.config.jwt.JwtAuthenticationFilter;
 import study.till.back.config.jwt.JwtTokenProvider;
+import study.till.back.service.OAuth2Service;
 
 @Configuration
 @EnableWebSecurity
@@ -20,6 +21,7 @@ import study.till.back.config.jwt.JwtTokenProvider;
 public class SecurityConfig {
 
     private final JwtTokenProvider jwtTokenProvider;
+    private final OAuth2Service oAuth2Service;
 
     private static final String[] NON_AUTHENTICATED_URIS = {
             "/api/signup",
@@ -35,7 +37,9 @@ public class SecurityConfig {
 
     private static final String[] PUBLIC_GET_URIS = {
             "/api/posts/**",
-            "/api/comments/**"
+            "/api/comments/**",
+            "/oauth/**",
+            "/login"
     };
 
     @Bean
@@ -43,13 +47,20 @@ public class SecurityConfig {
         http
                 .httpBasic().disable()
                 .csrf().disable()
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
                 .and()
                 .authorizeRequests()
                 .antMatchers(NON_AUTHENTICATED_URIS).permitAll()
                 .antMatchers(SWAGGER_URIS).permitAll()
                 .antMatchers(HttpMethod.GET, PUBLIC_GET_URIS).permitAll()
                 .anyRequest().authenticated()
+                .and()
+                .oauth2Login()
+                .userInfoEndpoint()
+                .userService(oAuth2Service)
+                .and()
+                .defaultSuccessUrl("/oauth/success")
+                .failureUrl("/oauth/fail")
                 .and()
                 .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class);
 
