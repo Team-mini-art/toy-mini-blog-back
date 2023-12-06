@@ -5,7 +5,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
-import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
@@ -31,9 +30,7 @@ public class OAuth2Service extends DefaultOAuth2UserService {
     @Override
     @Transactional
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
-        OAuth2UserService oAuth2UserService = new DefaultOAuth2UserService();
-        OAuth2User oAuth2User = oAuth2UserService.loadUser(userRequest);
-        return oAuth2User;
+        return super.loadUser(userRequest);
     }
 
     public ResponseEntity<LoginResponse> loginSuccess(OAuth2User oAuth2User) {
@@ -45,6 +42,11 @@ public class OAuth2Service extends DefaultOAuth2UserService {
         Member member = memberRepository.findById(email).orElse(null);
 
         if (member != null) {
+            if (!member.getNickname().equals(nickname)) {
+                member.updateMember(nickname);
+                memberRepository.save(member);
+            }
+
             TokenInfo tokenInfo = jwtTokenProvider.generateToken(member.getEmail(), member.getRoles());
             LoginResponse loginResponse = LoginResponse.builder()
                     .status("SUCCESS")
@@ -62,6 +64,7 @@ public class OAuth2Service extends DefaultOAuth2UserService {
                 .oAuthType(OAuthType.GOOGLE)
                 .roles(Collections.singletonList("ROLE_USER"))
                 .build();
+
         memberRepository.save(newMember);
 
         TokenInfo tokenInfo = jwtTokenProvider.generateToken(newMember.getEmail(), newMember.getRoles());

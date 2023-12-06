@@ -7,11 +7,6 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
-import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
-import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
-import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
-import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import study.till.back.config.jwt.JwtTokenProvider;
 import study.till.back.dto.*;
@@ -20,7 +15,6 @@ import study.till.back.dto.member.*;
 import study.till.back.dto.token.TokenInfo;
 import study.till.back.entity.Member;
 import study.till.back.entity.MemberAttach;
-import study.till.back.entity.OAuthType;
 import study.till.back.exception.common.NoDataException;
 import study.till.back.exception.member.DuplicateMemberException;
 import study.till.back.exception.member.InvalidEmailException;
@@ -33,7 +27,6 @@ import study.till.back.util.valid.SignupValidUtil;
 import javax.transaction.Transactional;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -137,7 +130,7 @@ public class MemberService {
     @Transactional
     public ResponseEntity<CommonResponse> updateMember(MemberRequest memberRequest) {
         Member member = memberRepository.findById(memberRequest.getEmail()).orElseThrow(NotFoundMemberException::new);
-        member.updatePost(memberRequest.getNickname());
+        member.updateMember(memberRequest.getNickname());
         memberRepository.save(member);
 
         FileUploadDTO fileUploadDTO = new FileUploadDTO();
