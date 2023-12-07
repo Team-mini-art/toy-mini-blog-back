@@ -10,8 +10,8 @@ import javax.validation.constraints.NotEmpty;
 @Getter
 @Builder
 public class TokenRequest {
-    @NotEmpty(message = "accessToken을 입력해주세요.")
-    private String accessToken;
+    @NotEmpty(message = "email을 입력해주세요.")
+    private String email;
     @NotEmpty(message = "refreshToken을 입력해주세요.")
     private String refreshToken;
 }
