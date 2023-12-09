@@ -15,7 +15,10 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import study.till.back.dto.token.JwtStatus;
 import study.till.back.dto.token.TokenInfo;
+import study.till.back.exception.token.ExpiredTokenException;
+import study.till.back.exception.token.InvalidTokenException;
 import study.till.back.exception.token.UnauthorizedTokenException;
+import study.till.back.exception.token.UnsupportedTokenException;
 
 import java.security.Key;
 import java.util.Arrays;
@@ -64,9 +67,10 @@ public class JwtTokenProvider {
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
 
+        // Redis에 토큰 저장
         redisTemplate.opsForValue().set(
-                refreshToken,
                 memberPk,
+                refreshToken,
                 refreshExpirationTime,
                 TimeUnit.MILLISECONDS
         );
@@ -100,18 +104,21 @@ public class JwtTokenProvider {
             return true;
         }
         catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e) {
-            log.info("Invalid JWT Token", e);
+            log.error("invalid_jwt_token", e);
+            throw new InvalidTokenException();
         }
         catch (ExpiredJwtException e) {
-            log.info("Expired JWT Token", e);
+            log.error("jwt_token_expired", e);
+            throw new ExpiredTokenException();
         }
         catch (UnsupportedJwtException e) {
-            log.info("Unsupported JWT Token", e);
+            log.error("unsupported_jwt_token", e);
+            throw new UnsupportedTokenException();
         }
         catch (IllegalArgumentException e) {
-            log.info("JWT claims string is empty.", e);
+            log.error("JWT claims string is empty.", e);
+            throw new IllegalArgumentException();
         }
-        return false;
     }
 
     public JwtStatus getTokenStatus(String token) {
@@ -127,9 +134,9 @@ public class JwtTokenProvider {
         }
     }
 
-    public Claims parseClaims(String accessToken) {
+    public Claims parseClaims(String token) {
         try {
-            return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(accessToken).getBody();
+            return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
         } catch (ExpiredJwtException e) {
             return e.getClaims();
         }

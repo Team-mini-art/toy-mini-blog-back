@@ -73,8 +73,8 @@ class JwtTokenProviderTest extends JwtTokenProvider {
     }
 
     @Override
-    public Claims parseClaims(String accessToken) {
-        return Jwts.parserBuilder().setSigningKey(this.key).build().parseClaimsJws(accessToken).getBody();
+    public Claims parseClaims(String token) {
+        return Jwts.parserBuilder().setSigningKey(this.key).build().parseClaimsJws(token).getBody();
     }
 
     @Override

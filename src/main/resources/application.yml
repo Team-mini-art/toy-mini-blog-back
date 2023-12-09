@@ -8,17 +8,6 @@ spring:
     multipart:
       max-file-size: 10MB
       max-request-size: 10MB
-  security:
-    oauth2:
-      client:
-        registration:
-          google:
-            client-id: ${google-client-id}
-            client-secret: ${google-client-secret}
-            redirect-uri: http://localhost:8081/login/oauth2/code/google
-            scope:
-              - email
-              - profile
 
 springdoc:
   default-consumes-media-type: application/json;charset=UTF-8

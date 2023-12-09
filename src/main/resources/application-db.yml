@@ -37,7 +37,6 @@ spring:
     username: ENC(gcNZpdpwOAapp1Mn5z/dKw==)
     password: ENC(DFBE0sJ3qjUvKi4bHbcJAUQ6DRNvxVVY)
     driver-class-name: org.mariadb.jdbc.Driver
-
   jpa:
     hibernate:
       ddl-auto: update
@@ -45,11 +44,21 @@ spring:
       hibernate:
         show_sql: true
         format_sql: true
-
   data:
     redis:
       host: localhost
       port: 6379
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${google-client-id}
+            client-secret: ${google-client-secret}
+            redirect-uri: http://localhost:8081/login/oauth2/code/google
+            scope:
+              - email
+              - profile
 
 logging:
   level:
@@ -74,7 +83,6 @@ spring:
     username: ENC(gcNZpdpwOAapp1Mn5z/dKw==)
     password: ENC(DFBE0sJ3qjUvKi4bHbcJAUQ6DRNvxVVY)
     driver-class-name: org.mariadb.jdbc.Driver
-
   jpa:
     hibernate:
       ddl-auto: update
@@ -82,11 +90,21 @@ spring:
       hibernate:
         show_sql: false
 #        format_sql: false
-
   data:
     redis:
       host: ${elasticache-endpoint}
       port: 6379
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${google-client-id}
+            client-secret: ${google-client-secret}
+            redirect-uri: http://54.180.91.118:8081/login/oauth2/code/google
+            scope:
+              - email
+              - profile
 
 logging:
   level:

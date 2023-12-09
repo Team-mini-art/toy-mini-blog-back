@@ -16,13 +16,20 @@ public enum ErrorCode {
     DATA_INTEGRITY_VIOLATION(HttpStatus.BAD_REQUEST, "데이터베이스의 무결성 제약 조건을 위반하였습니다."),
     INVALID_EMAIL(HttpStatus.FORBIDDEN, "이메일 형식이 올바르지 않습니다."),
     INVALID_PASSWORD(HttpStatus.FORBIDDEN, "비밀번호는 대문자, 숫자, 특수문자 포함 10자리 이상이어야 합니다."),
-    EXPIRED_ACCESS_TOKEN(HttpStatus.UNAUTHORIZED, "access_token_expired"),
-    EXPIRED_REFRESH_TOKEN(HttpStatus.UNAUTHORIZED, "refresh_token_expired"),
-    UNAUTHORIZED_TOKEN(HttpStatus.UNAUTHORIZED, "인증되지 않은 토큰입니다."),
     NOT_MATCH(HttpStatus.FORBIDDEN, "수정하실 컨텐츠의 회원과 등록된 회원이 일치하지 않습니다."),
     NO_DATA(HttpStatus.NOT_FOUND, "No Data"),
     CANNOT_UPLOAD_FILE(HttpStatus.INTERNAL_SERVER_ERROR, "파일 업로드에 실패하였습니다."),
     CANNOT_DELETE_FILE(HttpStatus.INTERNAL_SERVER_ERROR, "파일 삭제에 실패하였습니다."),
+
+    // Token
+    INVALID_TOKEN(HttpStatus.UNAUTHORIZED, "invalid_jwt_token"),
+    EXPIRED_TOKEN(HttpStatus.UNAUTHORIZED, "jwt_token_expired"),
+    UNSUPPORTED_TOKEN(HttpStatus.UNAUTHORIZED, "unsupported_jwt_token"),
+    UNAUTHORIZED_TOKEN(HttpStatus.UNAUTHORIZED, "unauthorized_jwt_token"),
+
+    // Redis
+    NOT_FOUND_REDIS_VALUE(HttpStatus.NOT_FOUND, "Redis에서 해당 key를 찾을 수 없습니다."),
+    NOT_EQUALS_REDIS_VALUE(HttpStatus.BAD_REQUEST, "Redis의 값과 요청한 값이 다릅니다."),
     ;
 
     private final HttpStatus status;
