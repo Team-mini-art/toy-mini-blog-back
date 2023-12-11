@@ -101,7 +101,7 @@ spring:
           google:
             client-id: ${google-client-id}
             client-secret: ${google-client-secret}
-            redirect-uri: http://${ec2-public-dns}:8081/login/oauth2/code/google
+            redirect-uri: http://mini-art-blog.com:8081/login/oauth2/code/google
             scope:
               - email
               - profile
