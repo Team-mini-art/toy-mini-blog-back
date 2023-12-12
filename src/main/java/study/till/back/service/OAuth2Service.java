@@ -3,6 +3,7 @@ package study.till.back.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
@@ -33,51 +34,51 @@ public class OAuth2Service extends DefaultOAuth2UserService {
         return super.loadUser(userRequest);
     }
 
-    public ResponseEntity<LoginResponse> loginSuccess(OAuth2User oAuth2User) {
+    public ResponseEntity<LoginResponse> loginSuccess(OAuth2AuthorizedClient authorizedClient, OAuth2User oAuth2User) {
+        OAuthType loginOAuthType = OAuthType.valueOf(authorizedClient.getClientRegistration().getRegistrationId().toUpperCase());
         Map<String, Object> attributes = oAuth2User.getAttributes();
 
         String email = (String) attributes.get("email");
         String nickname = (String) attributes.get("name");
 
-        Member member = memberRepository.findById(email).orElse(null);
-
-        if (member != null) {
-            if (!member.getNickname().equals(nickname)) {
-                member.updateMember(nickname);
-                memberRepository.save(member);
-            }
-
-            TokenInfo tokenInfo = jwtTokenProvider.generateToken(member.getEmail(), member.getRoles());
-            LoginResponse loginResponse = LoginResponse.builder()
-                    .status("SUCCESS")
-                    .message("로그인에 성공하였습니다.")
-                    .email(member.getEmail())
-                    .nickname(member.getNickname())
-                    .tokenInfo(tokenInfo)
-                    .build();
-            return ResponseEntity.ok(loginResponse);
+        if (loginOAuthType == OAuthType.KAKAO) {
+            email = (String) ((Map<String, Object>) attributes.get("kakao_account")).get("email");
+            nickname = (String) ((Map<String, Object>) attributes.get("properties")).get("nickname");
+        }
+        else if (loginOAuthType == OAuthType.NAVER) {
+            // NAVER 관련 코드
         }
 
-        Member newMember = Member.builder()
-                .email(email)
-                .nickname(nickname)
-                .oAuthType(OAuthType.GOOGLE)
-                .roles(Collections.singletonList("ROLE_USER"))
-                .build();
+        String finalEmail = email;
+        String finalNickname = nickname;
 
-        memberRepository.save(newMember);
+        Member member = memberRepository.findById(email).orElseGet(() -> {
+            Member newMember = Member.builder()
+                    .email(finalEmail)
+                    .nickname(finalNickname)
+                    .oAuthType(loginOAuthType)
+                    .roles(Collections.singletonList("ROLE_USER"))
+                    .build();
+            memberRepository.save(newMember);
+            return newMember;
+        });
 
-        TokenInfo tokenInfo = jwtTokenProvider.generateToken(newMember.getEmail(), newMember.getRoles());
+        if (!member.getNickname().equals(nickname)) {
+            member.updateMember(nickname);
+            memberRepository.save(member);
+        }
 
+        TokenInfo tokenInfo = jwtTokenProvider.generateToken(member.getEmail(), member.getRoles());
         LoginResponse loginResponse = LoginResponse.builder()
                 .status("SUCCESS")
                 .message("로그인에 성공하였습니다.")
-                .email(newMember.getEmail())
-                .nickname(newMember.getNickname())
+                .email(member.getEmail())
+                .nickname(member.getNickname())
                 .tokenInfo(tokenInfo)
                 .build();
         return ResponseEntity.ok(loginResponse);
     }
+
 
     public ResponseEntity<CommonResponse> loginFail() {
         CommonResponse commonResponse = CommonResponse.builder()

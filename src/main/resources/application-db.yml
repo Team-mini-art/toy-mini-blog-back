@@ -57,9 +57,24 @@ spring:
             client-secret: ${google-client-secret}
             redirect-uri: http://localhost:8081/login/oauth2/code/google
             scope:
-              - email
               - profile
-
+              - email
+          kakao:
+            client-id: ${kakao-client-id}
+            client-secret: ${kakao-client-secret}
+            redirect-uri: http://localhost:8081/login/oauth2/code/kakao
+            authorization-grant-type: authorization_code
+            client-name: Kakao
+            client-authentication-method: POST
+            scope:
+              - profile_nickname
+              - account_email
+        provider:
+          kakao:
+            authorization-uri: https://kauth.kakao.com/oauth/authorize
+            token-uri: https://kauth.kakao.com/oauth/token
+            user-info-uri: https://kapi.kakao.com/v2/user/me
+            user-name-attribute: id
 logging:
   level:
     org.hibernate.SQL: debug
@@ -103,8 +118,24 @@ spring:
             client-secret: ${google-client-secret}
             redirect-uri: http://mini-art-blog.com:8081/login/oauth2/code/google
             scope:
-              - email
               - profile
+              - email
+          kakao:
+            client-id: ${kakao-client-id}
+            client-secret: ${kakao-client-secret}
+            redirect-uri: http://localhost:8081/login/oauth2/code/kakao
+            authorization-grant-type: authorization_code
+            client-name: Kakao
+            client-authentication-method: POST
+            scope:
+              - profile_nickname
+              - account_email
+        provider:
+          kakao:
+            authorization-uri: https://kauth.kakao.com/oauth/authorize
+            token-uri: https://kauth.kakao.com/oauth/token
+            user-info-uri: https://kapi.kakao.com/v2/user/me
+            user-name-attribute: id
 
 logging:
   level:
