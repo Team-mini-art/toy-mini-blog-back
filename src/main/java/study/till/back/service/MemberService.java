@@ -130,7 +130,7 @@ public class MemberService {
     @Transactional
     public ResponseEntity<CommonResponse> updateMember(MemberRequest memberRequest) {
         Member member = memberRepository.findById(memberRequest.getEmail()).orElseThrow(NotFoundMemberException::new);
-        member.updateMember(memberRequest.getNickname());
+        member.updateMemberNickname(memberRequest.getNickname());
         memberRepository.save(member);
 
         FileUploadDTO fileUploadDTO = new FileUploadDTO();

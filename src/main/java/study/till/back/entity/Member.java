@@ -30,8 +30,12 @@ public class Member extends BaseTimeEntity implements UserDetails {
     private OAuthType oAuthType;
 
 
-    public void updateMember(String nickname) {
+    public void updateMemberNickname(String nickname) {
         this.nickname = nickname;
+    }
+
+    public void updateMemberOAuthType(OAuthType oAuthType) {
+        this.oAuthType = oAuthType;
     }
 
     @Builder.Default

@@ -46,7 +46,8 @@ public class OAuth2Service extends DefaultOAuth2UserService {
             nickname = (String) ((Map<String, Object>) attributes.get("properties")).get("nickname");
         }
         else if (loginOAuthType == OAuthType.NAVER) {
-            // NAVER 관련 코드
+            email = (String) ((Map<String, Object>) attributes.get("response")).get("email");
+            nickname = (String) ((Map<String, Object>) attributes.get("response")).get("nickname");
         }
 
         String finalEmail = email;
@@ -64,7 +65,12 @@ public class OAuth2Service extends DefaultOAuth2UserService {
         });
 
         if (!member.getNickname().equals(nickname)) {
-            member.updateMember(nickname);
+            member.updateMemberNickname(nickname);
+            memberRepository.save(member);
+        }
+
+        if (member.getOAuthType() != loginOAuthType) {
+            member.updateMemberOAuthType(loginOAuthType);
             memberRepository.save(member);
         }
 
