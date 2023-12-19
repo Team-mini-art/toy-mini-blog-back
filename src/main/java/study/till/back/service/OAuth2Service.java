@@ -1,6 +1,7 @@
 package study.till.back.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
@@ -21,6 +22,7 @@ import javax.transaction.Transactional;
 import java.util.Collections;
 import java.util.Map;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class OAuth2Service extends DefaultOAuth2UserService {
