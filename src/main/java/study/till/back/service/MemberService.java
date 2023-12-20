@@ -2,7 +2,6 @@ package study.till.back.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -12,7 +11,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import study.till.back.config.jwt.JwtTokenProvider;
 import study.till.back.dto.*;
-import study.till.back.dto.email.EmailRequset;
 import study.till.back.dto.file.FileUploadDTO;
 import study.till.back.dto.member.*;
 import study.till.back.dto.token.TokenInfo;
@@ -42,11 +40,6 @@ public class MemberService {
     private final JwtTokenProvider jwtTokenProvider;
     private final MemberAttachRepository memberAttachRepository;
     private final S3Service s3Service;
-    private final EmailService emailService;
-
-    @Value(("${spring.mail.auth-code-expiration-millis}"))
-    private long authCodeExpirationMillis;
-
     @Transactional
     public ResponseEntity<CommonResponse> signup(SignupRequest signupRequest) {
         if (!SignupValidUtil.isValidEmail(signupRequest.getEmail())) {
@@ -179,11 +172,5 @@ public class MemberService {
                 .message("회원 정보가 수정되었습니다.")
                 .build();
         return ResponseEntity.ok(commonResponse);
-    }
-
-    public void sendCodeEmail(EmailRequset emailRequset) {
-        String title = "Mini Art Blog 이메일 인증 번호";
-        String authCode = emailService.createCode();
-        emailService.sendEmail(emailRequset.getToEmail(), title, authCode);
     }
 }

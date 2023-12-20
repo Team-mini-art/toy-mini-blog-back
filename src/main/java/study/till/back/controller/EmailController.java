@@ -1,26 +1,30 @@
 package study.till.back.controller;
 
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import study.till.back.dto.email.EmailRequset;
-import study.till.back.service.MemberService;
+import study.till.back.dto.CommonResponse;
+import study.till.back.dto.email.SendCodeRequest;
+import study.till.back.dto.email.VerifyCodeRequset;
+import study.till.back.service.EmailService;
 
 @RestController
 @RequestMapping("/api/email")
 @RequiredArgsConstructor
 public class EmailController {
 
-    private final MemberService memberService;
+    private final EmailService emailService;
 
-    @PostMapping("/sendAuthCode")
-    public ResponseEntity sendMessage(@RequestBody EmailRequset emailRequset) {
-        memberService.sendCodeEmail(emailRequset);
-        return new ResponseEntity(HttpStatus.OK);
+    @PostMapping("/send-code")
+    public ResponseEntity<CommonResponse> sendCode(@RequestBody SendCodeRequest SendCodeRequest) {
+        return emailService.sendCode(SendCodeRequest);
+    }
+
+    @PostMapping("/verify-code")
+    public ResponseEntity<CommonResponse> verifyCode(@RequestBody VerifyCodeRequset verifyCodeRequset) {
+        return emailService.verifyCode(verifyCodeRequset);
     }
 }
