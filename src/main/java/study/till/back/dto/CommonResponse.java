@@ -12,4 +12,11 @@ import lombok.NoArgsConstructor;
 public class CommonResponse {
     private String status;
     private String message;
+
+    public static CommonResponse createCommonResponse(String status, String message) {
+        return CommonResponse.builder()
+                .status(status)
+                .message(message)
+                .build();
+    }
 }
