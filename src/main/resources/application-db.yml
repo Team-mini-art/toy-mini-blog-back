@@ -118,6 +118,9 @@ logging:
 upload:
   path: /Users/hmmini/mini/develop/project/backend/asset/
 
+ses:
+  mail: no-reply@mini-art-blog.com
+
 ---
 
 spring:
@@ -167,7 +170,22 @@ spring:
             token-uri: https://kauth.kakao.com/oauth/token
             user-info-uri: https://kapi.kakao.com/v2/user/me
             user-name-attribute: id
-
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${gmail-id}
+    password: ${gmail-password}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
+          connectiontimeout: 5000
+          timeout: 5000
+          writetimeout: 5000
+    auth-code-expiration-millis: 600000
 logging:
   level:
     org.hibernate.SQL: info
@@ -185,3 +203,6 @@ decorator:
 
 upload:
   path: /asset/
+
+ses:
+  mail: no-reply@mini-art-blog.com

@@ -10,6 +10,7 @@ import study.till.back.dto.CommonResponse;
 import study.till.back.dto.email.SendCodeRequest;
 import study.till.back.dto.email.VerifyCodeRequset;
 import study.till.back.service.EmailService;
+import study.till.back.service.SESEmailService;
 
 @RestController
 @RequestMapping("/api/email")
@@ -17,10 +18,11 @@ import study.till.back.service.EmailService;
 public class EmailController {
 
     private final EmailService emailService;
+    private final SESEmailService sesEmailService;
 
     @PostMapping("/send-code")
     public ResponseEntity<CommonResponse> sendCode(@RequestBody SendCodeRequest SendCodeRequest) {
-        return emailService.sendCode(SendCodeRequest);
+        return sesEmailService.sendCode(SendCodeRequest);
     }
 
     @PostMapping("/verify-code")

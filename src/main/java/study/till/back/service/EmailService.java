@@ -27,7 +27,6 @@ import java.util.concurrent.TimeUnit;
 @RequiredArgsConstructor
 public class EmailService {
     private final JavaMailSender emailSender;
-    private final SESEmailService sesEmailService;
     private final RedisTemplate<String, String> redisTemplate;
 
     @Value(("${spring.mail.auth-code-expiration-millis}"))
@@ -79,7 +78,7 @@ public class EmailService {
             log.error(e.getMessage());
         }
     }
-    private String createCode() {
+    public String createCode() {
         int length = 6;
         try {
             Random random = SecureRandom.getInstanceStrong();
@@ -94,7 +93,7 @@ public class EmailService {
         }
     }
 
-    private String makeText(String authCode) {
+    public String makeText(String authCode) {
         StringBuilder sb = new StringBuilder();
         sb.append("<div style='width: 400px; margin: 0 auto;'>");
         sb.append("  <a href='http://mini-art-blog.com' rel='noreferrer noopener' target='_blank'>");
