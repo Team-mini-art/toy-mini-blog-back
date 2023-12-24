@@ -2,6 +2,7 @@ package study.till.back.service;
 
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +14,7 @@ import study.till.back.dto.token.TokenResponse;
 import study.till.back.exception.redis.NotEqualsRedisException;
 import study.till.back.exception.redis.NotFoundRedisException;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class TokenService {

@@ -1,6 +1,7 @@
 package study.till.back.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -29,6 +30,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class MemberService {
@@ -38,7 +40,6 @@ public class MemberService {
     private final JwtTokenProvider jwtTokenProvider;
     private final MemberAttachRepository memberAttachRepository;
     private final S3Service s3Service;
-
     @Transactional
     public ResponseEntity<CommonResponse> signup(SignupRequest signupRequest) {
         if (!SignupValidUtil.isValidEmail(signupRequest.getEmail())) {
@@ -130,7 +131,7 @@ public class MemberService {
     @Transactional
     public ResponseEntity<CommonResponse> updateMember(MemberRequest memberRequest) {
         Member member = memberRepository.findById(memberRequest.getEmail()).orElseThrow(NotFoundMemberException::new);
-        member.updateMember(memberRequest.getNickname());
+        member.updateMemberNickname(memberRequest.getNickname());
         memberRepository.save(member);
 
         FileUploadDTO fileUploadDTO = new FileUploadDTO();
