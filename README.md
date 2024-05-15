@@ -25,7 +25,7 @@
 
 ---
 
-백엔드, 프론트 최신 기술스택에 미숙한 둘이서 실력 향상을 위한 가장 기본적인 서비스인 블로그를 구현해보는 프로젝트
+JPA를 이용한 모두가 이용할 수 있는 블로그 서비스 개발
 
 <br/>
 
@@ -33,17 +33,16 @@
 
 ---
 
-
-- SpringBoot와 JPA를 통해 기본적인 CRUD를 직접 익히면서 가장 기본인 블로그를 구현
-- Spring의 동작 원리 및 SpringBoot와의 차이점 이해하기
-- Spring Data JPA, QueryDsl 등 ORM에 대해 이해하기
-- Rest API로 CRUD 구현
+- 도메인, 데이터베이스 설계
+- SpringBoot와 JPA를 이용한 REST API 제공 및 서비스 제공
+- 최신 Java와 Spring의 동작 원리 이해하기
+- JPA, QueryDsl ORM에 대해 이해하기
 - Spring Security, Jwt 토큰와 Redis를 이용한 로그인 관리 및 쿠키, 세션과의 차이점 이해하기
 - oAuth2를 이용한 로그인 구현
 - 회원가입 인증메일 발송 로직 구현
-- CustomeException을 만들어 로그의 가독성 향상 시키기
-- GitHub, Jenkins, Docker를 이용한 무중단 CI/CD 파이프라인 구축해보기
-- Git의 branch를 이슈별로 관리하여 Commit, Pull Request 협업 시뮬레이션
+- RuntimeException을 상속하는 CustomException을 만들어 로그의 가독성 향상 및 예외 처리
+- GitHub, Jenkins, Docker를 이용한 무중단 배포 CI/CD 파이프라인 구축해보기
+- Git을 활용하여 코드 관리 및 History 추적
 - AWS 클라우드 서비스를 이용한 서버 구성 경험해보기
 
 <br/>
@@ -66,7 +65,7 @@
 ### - BackEnd
 
 
-- Java11, SpringBoot 2.7.9, Spring Data JPA, Spring Security, JUnit5, JWT, oAuth2, Swagger UI, Jasypt
+- Java11, SpringBoot 2.7.9, JPA, Spring Security, JUnit5, JWT, oAuth2, Swagger UI, Jasypt
 - Jenkins, Gradle, Docker, AWS EC2, AWS RDS, AWS ElastiCache, AWS S3, AWS SES, AWS Route 53,
 - H2, MariaDB, Redis
 
