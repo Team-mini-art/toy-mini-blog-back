@@ -16,7 +16,7 @@
     <img src="src/main/resources/asset/카카오_로그인.png" height="220px">
     <br/>
     <img src="src/main/resources/asset/인증메일.png" width="600px">
-    <h3><a href="http://www.mini-art-blog.com/"><del>Try to Mini Blog 😁</del>(비용으로 인한 도메인 종료)</a></h3>
+    <h3><a href="http://www.mini-art-blog.com/"><del>Try to Mini Blog 😁</del>(비용으로 인한 서비스 종료)</a></h3>
 </div>
 
 <br/>
