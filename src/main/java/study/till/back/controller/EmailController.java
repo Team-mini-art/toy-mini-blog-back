@@ -1,6 +1,7 @@
 package study.till.back.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Profile;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -15,6 +16,7 @@ import study.till.back.service.SESEmailService;
 @RestController
 @RequestMapping("/api/email")
 @RequiredArgsConstructor
+@Profile("!local")
 public class EmailController {
 
     private final EmailService emailService;

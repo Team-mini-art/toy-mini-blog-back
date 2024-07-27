@@ -14,17 +14,20 @@ import study.till.back.dto.comment.FindCommentResponse;
 import study.till.back.entity.Comment;
 import study.till.back.entity.Member;
 import study.till.back.entity.Post;
+import study.till.back.entity.Reply;
 import study.till.back.exception.comment.NotFoundCommentException;
 import study.till.back.exception.common.NoDataException;
 import study.till.back.exception.member.NotFoundMemberException;
 import study.till.back.exception.member.NotMatchMemberException;
 import study.till.back.exception.post.NotFoundPostException;
-import study.till.back.repository.CommentRepositroy;
+import study.till.back.repository.CommentRepository;
 import study.till.back.repository.MemberRepository;
 import study.till.back.repository.PostRepository;
 
 import javax.transaction.Transactional;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -34,10 +37,10 @@ public class CommentService {
 
     private final MemberRepository memberRepository;
     private final PostRepository postRepository;
-    private final CommentRepositroy commentRepositroy;
+    private final CommentRepository commentRepository;
 
     public ResponseEntity<List<FindCommentResponse>> findComments(Pageable pageable) {
-        Page<Comment> comments = commentRepositroy.findAll(pageable);
+        Page<Comment> comments = commentRepository.findAll(pageable);
 
         if (comments.isEmpty()) {
             throw new NoDataException();
@@ -50,9 +53,38 @@ public class CommentService {
         return ResponseEntity.ok(findCommentResponses);
     }
 
+    public ResponseEntity<List<FindCommentResponse>> findCommentsFetch(Pageable pageable) {
+        Page<Comment> comments = commentRepository.findAllWithRepliesList(pageable);
+
+        if (comments.isEmpty()) {
+            throw new NoDataException();
+        }
+
+        List<FindCommentResponse> findCommentResponses = comments.stream()
+                .map(FindCommentResponse::from)
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(findCommentResponses);
+    }
+
+    public ResponseEntity<List<FindCommentResponse>> findCommentsTwice(Pageable pageable) {
+        Page<Comment> commentPage = commentRepository.findAllComments(pageable);
+
+        if (commentPage.isEmpty()) {
+            throw new NoDataException();
+        }
+
+        List<Comment> commentsWithReplies = commentRepository.findCommentsWithReplies(commentPage.getContent());
+
+        List<FindCommentResponse> findCommentResponses = commentsWithReplies.stream()
+                .map(FindCommentResponse::from)
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(findCommentResponses);
+    }
 
     public ResponseEntity<FindCommentResponse> findComment(Long id) {
-        Comment comment = commentRepositroy.findById(id).orElseThrow(NotFoundCommentException::new);
+        Comment comment = commentRepository.findById(id).orElseThrow(NotFoundCommentException::new);
 
         FindCommentResponse findCommentResponse = FindCommentResponse.from(comment);
 
@@ -71,7 +103,7 @@ public class CommentService {
                 .contents(commentRequest.getContents())
                 .build();
 
-        commentRepositroy.save(comment);
+        commentRepository.save(comment);
 
         CreateCommonResponse createCommonResponse = CreateCommonResponse.builder()
                 .id(comment.getId())
@@ -88,12 +120,12 @@ public class CommentService {
 
         postRepository.findById(commentRequest.getPost_id()).orElseThrow(NotFoundPostException::new);
 
-        Comment comment = commentRepositroy.findById(id).orElseThrow(NotFoundCommentException::new);
+        Comment comment = commentRepository.findById(id).orElseThrow(NotFoundCommentException::new);
 
         if (!member.getEmail().equals(comment.getMember().getEmail())) throw new NotMatchMemberException();
 
         comment.updateComment(commentRequest.getContents());
-        commentRepositroy.save(comment);
+        commentRepository.save(comment);
 
         CommonResponse commonResponse = CommonResponse.builder()
                 .status("SUCCESS")
@@ -104,9 +136,9 @@ public class CommentService {
 
     @Transactional
     public ResponseEntity<CommonResponse> deleteComment(Long id) {
-        commentRepositroy.findById(id).orElseThrow(NotFoundCommentException::new);
+        commentRepository.findById(id).orElseThrow(NotFoundCommentException::new);
 
-        commentRepositroy.deleteById(id);
+        commentRepository.deleteById(id);
 
         CommonResponse commonResponse = CommonResponse.builder()
                 .status("SUCCESS")

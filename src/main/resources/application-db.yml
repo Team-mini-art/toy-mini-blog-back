@@ -3,18 +3,18 @@ spring:
     activate:
       on-profile: local
   datasource:
-    url: jdbc:h2:tcp://localhost/~/til-back
+    url: jdbc:h2:mem:~/til-back;MODE=MYSQL;
     username: sa
     password:
     driver-class-name: org.h2.Driver
 
   jpa:
     hibernate:
-      hbm2ddl.auto: update
-#          ddl-auto: create
+#      hbm2ddl.auto: update
+          ddl-auto: create
     properties:
       hibernate:
-        #         show_sql: true
+        show_sql: true
         format_sql: true
 
   data:

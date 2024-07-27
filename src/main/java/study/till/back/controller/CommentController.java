@@ -31,7 +31,7 @@ public class CommentController {
 
         Sort.Direction sortDirection = Sort.Direction.fromString(direction);
         Pageable pageable = PageRequest.of(page, size, Sort.by(sortDirection, sort));
-        return commentService.findComments(pageable);
+        return commentService.findCommentsTwice(pageable);
     }
 
     @GetMapping("/comments/{id}")

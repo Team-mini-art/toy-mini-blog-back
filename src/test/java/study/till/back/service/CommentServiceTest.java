@@ -1,6 +1,5 @@
 package study.till.back.service;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -10,7 +9,7 @@ import study.till.back.entity.Comment;
 import study.till.back.entity.Member;
 import study.till.back.entity.Post;
 import study.till.back.entity.Reply;
-import study.till.back.repository.CommentRepositroy;
+import study.till.back.repository.CommentRepository;
 import study.till.back.repository.MemberRepository;
 import study.till.back.repository.PostRepository;
 import study.till.back.repository.ReplyRepository;
@@ -18,10 +17,7 @@ import study.till.back.repository.ReplyRepository;
 import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Function;
 import java.util.stream.Collectors;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 class CommentServiceTest {
@@ -33,7 +29,7 @@ class CommentServiceTest {
     private PostRepository postRepository;
 
     @Autowired
-    private CommentRepositroy commentRepositroy;
+    private CommentRepository commentRepositroy;
 
     @Autowired
     private ReplyRepository replyRepository;

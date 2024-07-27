@@ -16,7 +16,7 @@ import study.till.back.exception.member.NotFoundMemberException;
 import study.till.back.exception.member.NotMatchMemberException;
 import study.till.back.exception.post.NotFoundPostException;
 import study.till.back.exception.reply.NotFoundReplyException;
-import study.till.back.repository.CommentRepositroy;
+import study.till.back.repository.CommentRepository;
 import study.till.back.repository.MemberRepository;
 import study.till.back.repository.PostRepository;
 import study.till.back.repository.ReplyRepository;
@@ -28,7 +28,7 @@ public class ReplyService {
 
     private final MemberRepository memberRepository;
     private final PostRepository postRepository;
-    private final CommentRepositroy commentRepositroy;
+    private final CommentRepository commentRepositroy;
     private final ReplyRepository replyRepository;
 
     public ResponseEntity<CreateCommonResponse> createReply(ReplyRequest replyRequest) {

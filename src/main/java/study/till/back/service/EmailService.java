@@ -3,6 +3,7 @@ package study.till.back.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Profile;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.http.ResponseEntity;
@@ -25,6 +26,7 @@ import java.util.concurrent.TimeUnit;
 @Service
 @Transactional
 @RequiredArgsConstructor
+@Profile("!local")
 public class EmailService {
     private final JavaMailSender emailSender;
     private final RedisTemplate<String, String> redisTemplate;

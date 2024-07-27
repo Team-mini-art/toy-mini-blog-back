@@ -39,6 +39,7 @@ cloud:
     credentials:
       accessKey: ${aws-access-key}
       secretKey: ${aws-secret-key}
+      instance-profile: false
     s3:
       bucket: mini-art-bucket
     region:
